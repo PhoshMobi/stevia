@@ -19,6 +19,9 @@
 #ifdef POS_HAVE_HUNSPELL
 # include "completers/pos-completer-hunspell.h"
 #endif
+#ifdef POS_HAVE_UIM
+# include "completers/pos-completer-uim.h"
+#endif
 #ifdef POS_HAVE_VARNAM
 # include "completers/pos-completer-varnam.h"
 #endif
@@ -107,6 +110,13 @@ init_completer (PosCompleterManager *self, const char *name, GError **err)
 #ifdef POS_HAVE_HUNSPELL
   } else if (g_strcmp0 (name, "hunspell") == 0) {
     completer = pos_completer_hunspell_new (err);
+    if (completer)
+      goto done;
+    return NULL;
+#endif
+#ifdef POS_HAVE_UIM
+  } else if (g_strcmp0 (name, "uim") == 0) {
+    completer = pos_completer_uim_new (err);
     if (completer)
       goto done;
     return NULL;

@@ -94,6 +94,37 @@ else
   libpos_completer_hunspell_dep = declare_dependency()
 endif
 
+if uim_dep.found()
+  # Uim based completer
+  libpos_completer_uim_sources = files('pos-completer-uim.c', 'pos-completer-uim.h')
+
+  libpos_completer_uim_deps = [gio_dep, glib_dep, gmobile_dep, gnome_desktop_dep, gtk_dep, uim_dep]
+
+  libpos_completer_uim_lib = static_library(
+    'pos-completer-uim',
+    libpos_completer_uim_sources,
+    include_directories: pos_includes,
+    install: false,
+    dependencies: libpos_completer_uim_deps,
+    override_options: ['cpp_std=c++11'],
+  )
+
+  libpos_completer_uim_dep = declare_dependency(
+    include_directories: libpos_completer_includes,
+    link_with: libpos_completer_uim_lib,
+    dependencies: libpos_deps,
+  )
+
+  libpos_completer_uim_dep = declare_dependency(
+    include_directories: libpos_completer_includes,
+    link_with: libpos_completer_uim_lib,
+  )
+else
+  libpos_completer_uim_sources = []
+  libpos_completer_uim_lib = []
+  libpos_completer_uim_dep = declare_dependency()
+endif
+
 if varnam_dep.found()
   #  varnam based completer
   libpos_completer_varnam_sources = files('pos-completer-varnam.c', 'pos-completer-varnam.h')
@@ -123,6 +154,7 @@ libpos_completers_sources = [
   libpos_completer_hunspell_sources,
   libpos_completer_pipe_sources,
   libpos_completer_presage_sources,
+  libpos_completer_uim_sources,
   libpos_completer_varnam_sources,
 ]
 
@@ -131,6 +163,7 @@ libpos_completer_libs = [
   libpos_completer_hunspell_lib,
   libpos_completer_pipe_lib,
   libpos_completer_presage_lib,
+  libpos_completer_uim_lib,
   libpos_completer_varnam_lib,
 ]
 
@@ -140,6 +173,7 @@ libpos_completers_dep = declare_dependency(
     libpos_completer_hunspell_dep,
     libpos_completer_pipe_dep,
     libpos_completer_presage_dep,
+    libpos_completer_uim_dep,
     libpos_completer_varnam_dep,
   ],
 )

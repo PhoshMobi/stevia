@@ -141,6 +141,7 @@ else
   # presage did not have pkg-config files before version 2
   presage_dep = cc.find_library('presage', required: false)
 endif
+uim_dep = dependency('uim', required: false)
 varnam_dep = dependency('govarnam', required: false)
 
 completers = []
@@ -177,6 +178,7 @@ config_h.set('POS_HAVE_FZF', fzf.found())
 config_h.set('POS_HAVE_HUNSPELL', hunspell_dep.found())
 config_h.set('POS_HAVE_PRESAGE', presage_dep.found())
 config_h.set('POS_HAVE_PRESAGE2', presage2_dep.found())
+config_h.set('POS_HAVE_UIM', uim_dep.found())
 config_h.set('POS_HAVE_VARNAM', varnam_dep.found())
 config_h.set(
   'POS_INPUT_SURFACE_DEFAULT_HEIGHT',
@@ -225,6 +227,7 @@ summary(
     'Presage': presage_dep.found(),
     'Fzf': fzf.found(),
     'Varnam': varnam_dep.found(),
+    'Uim': uim_dep.found(),
     'Hunspell': hunspell_dep.found(),
   },
   bool_yn: true,

@@ -58,3 +58,13 @@ if presage_dep.found()
     env: test_env,
   )
 endif
+
+if uim_dep.found()
+  name = 'test-completer-uim'
+  test(
+    name,
+    executable(name, f'@name@.c', pie: true, dependencies: libpos_dep),
+    depends: [compile_schemas],
+    env: test_env,
+  )
+endif

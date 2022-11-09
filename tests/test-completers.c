@@ -14,11 +14,14 @@
 #ifdef POS_HAVE_FZF
 # include "pos-completer-fzf.h"
 #endif
-#ifdef POS_HAVE_VARNAM
-# include "pos-completer-varnam.h"
-#endif
 #ifdef POS_HAVE_HUNSPELL
 # include "pos-completer-hunspell.h"
+#endif
+#ifdef POS_HAVE_UIM
+# include "pos-completer-uim.h"
+#endif
+#ifdef POS_HAVE_VARNAM
+# include "pos-completer-varnam.h"
 #endif
 
 #include <gio/gio.h>
