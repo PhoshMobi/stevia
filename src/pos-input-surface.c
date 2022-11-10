@@ -443,13 +443,14 @@ on_completion_selected (PosInputSurface *self, const char *completion)
   else
     send = g_strdup_printf ("%s ", completion);
 
-  pos_input_method_send_string (self->input_method, send, TRUE);
+  /* Some completers like uim need more control than just submitting the selection */
+  if (pos_completer_set_selected (self->completer, completion) == FALSE)
+    pos_input_method_send_string (self->input_method, send, TRUE);
 
   if (pos_input_surface_is_completer_active (self)) {
     pos_completer_learn_accepted (self->completer, send);
     pos_completer_set_preedit (self->completer, NULL);
   }
-
 }
 
 

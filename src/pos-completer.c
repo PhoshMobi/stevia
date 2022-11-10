@@ -37,6 +37,9 @@
  * characters to either take the user input as is or force
  * "aggressive" autocorrection (picking a correction on the users
  * behalf).
+ *
+ * @set_selection: Invoked when the user selected a completion item.
+ *     Implementation of this method is optional.
  */
 
 G_DEFINE_INTERFACE (PosCompleter, pos_completer, G_TYPE_OBJECT)
@@ -335,6 +338,32 @@ pos_completer_set_language (PosCompleter *self,
 
   return iface->set_language (self, lang, region, error);
 }
+
+/**
+ * pos_completer_set_selected:
+ * @self: The completer
+ * @selected:  The selection
+ *
+ * Inform the completer that the user has selected an option provided
+ * by the completer. Returns `TRUE` if the completer handled the selection.
+ *
+ * Returns: %TRUE when handled, otherwise `FALSE`.
+ */
+gboolean
+pos_completer_set_selected (PosCompleter *self, const char *selected)
+{
+  PosCompleterInterface *iface;
+
+  g_return_val_if_fail (POS_IS_COMPLETER (self), FALSE);
+
+  iface = POS_COMPLETER_GET_IFACE (self);
+  /* optional */
+  if (iface->set_selected == NULL)
+    return FALSE;
+
+  return iface->set_selected (self, selected);
+}
+
 
 /* Used by completers to simplify implementations */
 

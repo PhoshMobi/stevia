@@ -57,6 +57,7 @@ struct _PosCompleterInterface
   char *         (*get_display_name) (PosCompleter *self);
   void           (*learn_accepted) (PosCompleter *self, const char *word);
   const char *   (*lookup_completion) (PosCompleter *self, const char *completion);
+  gboolean       (*set_selected) (PosCompleter *self, const char *selected);
 };
 
 /* Used by completion users */
@@ -80,5 +81,6 @@ GStrv          pos_completer_capitalize_by_template (const char *template,
                                                      const GStrv completions);
 
 glong          pos_completer_find_prev_word_break (const char *text);
+gboolean       pos_completer_set_selected (PosCompleter *self, const char *selected);
 
 G_END_DECLS
