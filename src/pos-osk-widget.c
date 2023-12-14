@@ -55,6 +55,12 @@ enum {
 };
 static GParamSpec *props[PROP_LAST_PROP];
 
+typedef enum {
+  CURSOR_DRAG_STARTING,
+  CURSOR_DRAG_HORIZ,
+  CURSOR_DRAG_VERT,
+} cursor_drag_t;
+
 /**
  * PosOskWidgetRow:
  * @width: number in key units
@@ -151,6 +157,7 @@ struct _PosOskWidget {
   /* Cursor movement */
   GtkGesture          *cursor_drag;
   double               last_x, last_y;
+  cursor_drag_t        drag_type;
 };
 G_DEFINE_TYPE (PosOskWidget, pos_osk_widget, GTK_TYPE_DRAWING_AREA)
 
@@ -162,10 +169,25 @@ on_drag_begin (PosOskWidget *self,
 {
   if (self->mode != POS_OSK_WIDGET_MODE_CURSOR)
     return;
+
+  self->drag_type = CURSOR_DRAG_STARTING;
+  self->last_x = start_x;
+  self->last_y = start_y;
 }
 
 #define KEY_DIST_X 5
 #define KEY_DIST_Y 10
+
+
+#define CAN_DRAG_HORIZ(self)                                            \
+  (self->drag_type == CURSOR_DRAG_STARTING || self->drag_type == CURSOR_DRAG_HORIZ)
+#define CAN_DRAG_VERT(self)                                             \
+  (self->drag_type == CURSOR_DRAG_STARTING || self->drag_type == CURSOR_DRAG_VERT)
+#define DRAG_TYPE(self)                                                 \
+  (self->drag_type == CURSOR_DRAG_STARTING ? "starting"                 \
+   : self->drag_type == CURSOR_DRAG_HORIZ  ? "horiz"                    \
+   : "vert")
+
 
 static void
 on_drag_update (PosOskWidget *self, double off_x, double off_y)
@@ -176,17 +198,19 @@ on_drag_update (PosOskWidget *self, double off_x, double off_y)
   if (self->mode != POS_OSK_WIDGET_MODE_CURSOR)
     return;
 
-  g_debug ("%s: %f, %f", __func__, off_x, off_y);
+  g_debug ("%s: (%f,%f) %s", __func__, off_x, off_y, DRAG_TYPE (self));
 
   delta_x = self->last_x - off_x;
   delta_y = self->last_y - off_y;
 
-  if (ABS (delta_x) > KEY_DIST_X) {
+  if (ABS (delta_x) > KEY_DIST_X && CAN_DRAG_HORIZ (self)) {
     symbol =  delta_x > 0 ? POS_OSK_SYMBOL_LEFT : POS_OSK_SYMBOL_RIGHT;
     self->last_x = off_x;
-  } else if (ABS (delta_y) > KEY_DIST_Y) {
+    self->drag_type = CURSOR_DRAG_HORIZ;
+  } else if (ABS (delta_y) > KEY_DIST_Y && CAN_DRAG_VERT (self)) {
     symbol =  delta_y > 0 ? POS_OSK_SYMBOL_UP : POS_OSK_SYMBOL_DOWN;
     self->last_y = off_y;
+    self->drag_type = CURSOR_DRAG_VERT;
   }
 
   if (symbol)
