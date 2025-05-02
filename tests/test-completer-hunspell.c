@@ -51,17 +51,9 @@ test_completer_hunspell_object (void)
 int
 main (int argc, char *argv[])
 {
-  gint ret;
-
-  g_test_init (&argc, &argv, NULL);
-
-  pos_init ();
+  gtk_test_init (&argc, &argv, NULL);
 
   g_test_add_func ("/pos/completer/hunspell/object", test_completer_hunspell_object);
 
-  ret = g_test_run ();
-
-  pos_uninit ();
-
-  return ret;
+  return g_test_run ();
 }

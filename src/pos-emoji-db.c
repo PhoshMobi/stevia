@@ -54,7 +54,7 @@ pos_emoji_db_init (PosEmojiDb *self)
   g_autoptr (GBytes) bytes = NULL;
   g_autoptr (GError) err = NULL;
 
-  bytes = g_resources_lookup_data ("/mobi/phosh/stevia/emoji/en.data", 0, &err);
+  bytes = g_resources_lookup_data ("/org/gtk/libgtk/emoji/en.data", 0, &err);
   if (!bytes) {
     g_critical ("Failed to load emoji data: %s", err->message);
   } else {
