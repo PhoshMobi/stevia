@@ -1,3 +1,77 @@
+phosh-osk-stevia (0.49~rc1) experimental; urgency=medium
+
+  * wayland: New singleton to track Wayland protocols.
+    Similar to what we do in phosh. This frees the stevia
+    class from the protocol handling and makes it easier
+    to access Wayland protocols in other classes.
+    We emit a `ready` signal once all needed protocols
+    were announced by the registry.
+  * stevia: Instantiate wayland singleton
+  * stevia: Use wayland singleton.
+    This allows us to drop the registry handling
+  * stevia: Track Wayland outputs
+  * completer: Fix path to po data.
+    Otherwise the translations won't be added to the completer
+    info files.
+  * completer: Make sure description gets replaced in the desktop file.
+    This makes sure `Description` gets transfered from the po file
+    to the generated desktop file.
+  * po: Add `Description` keyword.
+    Otherwise it will not be extracted from the completer "desktop" like files
+    in data/completers when running `ninja -C _build phosh-osk-stevia-update-po`
+  * po: Update German translation
+  * data/schema: Add description for keyboard shortcuts.
+    Makes `gsettings describe` more useful.
+  * osk-widget: Make key height a property
+  * input-surface: Fix size comparison.
+    We want to compare with the widget height not a variable
+    that is currently never set (thus zero).
+  * input-surface: No need to request natural size.
+    We don't use it
+  * input-surface: Add a minimum height.
+    If the layer surface is smaller than that we will require
+    at least that height.
+  * input-surface: Add dead-zone property.
+    This allows to configure an empty space at the bottom of all layouts.
+  * input-surface: Adjust key height based on surface size
+  * osk-widget: Allow to get max rows.
+    Gets the maximum number of key rows in a layout.
+  * input-surface: Take number of layout rows into account.
+    Closes: https://gitlab.gnome.org/guidog/stevia/-/issues/45
+  * size-manager: New object to calculate input surface size.
+    The size manager takes the current outputs physical and logical
+    size into account to calculate height when the corresponding
+    gsettings are enabled.
+    This is currently limited to portrait mode.
+    We target the keyboard's key area height to be 4cm so keys are reasonably
+    sized. The target height for the dead zone at the bottom is 8mm. This
+    is useful on taller devices as otherwise when typing the bottom row requires
+    additional force as the center of gravity is far away from the supporting
+    fingers.
+  * osk-stevia: Instantiate size manager
+  * stevia: Make default input surface height a variable
+  * stevia: Wire up size manager.
+    Bind the `dead-zone` and `height` property
+  * doc: Document new configuration flags
+  * input-surface: Separate button and key press.
+    This will allow us to use the new fbd event for OSK key presses
+  * input-surface: Use key new event.
+    We set the important hint as we want the OSK's haptic
+    feedback to stay on when the phone goes to silent mode
+    (unless the user turns it off explicitly).
+  * hunspell-completer: Fix additional completions.
+    We used the old completer rather than the new one from the builder.
+    While at that make the presage and hunspell completers more look
+    alike by using `GStrvBuilder` everywhere.
+    Fixes: a849b11de ("hunspell: Check for emojis too by using PosCompleterBase")
+  * doc: Link to blog posts.
+    They provide useful information for development. Brush
+    up the README a bit while at that.
+  * doc: Explain how to test layout changes.
+    Closes: https://gitlab.gnome.org/guidog/stevia/-/issues/71
+
+ -- Guido Günther <agx@sigxcpu.org>  Wed, 06 Aug 2025 07:26:23 +0200
+
 phosh-osk-stevia (0.48.0) experimental; urgency=medium
 
   * completion: Fix keyword completion value.
