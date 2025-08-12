@@ -74,8 +74,6 @@
 
     <!-- handcrafted -->
     <file preprocess="json-stripblanks" >layouts/terminal.json</file>
-    <!-- emoji -->
-    <file>emoji/en.data</file>
   </gresource>
   <gresource prefix="/mobi/phosh/stevia/icons/">
     <file alias="keyboard-enter-symbolic.svg">../data/icons/keyboard-enter-symbolic.svg</file>

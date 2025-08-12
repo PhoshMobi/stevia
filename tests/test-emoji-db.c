@@ -33,17 +33,9 @@ test_emoji_db_match (void)
 int
 main (int argc, char *argv[])
 {
-  gint ret;
-
-  g_test_init (&argc, &argv, NULL);
-
-  pos_init ();
+  gtk_test_init (&argc, &argv, NULL);
 
   g_test_add_func ("/pos/emoji-db/match", test_emoji_db_match);
 
-  ret = g_test_run ();
-
-  pos_uninit ();
-
-  return ret;
+  return g_test_run ();
 }
