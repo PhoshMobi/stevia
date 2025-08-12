@@ -134,7 +134,7 @@ pos_emoji_db_match_by_name (PosEmojiDb *self, const char *match, guint max_match
 
         g_variant_get_child (codes, i, "u", &code);
         if (code)
-          p += g_unichar_to_utf8 (code, p);
+          p += g_unichar_to_utf8 (GINT32_FROM_LE (code), p);
       }
       p += g_unichar_to_utf8 (0xFE0F, p); /* U+FE0F is the Emoji variation selector */
       *p = '\0';
