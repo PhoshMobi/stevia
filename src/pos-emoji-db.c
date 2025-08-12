@@ -137,7 +137,7 @@ pos_emoji_db_match_by_name (PosEmojiDb *self, const char *match, guint max_match
           p += g_unichar_to_utf8 (code, p);
       }
       p += g_unichar_to_utf8 (0xFE0F, p); /* U+FE0F is the Emoji variation selector */
-      p[0] = 0;
+      *p = '\0';
 
       g_strv_builder_add (builder, text);
       matches++;
