@@ -3,8 +3,6 @@ pos-input-surface {
 }
 
 pos-osk-widget {
-  font-family: cantarell, sans-serif;
-
   color: @pos_fg_color;
   background-color: @pos_bg_color;
 }
@@ -58,8 +56,6 @@ pos-key.return.pressed {
  * character popover
  */
 pos-char-popup {
-  font-family: cantarell, sans-serif;
-
   color: @theme_fg_color;
   background-color: @theme_bg_color;
 }
@@ -212,7 +208,7 @@ pos-keypad .symbol { font-size: 100%; }
 
 pos-keypad button {
   color: @pos_key_fg_color;
-  background: @pos_key_bg_color;  
+  background: @pos_key_bg_color;
   border: 0px;
   margin: 1px;
 }
