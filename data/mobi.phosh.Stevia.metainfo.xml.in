@@ -64,6 +64,15 @@
   </screenshots>
 
   <releases>
+    <release version="0.49.0" date="2025-08-14">
+      <description translate="no">
+        <ul>
+          <li>Allow to keep physical size constant in portrait mode</li>
+          <li>Allow to add empty bottom bar in portrait mode</li>
+          <li>Bug fixes and layout improvements</li>
+        </ul>
+      </description>
+    </release>
     <release version="0.48.0" date="2025-06-27">
       <description translate="no">
         <ul>

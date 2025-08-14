@@ -1,3 +1,23 @@
+phosh-osk-stevia (0.49.0) experimental; urgency=medium
+
+  [ Guido Günther ]
+  * emoji-db: Make it easier to read.
+    We just 0-terminate the string here
+  * emoji-db: Take endianess into account.
+    The db is LE so convert to host byte order
+    Closes: https://gitlab.gnome.org/guidog/stevia/-/issues/61
+  * emoji-db: Use GTKs emoji data
+  * emoji: Drop emoji data.
+    We can just pick up what GTK ships.
+
+  [ Achill Gilgenast ]
+  * stylesheet: Drop cantarell as font family.
+    GNOME switched to Adwaita Fonts for their font family and dropped Cantarell.
+    Just use the default font used in the system and don't hardcode it.
+    Closes: https://gitlab.gnome.org/guidog/stevia/-/issues/69
+
+ -- Guido Günther <agx@sigxcpu.org>  Thu, 14 Aug 2025 10:23:59 +0200
+
 phosh-osk-stevia (0.49~rc1) experimental; urgency=medium
 
   * wayland: New singleton to track Wayland protocols.

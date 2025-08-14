@@ -1,16 +1,21 @@
-phosh-osk-stevia 0.49~rc1
--------------------------
+phosh-osk-stevia 0.49.0
+-----------------------
 Released August 2025
 * Allow to keep physical size constant in portrait mode
 * Allow to add empty bottom bar in portrait mode
 * Fix adding additional completions in hunspell
+* Use system default font instead of hardcoding Cantarell
+* Drop built in emoji data
 * Use `key-pressed` instead of `button-pressed` for
   feedback
 * Fix translations of completer information in p-m-s
 * Issues fixed:
     * https://gitlab.gnome.org/guidog/stevia/-/issues/45
+    * https://gitlab.gnome.org/guidog/stevia/-/issues/61
+    * https://gitlab.gnome.org/guidog/stevia/-/issues/69
     * https://gitlab.gnome.org/guidog/stevia/-/issues/71
 * Contributors:
+    * Achill Gilgenast
     * Guido Günther
 * UI translations:
     * Guido Günther (de)
