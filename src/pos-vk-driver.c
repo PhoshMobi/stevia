@@ -377,8 +377,9 @@ pos_vk_driver_build_keymap (PosVkDriver *self, PosKeysym extra_keysms[])
      * what we emit via `pos_vk_driver_key_down()`. As usual with xkb keymaps the keycodes
      * have an offset of `8`.
      */
-    g_string_append_printf (keycodes, "    <I%.3d>         = %d;\n", keycode->keycode + 8, keycode->keycode + 8);
-
+    g_string_append_printf (keycodes, "    <I%.3d>         = %d;\n",
+                            keycode->keycode + 8,
+                            keycode->keycode + 8);
     /*
      * For characters map each symbol as 'U<UCS4>' to the keycodes added above
      * See /usr/include/X11/keysymdef.h
