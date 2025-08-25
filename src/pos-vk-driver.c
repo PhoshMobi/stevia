@@ -455,21 +455,16 @@ pos_vk_driver_build_keymap (PosVkDriver *self, PosKeysym extra_keysms[])
 
 
 static void
-pos_vk_driver_update_keycodes (PosVkDriver *self, const char *layout_id)
+pos_vk_driver_update_terminal_keycodes (PosVkDriver *self)
 {
-  const PosKeycode *keycodes = keycodes_terminal;
-
   g_clear_pointer (&self->keycodes, g_hash_table_destroy);
 
   self->keycodes = g_hash_table_new (g_str_hash, g_str_equal);
   for (int i = 0; i < G_N_ELEMENTS (keycodes_common); i++)
     g_hash_table_insert (self->keycodes, keycodes_common[i].key,  (gpointer)&keycodes_common[i]);
 
-  if (g_strcmp0 (layout_id, "terminal"))
-    g_warning ("Unknown layout id '%s', will use terminal layout", layout_id);
-
-  for (int i = 0; keycodes[i].key != NULL; i++)
-    g_hash_table_insert (self->keycodes, keycodes[i].key,  (gpointer)&keycodes[i]);
+  for (int i = 0; keycodes_terminal[i].key != NULL; i++)
+    g_hash_table_insert (self->keycodes, keycodes_terminal[i].key,  (gpointer)&keycodes_terminal[i]);
 }
 
 
@@ -662,8 +657,7 @@ pos_vk_driver_key_press_gdk (PosVkDriver *self, guint gdk_keycode, GdkModifierTy
  * pos_vk_driver_set_terminal_keymap:
  * @self: The vk driver
  *
- * Sets the given keymap honoring xkb-options set in GNOME. When possible send
- * keycodes matching that layout id.
+ * Sets the terminal keymap.
  */
 void
 pos_vk_driver_set_terminal_keymap (PosVkDriver *self)
@@ -687,7 +681,7 @@ pos_vk_driver_set_terminal_keymap (PosVkDriver *self)
 
   pos_virtual_keyboard_set_keymap (self->virtual_keyboard, keymap);
 
-  pos_vk_driver_update_keycodes (self, layout_id);
+  pos_vk_driver_update_terminal_keycodes (self);
 }
 
 /**
