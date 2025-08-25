@@ -379,14 +379,14 @@ pos_output_get_transformed_phys_height (PosOutput *self)
 }
 
 /**
- * pos_output_get_transformed_phys_height:
+ * pos_output_get_transformed_phys_width:
  * @self: The output
  *
  * Get the height of the output taking the current transform into
  * account. So when the output is flipped 90⁰ the return value will
  * be the physical height.
  *
- * Returns: The physical height
+ * Returns: The physical width
  */
 guint
 pos_output_get_transformed_phys_width (PosOutput *self)
