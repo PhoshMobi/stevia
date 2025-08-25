@@ -1910,6 +1910,7 @@ on_input_setting_changed (PosInputSurface *self, const char *key, GSettings *set
       first_set = TRUE;
       hdy_deck_set_visible_child (self->deck, GTK_WIDGET (osk_widget));
     }
+    update_osk_key_height (NULL, osk_widget, self);
   }
 
   if (old) {
