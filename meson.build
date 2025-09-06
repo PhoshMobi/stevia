@@ -149,6 +149,17 @@ if completers.length() == 0
   error('No usable completer found')
 endif
 
+code = '''
+#include <linux/rfkill.h>
+
+struct rfkill_event_ext e;
+'''
+have_rfkill_event_ext = cc.compiles(code, name: 'Have rfkill_event_ext')
+have_memfd_create = cc.has_function(
+  'memfd_create',
+  prefix: ['#define _GNU_SOURCE', '#include <sys/mman.h>'],
+)
+
 config_h = configuration_data()
 config_h.set_quoted('GETTEXT_PACKAGE', 'phosh-osk-stevia')
 config_h.set_quoted('LOCALEDIR', localedir)
@@ -164,6 +175,11 @@ config_h.set(
   description: 'Default height of the input surface',
 )
 config_h.set_quoted('POS_DEFAULT_COMPLETER', default_completer)
+config_h.set(
+  'PHOSH_HAVE_MEMFD_CREATE',
+  have_memfd_create,
+  description: 'Whether we have memdfd_create on Linux',
+)
 
 configure_file(output: 'pos-config.h', configuration: config_h)
 

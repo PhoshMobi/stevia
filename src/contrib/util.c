@@ -6,13 +6,21 @@
  * Author: Guido Günther <agx@sigxcpu.org>
  */
 
+#define _GNU_SOURCE
+
+#include "pos-config.h"
+
 #include "util.h"
 #include <gtk/gtk.h>
 
 #include <systemd/sd-login.h>
 
+#ifdef PHOSH_HAVE_MEMFD_CREATE
+#include <linux/memfd.h>
+#include <linux/mman.h>
+#endif
+
 #include <sys/mman.h>
-#include <sys/stat.h>
 #include <fcntl.h>
 
 
@@ -264,16 +272,37 @@ randname (char *buf)
   }
 }
 
-
 static int
 anonymous_shm_open (void)
 {
   char name[] = "/phosh-XXXXXX";
+  int fd = -1;
+
+#ifdef PHOSH_HAVE_MEMFD_CREATE
+/* For kernel headers before 6.3 */
+# ifndef MFD_NOEXEC_SEAL
+#  define MFD_NOEXEC_SEAL 0x0008U
+# endif
+  static unsigned int memfd_create_flags = MFD_CLOEXEC | MFD_ALLOW_SEALING | MFD_NOEXEC_SEAL;
+  /* name is only for debugging, collisions don't matter */
+  randname (name + strlen (name) - 6);
+  fd = memfd_create (name, memfd_create_flags);
+  if (fd < 0 && errno == EINVAL) {
+    memfd_create_flags &= ~MFD_NOEXEC_SEAL;
+    g_warning ("memfd_create failed, retrying without MFD_NOEXEC_SEAL");
+    fd = memfd_create (name, memfd_create_flags);
+  }
+  if (fd >= 0) {
+    fcntl (fd, F_ADD_SEALS, F_SEAL_SHRINK);
+    return fd;
+  }
+#else
   int retries = 100;
 
+#ifdef __linux__
+  g_warning_once ("Falling back to shm_open for shared memory buffers.");
+#endif
   do {
-    int fd;
-
     randname (name + strlen (name) - 6);
     --retries;
     /* shm_open guarantees that O_CLOEXEC is set */
@@ -283,6 +312,7 @@ anonymous_shm_open (void)
       return fd;
     }
   } while (retries > 0 && errno == EEXIST);
+#endif
 
   return -1;
 }

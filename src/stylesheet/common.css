@@ -56,23 +56,16 @@ pos-key.return.pressed {
  * character popover
  */
 pos-char-popup {
-  color: @theme_fg_color;
-  background-color: @theme_bg_color;
+  border-radius: 10px;
 }
 
 pos-char-popup grid {
   padding: 2px;
-  background: @pos_key_bg_color;
-  border-radius: 0px;
-  border: 3px solid @theme_bg_color;
 }
 
 pos-char-popup button {
-  font-size: 120%;
-  color: @pos_key_fg_color;
-  background: @pos_key_bg_color;
+  font-size: 175%;
   padding: 10px;
-  border-radius: 0px;
   border: none;
 }
 
