@@ -542,7 +542,7 @@ pos_vk_driver_new (PosVirtualKeyboard *virtual_keyboard)
 }
 
 /**
- * pos_vk_driver_new_down:
+ * pos_vk_driver_key_down:
  * @self: The virtual keyboard driver
  * @key: The key to press
  * @modifiers: Additional modifiers
