@@ -9,7 +9,7 @@
   <shortname>Stevia</shortname>
   <shortdesc>An on screen keyboard for Phosh</shortdesc>
   <description>A sweet on Screen Keyboard for Phosh</description>
-  <homepage rdf:resource="https://gitlab.gnome.org/World/Phosh/phosh/" />
+  <homepage rdf:resource="https://gitlab.gnome.org/World/Phosh/stevia/" />
   <license rdf:resource="http://usefulinc.com/doap/licenses/gpl" />
 
   <programming-language>C</programming-language>

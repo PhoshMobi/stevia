@@ -27,7 +27,7 @@ Build-Depends:
  xauth <!nocheck>,
  xvfb <!nocheck>,
 Standards-Version: 4.7.2
-Homepage: https://gitlab.gnome.org/guidog/stevia/
+Homepage: https://gitlab.gnome.org/World/Phosh/stevia/
 Rules-Requires-Root: no
 
 Package: phosh-osk-stevia

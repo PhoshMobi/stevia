@@ -1,6 +1,6 @@
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: phosh-osk-stevia
-Source: https://gitlab.gnome.org/guidog/stevia
+Source: https://gitlab.gnome.org/World/Phosh/stevia
 
 Files: *
 Copyright:

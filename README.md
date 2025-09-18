@@ -18,8 +18,8 @@ Features:
 - no language boundaries within the codebase to lower the entrance barrier
 - use current GTK and GObject patterns (actions, bindings, …)
 - use GNOME libs and technologies wherever possible (GSettings, json-glib, …)
-- [character popover](https://gitlab.gnome.org/guidog/stevia/-/raw/main/screenshots/pos-popover.png)
-- [emoji layout](https://gitlab.gnome.org/guidog/stevia/-/raw/main/screenshots/pos-emoji.png)
+- [character popover](https://gitlab.gnome.org/World/Phosh/stevia/-/raw/main/screenshots/pos-popover.png)
+- [emoji layout](https://gitlab.gnome.org/World/Phosh/stevia/-/raw/main/screenshots/pos-emoji.png)
 - cursor navigation via space-bar long-press
 - word correction via hunspell
 - use any program as completer via a `pipe` completer ([Example](https://social.librem.one/@agx/110260534404795348))
@@ -37,7 +37,7 @@ Stevia is licensed under the GPLv3+.
 ## Getting the source
 
 ```sh
-git clone https://gitlab.gnome.org/guidog/stevia
+git clone https://gitlab.gnome.org/World/Phosh/stevia
 cd stevia
 ```
 
@@ -101,7 +101,7 @@ post](https://phosh.mobi/posts/osk-completion/) for more details.
 ### Development Documentation
 
 The API and development documentation is available at
-<https://guidog.pages.gitlab.gnome.org/stevia>. See also the OSK
+<https://world.pages.gitlab.gnome.org/Phosh/stevia>. See also the OSK
 related posts on [phosh.mobi](https://phosh.mobi/tags/osk/).
 
 ### End User Documentation
@@ -111,12 +111,12 @@ system via `man phosh-osk-stevia`).
 
 ## Getting in Touch
 
-- Issue tracker: <https://gitlab.gnome.org/guidog/stevia/issues>
+- Issue tracker: <https://gitlab.gnome.org/World/Phosh/stevia/issues>
 - Matrix: <https://matrix.to/#/#phosh:sigxcpu.org>
 
-[main]: https://gitlab.gnome.org/guidog/stevia/-/tree/main
-[.gitlab-ci.yml]: https://gitlab.gnome.org/guidog/stevia/-/blob/main/.gitlab-ci.yml
-[debian/control]:https://gitlab.gnome.org/guidog/stevia/-/blob/main/debian/control
+[main]: https://gitlab.gnome.org/World/Phosh/stevia/-/tree/main
+[.gitlab-ci.yml]: https://gitlab.gnome.org/World/Phosh/stevia/-/blob/main/.gitlab-ci.yml
+[debian/control]:https://gitlab.gnome.org/World/Phosh/stevia/-/blob/main/debian/control
 [phosh]: https://gitlab.gnome.org/World/Phosh/phosh
 [squeekboard]: https://gitlab.gnome.org/World/Phosh/squeekboard
 [sm.puri.OSK0]: https://gitlab.gnome.org/World/Phosh/phosh/-/blob/main/src/dbus/sm.puri.OSK0.xml

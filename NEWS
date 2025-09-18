@@ -10,10 +10,10 @@ Released August 2025
   feedback
 * Fix translations of completer information in p-m-s
 * Issues fixed:
-    * https://gitlab.gnome.org/guidog/stevia/-/issues/45
-    * https://gitlab.gnome.org/guidog/stevia/-/issues/61
-    * https://gitlab.gnome.org/guidog/stevia/-/issues/69
-    * https://gitlab.gnome.org/guidog/stevia/-/issues/71
+    * https://gitlab.gnome.org/World/Phosh/stevia/-/issues/45
+    * https://gitlab.gnome.org/World/Phosh/stevia/-/issues/61
+    * https://gitlab.gnome.org/World/Phosh/stevia/-/issues/69
+    * https://gitlab.gnome.org/World/Phosh/stevia/-/issues/71
 * Contributors:
     * Achill Gilgenast
     * Guido Günther
@@ -32,8 +32,8 @@ Released June 2025
 * New layouts:
     * us+dvorak
 * Issues fixed:
-    * https://gitlab.gnome.org/guidog/stevia/-/issues/66
-    * https://gitlab.gnome.org/guidog/stevia/-/issues/67
+    * https://gitlab.gnome.org/World/Phosh/stevia/-/issues/66
+    * https://gitlab.gnome.org/World/Phosh/stevia/-/issues/67
 * Contributors:
     * chri2
     * Guido Günther
@@ -49,7 +49,7 @@ Released May 2025
 * Add special keywords like "today" to completion (optional, on by
   default)
 * Issues fixed:
-    * https://gitlab.gnome.org/guidog/stevia/-/issues/58
+    * https://gitlab.gnome.org/World/Phosh/stevia/-/issues/58
 * Contributors:
     * Guido Günther
 * UI translations:
@@ -61,7 +61,7 @@ Released March 2025
 * Improve key symbols for layer switching
 * Simplify switching to Symbols2 layer
 * Issues fixed:
-    * https://gitlab.gnome.org/guidog/stevia/-/issues/43
+    * https://gitlab.gnome.org/World/Phosh/stevia/-/issues/43
 * Contributors:
     * Guido Günther
 
@@ -72,8 +72,8 @@ Released February 2025
 * Update emoji data
 * Make IL layout as close as possible to SI-1452-2
 * Issues fixed:
-    * https://gitlab.gnome.org/guidog/stevia/-/issues/53
-    * https://gitlab.gnome.org/guidog/stevia/-/issues/31
+    * https://gitlab.gnome.org/World/Phosh/stevia/-/issues/53
+    * https://gitlab.gnome.org/World/Phosh/stevia/-/issues/31
 * Contributors:
     * Boris Shtrasman
     * Guido Günther
@@ -101,9 +101,9 @@ Released November 2024
 * User documentation updates
 * Various bug fixes
 * Issues fixed:
-    * https://gitlab.gnome.org/guidog/stevia/-/issues/44
-    * https://gitlab.gnome.org/guidog/stevia/-/issues/41
-    * https://gitlab.gnome.org/guidog/stevia/-/issues/49
+    * https://gitlab.gnome.org/World/Phosh/stevia/-/issues/44
+    * https://gitlab.gnome.org/World/Phosh/stevia/-/issues/41
+    * https://gitlab.gnome.org/World/Phosh/stevia/-/issues/49
 * Contributors:
     * Guido Günther
     * Julian
@@ -131,7 +131,7 @@ Released September 2024
 * Allow to paste clipboard contents
 * varnam completer: Learn accepted words to improve predictions
 * Issues fixed:
-    * https://gitlab.gnome.org/guidog/stevia/-/issues/26
+    * https://gitlab.gnome.org/World/Phosh/stevia/-/issues/26
 * Contributors:
     * Guido Günther
 
@@ -163,7 +163,7 @@ Released: April 2024
 * (Optionally) hide OSK if a hardware keyboard is present
 * Fix completion bar styling when using HighContrast
 * Issues fixed:
-  * https://gitlab.gnome.org/guidog/stevia/-/issues/37
+  * https://gitlab.gnome.org/World/Phosh/stevia/-/issues/37
 * Contributors:
     * Guido Günther
 
@@ -185,7 +185,7 @@ Released: February 2024
 * Various fixes including better support for Enter/Return in Firefox
   and other search fields
 * Issues fixed:
-  - https://gitlab.gnome.org/guidog/stevia/-/issues/27
+  - https://gitlab.gnome.org/World/Phosh/stevia/-/issues/27
 * Contributors:
     * Anna “CyberTailor”
     * Guido Günther
@@ -207,7 +207,7 @@ Released: December 2023
 * Add gnome-calculator to list of apps that don't unfold the OSK
 * Run style checks in ci
 * Issues fixed:
-  - https://gitlab.gnome.org/guidog/stevia/-/issues/10
+  - https://gitlab.gnome.org/World/Phosh/stevia/-/issues/10
 * Contributors:
     * Guido Günther
 
@@ -220,9 +220,9 @@ Released: October 2023
 * Better handle emojies and characters from popovers under XWayland
 * Be more robust when picking invalid keysyms for the shortcuts bar
 * Issues fixed:
-  https://gitlab.gnome.org/guidog/stevia/-/issues/16
-  https://gitlab.gnome.org/guidog/stevia/-/issues/22
-  https://gitlab.gnome.org/guidog/stevia/-/issues/24
+  https://gitlab.gnome.org/World/Phosh/stevia/-/issues/16
+  https://gitlab.gnome.org/World/Phosh/stevia/-/issues/22
+  https://gitlab.gnome.org/World/Phosh/stevia/-/issues/24
 * Contributors:
     * Guido Günther
 

@@ -38,8 +38,8 @@ workflow:
 
 variables:
   # For ci-fairy
-  FDO_UPSTREAM_REPO: guidog/stevia
-  DEBIAN_IMAGE: $CI_REGISTRY/guidog/stevia/debian:v0.0.2025-05-19
+  FDO_UPSTREAM_REPO: World/Phosh/stevia
+  DEBIAN_IMAGE: $CI_REGISTRY/world/phosh/stevia/debian:v0.0.2025-09-18
   XVFB_RUN: xvfb-run -a -s -noreset
   COMMON_BUILD_OPTS: --werror -Db_coverage=true -Dprefix=/usr
   ALPINE_EDGE_DEPS: alpine-sdk feedbackd-dev git glib-dev gnome-desktop-dev
