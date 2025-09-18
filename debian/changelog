@@ -5,7 +5,7 @@ phosh-osk-stevia (0.49.0) experimental; urgency=medium
     We just 0-terminate the string here
   * emoji-db: Take endianess into account.
     The db is LE so convert to host byte order
-    Closes: https://gitlab.gnome.org/guidog/stevia/-/issues/61
+    Closes: https://gitlab.gnome.org/World/Phosh/stevia/-/issues/61
   * emoji-db: Use GTKs emoji data
   * emoji: Drop emoji data.
     We can just pick up what GTK ships.
@@ -14,7 +14,7 @@ phosh-osk-stevia (0.49.0) experimental; urgency=medium
   * stylesheet: Drop cantarell as font family.
     GNOME switched to Adwaita Fonts for their font family and dropped Cantarell.
     Just use the default font used in the system and don't hardcode it.
-    Closes: https://gitlab.gnome.org/guidog/stevia/-/issues/69
+    Closes: https://gitlab.gnome.org/World/Phosh/stevia/-/issues/69
 
  -- Guido Günther <agx@sigxcpu.org>  Thu, 14 Aug 2025 10:23:59 +0200
 
@@ -57,7 +57,7 @@ phosh-osk-stevia (0.49~rc1) experimental; urgency=medium
   * osk-widget: Allow to get max rows.
     Gets the maximum number of key rows in a layout.
   * input-surface: Take number of layout rows into account.
-    Closes: https://gitlab.gnome.org/guidog/stevia/-/issues/45
+    Closes: https://gitlab.gnome.org/World/Phosh/stevia/-/issues/45
   * size-manager: New object to calculate input surface size.
     The size manager takes the current outputs physical and logical
     size into account to calculate height when the corresponding
@@ -88,7 +88,7 @@ phosh-osk-stevia (0.49~rc1) experimental; urgency=medium
     They provide useful information for development. Brush
     up the README a bit while at that.
   * doc: Explain how to test layout changes.
-    Closes: https://gitlab.gnome.org/guidog/stevia/-/issues/71
+    Closes: https://gitlab.gnome.org/World/Phosh/stevia/-/issues/71
 
  -- Guido Günther <agx@sigxcpu.org>  Wed, 06 Aug 2025 07:26:23 +0200
 
@@ -102,10 +102,10 @@ phosh-osk-stevia (0.48.0) experimental; urgency=medium
     encodings than UTF-8 in 2025.
     In case someone wants to make this more elaborate one
     could use `g_convert` to perform conversion.
-    Helps: https://gitlab.gnome.org/guidog/stevia/-/issues/67
+    Helps: https://gitlab.gnome.org/World/Phosh/stevia/-/issues/67
   * hunspell-completer: Try conversion to UTF-8.
     If hunspell's results aren't utf-8 we try to convert via iconv.
-    Closes: Helps: https://gitlab.gnome.org/guidog/stevia/-/issues/67
+    Closes: Helps: https://gitlab.gnome.org/World/Phosh/stevia/-/issues/67
   * hunspell-completer: Try input conversion from UTF-8.
     Convert input so accented characters get handled.
     Tested-by: Łukasz Osadnik
@@ -147,7 +147,7 @@ phosh-osk-stevia (0.48~alpha1) experimental; urgency=medium
 
   [ chri2 ]
   * pipe-completer: Add a demo as a head start
-    https://gitlab.gnome.org/guidog/phosh-osk-stub/-/issues/60
+    https://gitlab.gnome.org/World/Phosh/phosh-osk-stub/-/issues/60
 
   [ Paul Black ]
   * layout: Added us+dvorak
@@ -175,7 +175,7 @@ phosh-osk-stub (0.47~rc2) experimental; urgency=medium
     to make that possible.
   * osk-widget: Show indicator popup when enabled.
     When the gsetting is flipped show the indicator popup.
-    Closes: https://gitlab.gnome.org/guidog/stevia/-/issues/58
+    Closes: https://gitlab.gnome.org/World/Phosh/stevia/-/issues/58
   * completer-base: Complete some special keywords.
     This eases inserting things like current date and time
   * data: Enable keyword completer by default
@@ -289,10 +289,10 @@ phosh-osk-stub (0.46~rc1) experimental; urgency=medium
     trigger that layer as well.
     Also pressing the symbols key when caps lock is on triggers symbols2
     and turns off caps lock (as all layer changes do so)
-    Closes: https://gitlab.gnome.org/guidog/stevia/-/issues/43
+    Closes: https://gitlab.gnome.org/World/Phosh/stevia/-/issues/43
   * osk-widget: Improve key symbols.
     Hint which symbol layer will be activated
-    Helps: https://gitlab.gnome.org/guidog/stevia/-/issues/40
+    Helps: https://gitlab.gnome.org/World/Phosh/stevia/-/issues/40
 
  -- Guido Günther <agx@sigxcpu.org>  Sat, 22 Mar 2025 09:37:21 +0100
 
@@ -306,7 +306,7 @@ phosh-osk-stub (0.45~rc1) experimental; urgency=medium
 
   [ Boris Shtrasman ]
   * layout: Make IL layout to be as close as possible to SI-1452-2.
-    Closes: https://gitlab.gnome.org/guidog/stevia/-/issues/53
+    Closes: https://gitlab.gnome.org/World/Phosh/stevia/-/issues/53
 
   [ Guido Günther ]
   * osk-stub: Add minimal GObject.
@@ -331,7 +331,7 @@ phosh-osk-stub (0.45~rc1) experimental; urgency=medium
   * osk-stub: Move hw-tracker and device-state into object.
     Moves the remaining globals into the object
   * osk-widget: Long press on shift toggles caps lock.
-    Closes: https://gitlab.gnome.org/guidog/stevia/-/issues/31
+    Closes: https://gitlab.gnome.org/World/Phosh/stevia/-/issues/31
   * dir-locals: Set fill indicator column
   * emoji: Update emoji data.
     Taken from GTK commit
@@ -431,12 +431,12 @@ phosh-osk-stub (0.43~rc1) experimental; urgency=medium
     This gives us accent color support and frees PosInputSurface
     from style handling.
   * emoji-picker: Place section at the right edge in RTL locales.
-    Helps: https://gitlab.gnome.org/guidog/stevia/-/issues/44
+    Helps: https://gitlab.gnome.org/World/Phosh/stevia/-/issues/44
   * emoji-picker: Select correct section in RTL locales.
     When scrolling in RTL locales we bring in the new section from the
     right. Take that into account when highlighting the currently active
     section.
-    Closes: https://gitlab.gnome.org/guidog/stevia/-/issues/44
+    Closes: https://gitlab.gnome.org/World/Phosh/stevia/-/issues/44
   * osk-widget: Move key press logic to separate function.
     We'll use that for touch event handling
   * osk-widget: Make key_release_action symmetric to key_press_action
@@ -445,12 +445,12 @@ phosh-osk-stub (0.43~rc1) experimental; urgency=medium
   * osk-widget: Handle touch events.
     This allows us to process overlapping key presses by looking at the
     individual touch events rather than handling them as button presses.
-    Closes: https://gitlab.gnome.org/guidog/stevia/-/issues/41
+    Closes: https://gitlab.gnome.org/World/Phosh/stevia/-/issues/41
   * input-surface: Don't submit empty preedit.
     This needlessly clears selected text and is similar
     to https://gitlab.gnome.org/World/Phosh/phoc/-/merge_requests/592
     Fixes f8edcb646 ("input-surface: Submit preedit on layout changes to emoji or terminal")
-    Closes: https://gitlab.gnome.org/guidog/stevia/-/issues/49
+    Closes: https://gitlab.gnome.org/World/Phosh/stevia/-/issues/49
 
   [ Julian ]
   * shortcuts-bar: Add shortcut for Menu
@@ -515,7 +515,7 @@ phosh-osk-stub (0.42~rc1) experimental; urgency=medium
   * completer: Add vfunc to learn accepted words.
     Implementation by completers is optional
   * varnam: Learn accepted words.
-    Closes: https://gitlab.gnome.org/guidog/stevia/-/issues/26
+    Closes: https://gitlab.gnome.org/World/Phosh/stevia/-/issues/26
   * build: Install layout information.
     This allows other tools to figure out which layouts
     we support.
@@ -621,7 +621,7 @@ phosh-osk-stub (0.38.0) experimental; urgency=medium
   * hw-tracker: Track connected keyboards and allow to prevent unfold.
     Usually when a hardware keyboard is attached one doesn't want to show
     the OSK as this takes up screen space.
-    Closes: https://gitlab.gnome.org/guidog/stevia/-/issues/37
+    Closes: https://gitlab.gnome.org/World/Phosh/stevia/-/issues/37
   * hw-tracker: Add setting to ignore hw-keyboards.
     This helps in situations where people want an OSK and a hardware
     keyboard.
@@ -701,7 +701,7 @@ phosh-osk-stub (0.36.0) experimental; urgency=medium
     Return/Enter is special as we want it to submit the preedit but can't
     just append '\n' as lots of programs listen to the key event to toggle
     actions.
-    Closes: https://gitlab.gnome.org/guidog/stevia/-/issues/27
+    Closes: https://gitlab.gnome.org/World/Phosh/stevia/-/issues/27
   * completer: Add more characters to word separators
   * completer: Improve documentation of pos_completer_add_preedit
   * presage: Guard last word grabbing against preedit changes.
@@ -755,9 +755,9 @@ phosh-osk-stub (0.34.0) experimental; urgency=medium
     This allows us to switch back to the last language layout. The only
     special layout is currently the terminal layout but there will be more
     like PIN.
-    Helps: https://gitlab.gnome.org/guidog/stevia/-/issues/14
+    Helps: https://gitlab.gnome.org/World/Phosh/stevia/-/issues/14
   * data: Add some terminal keyboard shortcuts.
-    Closes: https://gitlab.gnome.org/guidog/stevia/-/issues/10
+    Closes: https://gitlab.gnome.org/World/Phosh/stevia/-/issues/10
   * schema: Ignore OSK activation for gnome-calculator.
 
  -- Guido Günther <agx@sigxcpu.org>  Fri, 01 Dec 2023 12:41:00 +0100
@@ -776,7 +776,7 @@ phosh-osk-stub (0.33.0) experimental; urgency=medium
     The virtual-keyboard requests are sent from pos in the right ordering
     and the compositor gets them correctly too so it fails within the X11
     bits.
-    Closes: https://gitlab.gnome.org/guidog/stevia/-/issues/22
+    Closes: https://gitlab.gnome.org/World/Phosh/stevia/-/issues/22
   * input-surface: Handle emojis when no input method is in use.
     As this doesn't happen often we just built a keymap for that one symbol.
     This works for e.g. chromium under XWayland but fails for e.g. chromium
@@ -790,7 +790,7 @@ phosh-osk-stub (0.33.0) experimental; urgency=medium
     when conversion fails but currently doesn't. See
       https://gitlab.gnome.org/GNOME/gtk/-/merge_requests/6492
     so check n_keys as well.
-    Closes: https://gitlab.gnome.org/guidog/stevia/-/issues/24
+    Closes: https://gitlab.gnome.org/World/Phosh/stevia/-/issues/24
   * shortcuts-bar: Allow for more keys as shortcuts.
     GTK needs to be pretty strict regarding accelerators but we can allow
     for more keys like arrow keys.
@@ -822,7 +822,7 @@ phosh-osk-stub (0.33.0) experimental; urgency=medium
   * input-surface: Enable completion when the layout requires it.
     Layouts like the varnam driven Malayalam need a completion engine
     so we need to have it on when the widget is used.
-    Closes: https://gitlab.gnome.org/guidog/stevia/-/issues/16
+    Closes: https://gitlab.gnome.org/World/Phosh/stevia/-/issues/16
   * input-surface: Don't ignore errors when setting completion fallback
   * docs: Explain govarnam setting
 
@@ -836,7 +836,7 @@ phosh-osk-stub (0.32.0) experimental; urgency=medium
   * build: Avoid get_pkgconfig_variable.
     Silences another meson warning
   * vk-driver: Add 'delete'
-    Closes: https://gitlab.gnome.org/guidog/stevia/-/issues/11
+    Closes: https://gitlab.gnome.org/World/Phosh/stevia/-/issues/11
   * Add varnam based completer.
     The config is currently hardcoded and uses 'ml' as language.
   * input-surface: Fix comment.
@@ -847,13 +847,13 @@ phosh-osk-stub (0.32.0) experimental; urgency=medium
   * osk-widget: Add xkb keymap layout-id.
     This allows us to keep keymaps in sync
   * input-surface: Switch keymap when switching layout.
-    Closes: https://gitlab.gnome.org/guidog/stevia/-/issues/15
+    Closes: https://gitlab.gnome.org/World/Phosh/stevia/-/issues/15
   * input-surface: Add doc string for keyboard-driver
   * vk-driver: Allow AltGr as modifier
   * vk-driver: Don't hardcode us keycodes.
     Set them based on the keymap.
   * vk-driver: Add German layout.
-    Closes: https://gitlab.gnome.org/guidog/stevia/-/issues/12
+    Closes: https://gitlab.gnome.org/World/Phosh/stevia/-/issues/12
   * input-surface: Scale up to 1024px.
     This makes for less empty space on wider displays
   * README: Mention varnam.
@@ -866,7 +866,7 @@ phosh-osk-stub (0.32.0) experimental; urgency=medium
     This creates a temporary keymap with the provided symbols.
   * osk-widget: Emit signal when character popover is shown or hidden
   * input-surface: Proxy popover symbols to vk driver.
-    Closes: https://gitlab.gnome.org/guidog/stevia/-/issues/18
+    Closes: https://gitlab.gnome.org/World/Phosh/stevia/-/issues/18
   * vk-driver: Don't listen for input source changes.
     Continuing from f5bb966b4b6cd33ed7661198beca8ea80359e13b where we pushed
     listening to input-source changes from the virtual_keyboard to the
@@ -880,7 +880,7 @@ phosh-osk-stub (0.32.0) experimental; urgency=medium
     interpret as evdev keycodes.
     This way we can get more layouts to work in virtual keyboard mode like
     Ukrainian.
-    Closes: https://gitlab.gnome.org/guidog/stevia/-/issues/19
+    Closes: https://gitlab.gnome.org/World/Phosh/stevia/-/issues/19
   * vk-driver: Drop handcrafted de layout.
     We only keep the us layout for the moment as this is useful for the
     terminal layout.
@@ -904,7 +904,7 @@ phosh-osk-stub (0.32.0) experimental; urgency=medium
   * osk-key: Don't leak symbols
   * vk-driver: Try harder to get an event code.
     If it's not in the table use GDK's reverse mapping function.
-    Closes: https://gitlab.gnome.org/guidog/stevia/-/issues/21
+    Closes: https://gitlab.gnome.org/World/Phosh/stevia/-/issues/21
   * vk-driver: Minimize GDK mapping table.
     We keep the regular letters to not e.g. swap Z and Y when the German
     layout is active.

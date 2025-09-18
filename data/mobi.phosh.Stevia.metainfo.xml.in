@@ -49,17 +49,17 @@
     <control>touch</control>
   </recommends>
 
-  <url type="homepage">https://gitlab.gnome.org/guidog/stevia</url>
-  <url type="bugtracker">https://gitlab.gnome.org/guidog/stevia</url>
+  <url type="homepage">https://gitlab.gnome.org/World/Phosh/stevia</url>
+  <url type="bugtracker">https://gitlab.gnome.org/World/Phosh/stevia</url>
 
   <screenshots>
     <screenshot type="default">
       <caption>Character Popover</caption>
-      <image>https://gitlab.gnome.org//guidog/stevia/-/raw/main/screenshots/pos-popover.png?inline=false</image>
+      <image>https://gitlab.gnome.org//World/Phosh/stevia/-/raw/main/screenshots/pos-popover.png?inline=false</image>
     </screenshot>
     <screenshot type="default">
       <caption>Emoji Layout</caption>
-      <image>https://gitlab.gnome.org//guidog/stevia/-/raw/main/screenshots/pos-emoji.png?inline=false</image>
+      <image>https://gitlab.gnome.org//World/Phosh/stevia/-/raw/main/screenshots/pos-emoji.png?inline=false</image>
     </screenshot>
   </screenshots>
 
