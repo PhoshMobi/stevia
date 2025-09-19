@@ -41,6 +41,9 @@
 
 #include <glib/gi18n-lib.h>
 
+#define KEY_PRESS_EVENT "key-pressed"
+#define BUTTON_PRESS_EVENT "button-pressed"
+
 #define MIN_Y_VELOCITY 1000
 
 /**
@@ -165,6 +168,19 @@ G_DEFINE_TYPE_WITH_CODE (PosInputSurface, pos_input_surface, PHOSH_TYPE_LAYER_SU
 
 
 static void
+pos_input_surface_trigger_feedback (PosInputSurface *self, const char *event_name)
+{
+  g_autoptr (LfbEvent) event = NULL;
+
+  g_assert (POS_IS_INPUT_SURFACE (self));
+
+  event = lfb_event_new (event_name);
+  lfb_event_set_important (event, TRUE);
+  lfb_event_trigger_feedback_async (event, NULL, NULL, NULL);
+}
+
+
+static void
 on_swipe (GtkGestureSwipe *swipe, double velocity_x, double velocity_y, gpointer data)
 {
   PosInputSurface *self = POS_INPUT_SURFACE (data);
@@ -237,31 +253,6 @@ on_num_shortcuts_changed (PosInputSurface *self)
 }
 
 
-static void
-pos_input_surface_notify_key_press (PosInputSurface *self)
-{
-  g_autoptr (LfbEvent) event = NULL;
-
-  g_assert (POS_IS_INPUT_SURFACE (self));
-
-  event = lfb_event_new ("key-pressed");
-  lfb_event_set_important (event, TRUE);
-  lfb_event_trigger_feedback_async (event, NULL, NULL, NULL);
-}
-
-
-static void
-pos_input_surface_notify_button_press (PosInputSurface *self)
-{
-  g_autoptr (LfbEvent) event = NULL;
-
-  g_assert (POS_IS_INPUT_SURFACE (self));
-
-  event = lfb_event_new ("button-pressed");
-  lfb_event_trigger_feedback_async (event, NULL, NULL, NULL);
-}
-
-
 static gboolean
 on_click_hook (GSignalInvocationHint *ihint,
                guint                  n_param_values,
@@ -270,7 +261,7 @@ on_click_hook (GSignalInvocationHint *ihint,
 {
   PosInputSurface *self = POS_INPUT_SURFACE (user_data);
 
-  pos_input_surface_notify_button_press (self);
+  pos_input_surface_trigger_feedback (self, BUTTON_PRESS_EVENT);
   return TRUE;
 }
 
@@ -389,7 +380,7 @@ on_osk_key_down (PosInputSurface *self, const char *symbol, GtkWidget *osk_widge
   g_return_if_fail (POS_IS_INPUT_SURFACE (self));
   g_return_if_fail (POS_IS_OSK_WIDGET (osk_widget));
 
-  pos_input_surface_notify_key_press (self);
+  pos_input_surface_trigger_feedback (self, KEY_PRESS_EVENT);
 }
 
 
@@ -591,7 +582,7 @@ on_emoji_picked (PosInputSurface *self, const char *emoji, PosEmojiPicker *emoji
     send_emoji_via_vk (self, emoji);
   }
 
-  pos_input_surface_notify_key_press (self);
+  pos_input_surface_trigger_feedback (self, KEY_PRESS_EVENT);
 }
 
 
@@ -625,7 +616,7 @@ on_keypad_symbol_pressed (PosInputSurface *self, const char *symbol, PosKeypad *
     pos_vk_driver_key_up (self->keyboard_driver, symbol);
   }
 
-  pos_input_surface_notify_key_press (self);
+  pos_input_surface_trigger_feedback (self, KEY_PRESS_EVENT);
 }
 
 
