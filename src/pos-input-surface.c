@@ -27,7 +27,6 @@
 #include "pos-shortcuts-bar.h"
 #include "pos-style-manager.h"
 #include "pos-vk-driver.h"
-#include "pos-virtual-keyboard.h"
 #include "pos-vk-driver.h"
 #include "util.h"
 
