@@ -1,8 +1,10 @@
 /*
  * Copyright © 2020 Lugsole
- * Copyright (C) 2021 Purism SPC
+ *             2021 Purism SPC
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Author: Guido Günther <agx@sigxcpu.org>
  */
 
 #include "pos-completer-priv.h"
