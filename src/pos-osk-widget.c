@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2022 The Phosh Developers
+ * Copyright (C) 2022-2024 The Phosh Developers
+ *               2025 Phosh.mobi e.V.
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  *
@@ -31,9 +32,6 @@
 #define LAYOUT_MAX_ROWS 5
 
 #define MINIMUM_WIDTH 360
-
-#define KEY_REPEAT_DELAY 700
-#define KEY_REPEAT_INTERVAL 50
 
 enum {
   OSK_KEY_DOWN,
@@ -843,33 +841,6 @@ pos_osk_widget_locate_key (PosOskWidget *self, double x, double y)
 }
 
 
-static gboolean
-on_key_repeat (gpointer data)
-{
-  PosOskWidget *self = POS_OSK_WIDGET (data);
-
-  g_return_val_if_fail (self->current, G_SOURCE_REMOVE);
-
-  g_signal_emit (self, signals[OSK_KEY_DOWN], 0, pos_osk_key_get_symbol (self->current));
-  g_signal_emit (self, signals[OSK_KEY_SYMBOL], 0, pos_osk_key_get_symbol (self->current));
-  g_signal_emit (self, signals[OSK_KEY_UP], 0, pos_osk_key_get_symbol (self->current));
-
-  return G_SOURCE_CONTINUE;
-}
-
-
-static gboolean
-on_repeat_timeout (gpointer data)
-{
-  PosOskWidget *self = POS_OSK_WIDGET (data);
-
-  self->repeat_id = g_timeout_add (KEY_REPEAT_INTERVAL, on_key_repeat, self);
-  g_source_set_name_by_id (self->repeat_id, "[pos-key-repeat]");
-
-  return G_SOURCE_REMOVE;
-}
-
-
 static void
 key_repeat_cancel (PosOskWidget *self)
 {
@@ -918,11 +889,6 @@ pos_osk_widget_key_press (PosOskWidget *self, double x, double y)
                POS_OSK_KEY_DBG (key), POS_OSK_KEY_DBG (self->current));
   }
   pos_osk_widget_key_press_action (self, key);
-
-  if (pos_osk_key_get_use (key) == POS_OSK_KEY_USE_DELETE) {
-    self->repeat_id = g_timeout_add (KEY_REPEAT_DELAY, on_repeat_timeout, self);
-    g_source_set_name_by_id (self->repeat_id, "[pos-key-repeat-timeout]");
-  }
 
   return GDK_EVENT_PROPAGATE;
 }
