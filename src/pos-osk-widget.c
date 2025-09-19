@@ -258,6 +258,8 @@ on_drag_begin (PosOskWidget *self,
 
 #define KEY_DIST_X 5
 #define KEY_DIST_Y 10
+#define V_X_MIN 1.4
+#define V_Y_MIN 2.8
 
 #define CAN_DRAG_HORIZ(self)                                            \
   (self->drag_type == CURSOR_DRAG_STARTING || self->drag_type == CURSOR_DRAG_HORIZ)
@@ -285,6 +287,14 @@ on_drag_update (PosOskWidget *self, double off_x, double off_y)
   pos_osk_widget_append_to_event_history (self, delta_x, delta_y);
 
   pos_osk_widget_calculate_drag_velocity (self, &v_x, &v_y);
+
+  if (CAN_DRAG_HORIZ (self) && ABS (v_x) < V_X_MIN && ABS (v_y) > V_Y_MIN) {
+    g_debug ("Switching to vert: %f %f", v_x, v_y);
+    self->drag_type = CURSOR_DRAG_VERT;
+  } else if (CAN_DRAG_VERT (self) && ABS (v_y) < V_Y_MIN && ABS (v_x) > V_X_MIN) {
+    g_debug ("Switching to horiz: %f %f", v_x, v_y);
+    self->drag_type = CURSOR_DRAG_HORIZ;
+  }
 
   if (ABS (delta_x) > KEY_DIST_X && CAN_DRAG_HORIZ (self)) {
     symbol =  delta_x > 0 ? POS_OSK_SYMBOL_LEFT : POS_OSK_SYMBOL_RIGHT;
