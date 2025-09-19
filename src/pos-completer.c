@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2023 The Phosh Developers
+ * Copyright (C) 2023-2024 The Phosh Developers
+ *               2025 Phosh.mobi e.V.
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  *
@@ -547,6 +548,62 @@ pos_completer_grab_last_word (const char *text, char **new_text, char **word)
   *word = g_strdup (text);
 
   return TRUE;
+}
+
+/**
+ * pos_completer_find_prev_word_break:
+ * @text: the text to find the word break in
+ *
+ * Scans `text` from the end and returns the last word break in bytes
+ * counted from the end of the string. The word break is the position
+ * of the last two words separated by `completion_end_symbols`.
+ *
+ * If the string has trailing whitespace the amount of whitespace at the
+ * end is returned instead.
+ *
+ * Returns: The position of the last word break or `-1` if none was found.
+ */
+long
+pos_completer_find_prev_word_break (const char *text)
+{
+  char *addr;
+  long len, pos, byte_len;
+  g_autofree char *symbol = NULL;
+
+  /* Nothing to parse */
+  if (STR_IS_NULL_OR_EMPTY (text))
+    return -1;
+
+  len = g_utf8_strlen (text, -1);
+  if (!len)
+    return -1;
+
+  /* Check trailing whitespace */
+  for (pos = len - 1; pos >= 0; pos--) {
+    g_free (symbol);
+    symbol = g_utf8_substring (text, pos, pos + 1);
+
+    if (!pos_completer_symbol_is_word_separator (symbol, NULL))
+      break;
+  }
+
+  if (pos != len - 1)
+    goto out;
+
+  for (; pos >= 0; pos--) {
+    g_free (symbol);
+    symbol = g_utf8_substring (text, pos, pos + 1);
+
+    g_debug ("%s", symbol);
+
+    if (pos_completer_symbol_is_word_separator (symbol, NULL))
+      break;
+  }
+
+ out:
+  byte_len = strlen (text);
+  addr = g_utf8_offset_to_pointer (text, pos);
+  return &(text[byte_len]) - addr - 1;
 }
 
 /**
