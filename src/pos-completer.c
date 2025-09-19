@@ -506,9 +506,9 @@ pos_completer_symbol_is_word_separator (const char *symbol, gboolean *is_ws)
  * @new_text:(out): The new text with the last word removed
  * @word: The last word of text
  *
- * Scans `text` from the end returns the last word. If `text` ends with
- * whitespace the last word is considered empty and `new_text` and `word`
- * remain unchanged.
+ * Scans `text` from the end and returns the last word. If `text` ends
+ * with whitespace the last word is considered empty and `new_text`
+ * and `word` remain unchanged.
  *
  * Returns: %TRUE `new_text` and `word` were filled.
  */
