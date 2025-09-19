@@ -408,9 +408,8 @@ pos_completer_add_preedit (PosCompleter *self, GString *preedit, const char *sym
   }
 
   /* Return/Enter is special, see above. */
-  if (g_strcmp0 (symbol, "KEY_ENTER") == 0) {
+  if (g_strcmp0 (symbol, "KEY_ENTER") == 0)
     return TRUE;
-  }
 
   /* Ignore all other special keys */
   if (g_str_has_prefix (symbol, "KEY_"))
@@ -527,18 +526,18 @@ pos_completer_grab_last_word (const char *text, char **new_text, char **word)
 
   /* text ends with whitespace */
   len = g_utf8_strlen (text, -1);
-  symbol = g_utf8_substring (text, len-1, len);
+  symbol = g_utf8_substring (text, len - 1, len);
   if (pos_completer_symbol_is_word_separator (symbol, NULL))
     return FALSE;
 
   /* Get last word in text */
   for (glong start = len - 1; start >= 0; start--) {
     g_free (symbol);
-    symbol = g_utf8_substring (text, start, start+1);
+    symbol = g_utf8_substring (text, start, start + 1);
 
     if (pos_completer_symbol_is_word_separator (symbol, NULL)) {
-      *word = g_strdup (g_utf8_offset_to_pointer (text, start+1));
-      *new_text = g_utf8_substring (text, 0, start+1);
+      *word = g_strdup (g_utf8_offset_to_pointer (text, start + 1));
+      *new_text = g_utf8_substring (text, 0, start + 1);
       return TRUE;
     }
   }
@@ -562,7 +561,7 @@ pos_completer_grab_last_word (const char *text, char **new_text, char **word)
  * Returns: (transfer full): copy of completions with changed capitalization
  */
 GStrv
-pos_completer_capitalize_by_template (const char  *template, const GStrv  completions)
+pos_completer_capitalize_by_template (const char *template, const GStrv completions)
 {
   gboolean has_caps;
   glong templ_len;
