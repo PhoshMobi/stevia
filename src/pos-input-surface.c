@@ -48,6 +48,7 @@
 
 #define BS_KEY_REPEAT_DELAY 700
 #define BS_KEY_REPEAT_INTERVAL_CHAR 50
+#define BS_KEY_REPEAT_INTERVAL_WORD 150
 
 /**
  * POS_INPUT_SURFACE_IS_LANG_LAYOUT:
@@ -161,6 +162,8 @@ struct _PosInputSurface {
 
   /* Backspace handling */
   guint                    bs_repeat_id;
+  PosBackspaceMode         bs_mode;
+  char                    *surround_before;
 };
 
 
@@ -188,6 +191,42 @@ pos_input_surface_trigger_feedback (PosInputSurface *self, const char *event_nam
 }
 
 
+static void
+pos_input_surface_set_backspace_mode (PosInputSurface *self, PosBackspaceMode mode)
+{
+  if (self->bs_mode == mode)
+    return;
+
+  self->bs_mode = mode;
+  g_debug ("Backspace mode: %d", self->bs_mode);
+}
+
+/**
+ * pos_input_surface_delete_last_word:
+ * @self: The input surface
+ *
+ * Delete the last word from the current surrounding text.
+ *
+ * Returns: `TRUE` if anything was deleted, otherwise `FALSE`
+ */
+static gboolean
+pos_input_surface_delete_last_word (PosInputSurface *self)
+{
+  long len = 0;
+
+  if (self->surround_before)
+    len = pos_completer_find_prev_word_break (self->surround_before);
+
+  /* We didn't find anything to delete or it's just a single char */
+  if (len <= 1)
+    return FALSE;
+
+  g_debug ("Deleting last word of length %ld", len);
+  pos_input_method_delete_surrounding_text (self->input_method, MAX (1, len), 0, TRUE);
+  return TRUE;
+}
+
+
 static gboolean
 on_bs_key_repeat (gpointer data)
 {
@@ -206,7 +245,14 @@ on_bs_long_press_timeout (gpointer data)
   PosInputSurface *self = data;
   guint interval;
 
-  interval = BS_KEY_REPEAT_INTERVAL_CHAR;
+  if (pos_input_method_get_active (self->input_method)) {
+    interval = BS_KEY_REPEAT_INTERVAL_WORD;
+    pos_input_surface_set_backspace_mode (self, POS_BACKSPACE_MODE_WORD);
+  } else {
+    /* When no input method is active we delete individual chars which should
+     * happen faster than deleting whole words */
+    interval = BS_KEY_REPEAT_INTERVAL_CHAR;
+  }
 
   self->bs_repeat_id = g_timeout_add (interval, on_bs_key_repeat, self);
   g_source_set_name_by_id (self->bs_repeat_id, "[pos-bs-key-repeat]");
@@ -220,6 +266,7 @@ pos_input_surface_set_backspace_pressed (PosInputSurface *self, const char *symb
 
   pressed = symbol && g_str_equal (symbol, "KEY_BACKSPACE");
   if (!pressed) {
+    pos_input_surface_set_backspace_mode (self, POS_BACKSPACE_MODE_CHAR);
     g_clear_handle_id (&self->bs_repeat_id, g_source_remove);
     return FALSE;
   }
@@ -238,6 +285,16 @@ pos_input_surface_set_backspace_pressed (PosInputSurface *self, const char *symb
 static void
 pos_input_surface_handle_backsapce (PosInputSurface *self)
 {
+  gboolean handled = FALSE;
+
+  g_assert (pos_input_method_get_active (self->input_method));
+
+  if (self->bs_mode == POS_BACKSPACE_MODE_WORD)
+    handled = pos_input_surface_delete_last_word (self);
+
+  if (handled)
+    return;
+
   pos_vk_driver_key_down (self->keyboard_driver, "KEY_BACKSPACE", POS_KEYCODE_MODIFIER_NONE);
   pos_vk_driver_key_up (self->keyboard_driver, "KEY_BACKSPACE");
 }
@@ -1367,7 +1424,6 @@ on_im_surrounding_text_changed (PosInputSurface *self, GParamSpec *pspec, PosInp
 {
   const char *text;
   guint anchor, cursor;
-  g_autofree char *before = NULL;
   g_autofree char *after = NULL;
 
   g_assert (POS_IS_INPUT_SURFACE (self));
@@ -1378,12 +1434,15 @@ on_im_surrounding_text_changed (PosInputSurface *self, GParamSpec *pspec, PosInp
   if (!pos_input_surface_is_completion_mode (self))
     return;
 
-  before = g_strndup (text, cursor);
+  g_free (self->surround_before);
+  self->surround_before = g_strndup (text, cursor);
 
   if (text)
     after = g_strdup (&(text[cursor]));
 
-  pos_completer_set_surrounding_text (POS_COMPLETER (self->completer), before, after);
+  pos_completer_set_surrounding_text (POS_COMPLETER (self->completer),
+                                      self->surround_before,
+                                      after);
 }
 
 
@@ -1500,6 +1559,7 @@ pos_input_surface_finalize (GObject *object)
   g_clear_object (&self->swipe_down);
   g_clear_object (&self->style_manager);
   g_clear_pointer (&self->osks, g_hash_table_destroy);
+  g_clear_pointer (&self->surround_before, g_free);
 
   G_OBJECT_CLASS (pos_input_surface_parent_class)->finalize (object);
 }
@@ -2072,6 +2132,7 @@ pos_input_surface_init (PosInputSurface *self)
 
   gtk_widget_init_template (GTK_WIDGET (self));
 
+  self->bs_mode = POS_BACKSPACE_MODE_CHAR;
   self->style_manager = pos_style_manager_new ();
   self->action_map = g_simple_action_group_new ();
   g_action_map_add_action_entries (G_ACTION_MAP (self->action_map),

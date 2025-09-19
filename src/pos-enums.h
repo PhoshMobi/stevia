@@ -108,4 +108,16 @@ typedef enum {
   POS_INPUT_METHOD_HINT_MULTILINE,
 } PosInputMethodHint;
 
+/**
+ * PosBackspaceMode:
+ * @POS_BACKSPACE_MODE_CHAR: Delete on character
+ * @POS_BACKSPACE_MODE_WORD: Delete one wordx
+ *
+ * How much a press of backspace should remove
+ */
+typedef enum {
+  POS_BACKSPACE_MODE_CHAR = 1,
+  POS_BACKSPACE_MODE_WORD = 2,
+} PosBackspaceMode;
+
 G_END_DECLS
