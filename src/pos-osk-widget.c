@@ -168,9 +168,7 @@ on_drag_begin (PosOskWidget *self,
 #define KEY_DIST_Y 10
 
 static void
-on_drag_update (PosOskWidget *self,
-                double        off_x,
-                double        off_y)
+on_drag_update (PosOskWidget *self, double off_x, double off_y)
 {
   const char *symbol = NULL;
   double delta_x, delta_y;
