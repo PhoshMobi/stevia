@@ -158,6 +158,8 @@ struct _PosInputSurface {
 };
 
 
+static void pos_input_surface_submit_symbol (PosInputSurface *self, const char *symbol);
+
 static void pos_input_surface_action_group_iface_init (GActionGroupInterface *iface);
 static void pos_input_surface_action_map_iface_init (GActionMapInterface *iface);
 
@@ -387,9 +389,16 @@ on_osk_key_down (PosInputSurface *self, const char *symbol, GtkWidget *osk_widge
 static void
 on_osk_key_symbol (PosInputSurface *self, const char *symbol)
 {
-  gboolean handled;
+  g_assert (POS_IS_INPUT_SURFACE (self));
 
-  g_return_if_fail (POS_IS_INPUT_SURFACE (self));
+  pos_input_surface_submit_symbol (self, symbol);
+}
+
+
+static void
+pos_input_surface_submit_symbol (PosInputSurface *self, const char *symbol)
+{
+  gboolean handled;
 
   g_debug ("Key: '%s' symbol", symbol);
 
@@ -596,8 +605,8 @@ on_emoji_picker_done (PosInputSurface *self)
 static void
 on_emoji_picker_delete_last (PosInputSurface *self)
 {
-  g_debug ("%s", __func__);
-  on_osk_key_symbol (self, "KEY_BACKSPACE");
+  g_debug ("Deleting last emoji");
+  pos_input_surface_submit_symbol (self, "KEY_BACKSPACE");
 }
 
 /* Keypads */
