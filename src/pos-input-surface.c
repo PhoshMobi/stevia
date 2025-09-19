@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2021 Purism SPC
  *               2022-2024 The Phosh Developers
+ *               2025 Phosh.mobi e.V.
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  *
@@ -39,6 +40,8 @@
 #include <libgnome-desktop/gnome-xkb-info.h>
 
 #include <glib/gi18n-lib.h>
+
+#define MIN_Y_VELOCITY 1000
 
 /**
  * POS_INPUT_SURFACE_IS_LANG_LAYOUT:
@@ -160,7 +163,6 @@ G_DEFINE_TYPE_WITH_CODE (PosInputSurface, pos_input_surface, PHOSH_TYPE_LAYER_SU
                          G_IMPLEMENT_INTERFACE (G_TYPE_ACTION_MAP, pos_input_surface_action_map_iface_init)
   )
 
-#define MIN_Y_VELOCITY 1000
 
 static void
 on_swipe (GtkGestureSwipe *swipe, double velocity_x, double velocity_y, gpointer data)
