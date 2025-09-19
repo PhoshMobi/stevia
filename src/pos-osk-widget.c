@@ -851,8 +851,8 @@ on_key_repeat (gpointer data)
   g_return_val_if_fail (self->current, G_SOURCE_REMOVE);
 
   g_signal_emit (self, signals[OSK_KEY_DOWN], 0, pos_osk_key_get_symbol (self->current));
-  g_signal_emit (self, signals[OSK_KEY_UP], 0, pos_osk_key_get_symbol (self->current));
   g_signal_emit (self, signals[OSK_KEY_SYMBOL], 0, pos_osk_key_get_symbol (self->current));
+  g_signal_emit (self, signals[OSK_KEY_UP], 0, pos_osk_key_get_symbol (self->current));
 
   return G_SOURCE_CONTINUE;
 }
@@ -986,8 +986,8 @@ pos_osk_widget_key_release_action (PosOskWidget *self, PosOskKey *key)
     G_GNUC_FALLTHROUGH;
   case POS_OSK_KEY_USE_DELETE:
     pos_osk_widget_set_key_pressed (self, self->current, FALSE);
-    g_signal_emit (self, signals[OSK_KEY_UP], 0, pos_osk_key_get_symbol (key));
     g_signal_emit (self, signals[OSK_KEY_SYMBOL], 0, pos_osk_key_get_symbol (key));
+    g_signal_emit (self, signals[OSK_KEY_UP], 0, pos_osk_key_get_symbol (key));
     switch_layer (self, key);
     break;
 
@@ -1142,6 +1142,7 @@ on_symbol_selected (PosOskWidget *self, const char *symbol)
 
   g_signal_emit (self, signals[OSK_KEY_DOWN], 0, symbol);
   g_signal_emit (self, signals[OSK_KEY_SYMBOL], 0, symbol);
+  g_signal_emit (self, signals[OSK_KEY_UP], 0, symbol);
   g_clear_pointer (&self->char_popup, phosh_cp_widget_destroy);
 }
 
