@@ -33,6 +33,8 @@
 
 #define MINIMUM_WIDTH 360
 
+#define EVENT_HISTORY_THRESHOLD_MS 150
+
 enum {
   OSK_KEY_DOWN,
   OSK_KEY_UP,
@@ -157,9 +159,88 @@ struct _PosOskWidget {
   /* Cursor movement */
   GtkGesture          *cursor_drag;
   double               last_x, last_y;
+  GArray              *event_history;
   cursor_drag_t        drag_type;
 };
 G_DEFINE_TYPE (PosOskWidget, pos_osk_widget, GTK_TYPE_DRAWING_AREA)
+
+typedef struct {
+  double delta_x, delta_y;
+  guint32 time;
+} EventHistoryRecord;
+
+
+static void
+pos_osk_widget_calculate_drag_velocity (PosOskWidget *self, double *v_x, double *v_y)
+{
+  gdouble total_delta_x = 0, total_delta_y = 0;
+  guint32 first_time = 0, last_time = 0;
+  guint i;
+
+  for (i = 0; i < self->event_history->len; i++) {
+    EventHistoryRecord *r =
+      &g_array_index (self->event_history, EventHistoryRecord, i);
+
+    if (i == 0)
+      first_time = r->time;
+    else {
+      total_delta_x += r->delta_x;
+      total_delta_y += r->delta_y;
+    }
+
+    last_time = r->time;
+  }
+
+  if (first_time == last_time) {
+    if (v_x)
+      *v_x = total_delta_x / (last_time - first_time);
+
+    if (v_y)
+      *v_y = total_delta_y / (last_time - first_time);
+  }
+
+  if (v_x)
+    *v_x = total_delta_x / (last_time - first_time);
+
+  if (v_y)
+    *v_y = total_delta_y / (last_time - first_time);
+}
+
+
+static void
+pos_osk_widget_trim_event_history (PosOskWidget *self)
+{
+  g_autoptr (GdkEvent) event = gtk_get_current_event ();
+  guint32 threshold_time = gdk_event_get_time (event) - EVENT_HISTORY_THRESHOLD_MS;
+  guint i;
+
+  for (i = 0; i < self->event_history->len; i++) {
+    guint32 time = g_array_index (self->event_history,
+                                  EventHistoryRecord, i).time;
+
+    if (time >= threshold_time)
+      break;
+  }
+
+  if (i > 0)
+    g_array_remove_range (self->event_history, 0, i);
+}
+
+
+static void
+pos_osk_widget_append_to_event_history (PosOskWidget *self, double delta_x, double delta_y)
+{
+  g_autoptr (GdkEvent) event = gtk_get_current_event ();
+  EventHistoryRecord record;
+
+  pos_osk_widget_trim_event_history (self);
+
+  record.delta_x = delta_x;
+  record.delta_y = delta_y;
+  record.time = gdk_event_get_time (event);
+
+  g_array_append_val (self->event_history, record);
+}
 
 
 static void
@@ -178,7 +259,6 @@ on_drag_begin (PosOskWidget *self,
 #define KEY_DIST_X 5
 #define KEY_DIST_Y 10
 
-
 #define CAN_DRAG_HORIZ(self)                                            \
   (self->drag_type == CURSOR_DRAG_STARTING || self->drag_type == CURSOR_DRAG_HORIZ)
 #define CAN_DRAG_VERT(self)                                             \
@@ -193,7 +273,7 @@ static void
 on_drag_update (PosOskWidget *self, double off_x, double off_y)
 {
   const char *symbol = NULL;
-  double delta_x, delta_y;
+  double delta_x, delta_y, v_x, v_y;
 
   if (self->mode != POS_OSK_WIDGET_MODE_CURSOR)
     return;
@@ -202,6 +282,9 @@ on_drag_update (PosOskWidget *self, double off_x, double off_y)
 
   delta_x = self->last_x - off_x;
   delta_y = self->last_y - off_y;
+  pos_osk_widget_append_to_event_history (self, delta_x, delta_y);
+
+  pos_osk_widget_calculate_drag_velocity (self, &v_x, &v_y);
 
   if (ABS (delta_x) > KEY_DIST_X && CAN_DRAG_HORIZ (self)) {
     symbol =  delta_x > 0 ? POS_OSK_SYMBOL_LEFT : POS_OSK_SYMBOL_RIGHT;
@@ -225,16 +308,14 @@ on_drag_end (PosOskWidget *self)
     return;
 
   pos_osk_widget_set_mode (self, POS_OSK_WIDGET_MODE_KEYBOARD);
+  g_array_remove_range (self->event_history, 0, self->event_history->len);
 }
 
 
 static void
 on_drag_cancel (PosOskWidget *self)
 {
-  if (self->mode != POS_OSK_WIDGET_MODE_CURSOR)
-    return;
-
-  pos_osk_widget_set_mode (self, POS_OSK_WIDGET_MODE_KEYBOARD);
+  on_drag_end (self);
 }
 
 
@@ -1476,6 +1557,7 @@ pos_osk_widget_finalize (GObject *object)
   g_clear_pointer (&self->region, g_free);
   g_clear_pointer (&self->layout_id, g_free);
   g_ptr_array_free (self->symbols, TRUE);
+  g_clear_pointer (&self->event_history, g_array_unref);
 
   G_OBJECT_CLASS (pos_osk_widget_parent_class)->finalize (object);
 }
@@ -1683,6 +1765,7 @@ pos_osk_widget_init (PosOskWidget *self)
   self->layer = POS_OSK_WIDGET_LAYER_NORMAL;
   self->symbols = g_ptr_array_new ();
   self->key_height = POS_OSK_WIDGET_KEY_HEIGHT_DEFAULT;
+  self->event_history = g_array_new (FALSE, FALSE, sizeof (EventHistoryRecord));
 
   gtk_widget_add_events (GTK_WIDGET (self), GDK_BUTTON_PRESS_MASK |
                          GDK_BUTTON_RELEASE_MASK |
