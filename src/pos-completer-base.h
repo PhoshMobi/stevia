@@ -22,5 +22,10 @@ PosCompleterBase *      pos_completer_base_new (void);
 GStrv                   pos_completer_base_get_additional_results (PosCompleterBase *self,
                                                                    const char       *match,
                                                                    guint             max_results);
+void                    pos_completer_base_set_surrounding_text (PosCompleterBase *iface,
+                                                                 const char       *before_text,
+                                                                 const char       *after_text);
+const char *            pos_completer_base_get_before_text (PosCompleterBase *self);
+const char *            pos_completer_base_get_after_text (PosCompleterBase *self);
 
 G_END_DECLS

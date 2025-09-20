@@ -36,6 +36,10 @@ static GParamSpec *props[PROP_LAST_PROP];
 
 typedef struct _PosCompleterBasePrivate {
   PhoshOskCompletionSourceFlags sources;
+
+  char       *before_text;
+  char       *after_text;
+
 } PosCompleterBasePrivate;
 
 G_DEFINE_TYPE_WITH_PRIVATE (PosCompleterBase, pos_completer_base, G_TYPE_OBJECT)
@@ -111,12 +115,27 @@ pos_completer_base_get_property (GObject    *object,
 
 
 static void
+pos_completer_base_finalize (GObject *object)
+{
+  PosCompleterBase *self = POS_COMPLETER_BASE (object);
+  PosCompleterBasePrivate *priv = pos_completer_base_get_instance_private (self);
+
+  g_clear_pointer (&priv->before_text, g_free);
+  g_clear_pointer (&priv->after_text, g_free);
+
+  G_OBJECT_CLASS (pos_completer_base_parent_class)->finalize (object);
+}
+
+
+static void
+
 pos_completer_base_class_init (PosCompleterBaseClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
   object_class->get_property = pos_completer_base_get_property;
   object_class->set_property = pos_completer_base_set_property;
+  object_class->finalize = pos_completer_base_finalize;
 
   /**
    * PosCompleterBase:sources:
@@ -187,4 +206,42 @@ pos_completer_base_get_additional_results (PosCompleterBase *self,
   }
 
   return g_strv_builder_end (builder);
+}
+
+
+void
+pos_completer_base_set_surrounding_text (PosCompleterBase *self,
+                                         const char       *before_text,
+                                         const char       *after_text)
+{
+  PosCompleterBasePrivate *priv = pos_completer_base_get_instance_private (self);
+
+  g_assert (POS_IS_COMPLETER_BASE (self));
+
+  g_set_str (&priv->after_text, after_text);
+  g_set_str (&priv->before_text, before_text);
+
+  g_debug ("Updating:  b:'%s', a:'%s'", priv->before_text, priv->after_text);
+}
+
+
+const char *
+pos_completer_base_get_before_text (PosCompleterBase *self)
+{
+  PosCompleterBasePrivate *priv = pos_completer_base_get_instance_private (self);
+
+  g_assert (POS_IS_COMPLETER_BASE (self));
+
+  return priv->before_text ? priv->before_text : "";
+}
+
+
+const char *
+pos_completer_base_get_after_text (PosCompleterBase *self)
+{
+  PosCompleterBasePrivate *priv = pos_completer_base_get_instance_private (self);
+
+  g_assert (POS_IS_COMPLETER_BASE (self));
+
+  return priv->after_text ? priv->after_text : "";
 }

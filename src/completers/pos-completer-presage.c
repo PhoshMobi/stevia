@@ -60,8 +60,6 @@ struct _PosCompleterPresage {
   PosCompleterBase      parent;
 
   char                 *name;
-  char                 *before_text;
-  char                 *after_text;
   GString              *preedit;
   GStrv                 completions;
   guint                 max_completions;
@@ -168,20 +166,11 @@ pos_completer_presage_set_surrounding_text (PosCompleter *iface,
 {
   PosCompleterPresage *self = POS_COMPLETER_PRESAGE (iface);
 
-  if (g_strcmp0 (self->after_text, after_text) == 0 &&
-      g_strcmp0 (self->before_text, before_text) == 0) {
-    return;
-  }
-
-  g_free (self->after_text);
-  self->after_text = g_strdup (after_text);
-
-  g_free (self->before_text);
-  self->before_text = g_strdup (before_text);
+  pos_completer_base_set_surrounding_text (POS_COMPLETER_BASE (self),
+                                           before_text,
+                                           after_text);
 
   pos_completer_presage_predict (self);
-
-  g_debug ("Updating:  b:'%s', a:'%s'", self->before_text, self->after_text);
 }
 
 
@@ -331,8 +320,6 @@ pos_completer_presage_finalize (GObject *object)
 
   g_clear_pointer (&self->completions, g_strfreev);
   g_string_free (self->preedit, TRUE);
-  g_clear_pointer (&self->before_text, g_free);
-  g_clear_pointer (&self->after_text, g_free);
   g_clear_pointer (&self->presage_past, g_free);
   g_clear_pointer (&self->presage_future, g_free);
   g_clear_pointer (&self->lang, g_free);
@@ -373,9 +360,12 @@ static const char*
 pos_completer_presage_get_past_stream (void *data)
 {
   PosCompleterPresage *self = POS_COMPLETER_PRESAGE (data);
+  PosCompleterBase *base = POS_COMPLETER_BASE (self);
 
   g_free (self->presage_past);
-  self->presage_past = g_strdup_printf ("%s%s", self->before_text ?: "", self->preedit->str);
+  self->presage_past = g_strdup_printf ("%s%s",
+                                        pos_completer_base_get_before_text (base),
+                                        self->preedit->str);
 
   g_debug ("Past: %s", self->presage_past);
   return self->presage_past;
@@ -502,8 +492,6 @@ pos_completer_presage_init (PosCompleterPresage *self)
   self->max_completions = MAX_COMPLETIONS;
   self->preedit = g_string_new (NULL);
   self->name = "presage";
-  self->before_text = g_strdup ("");
-  self->after_text = g_strdup ("");
 }
 
 /**

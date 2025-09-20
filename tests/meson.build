@@ -21,6 +21,7 @@ test_env.set('ASAN_OPTIONS', 'fast_unwind_on_malloc=0')
 
 tests = [
   'completer',
+  'completer-base',
   'completer-hunspell',
   'load-layouts',
   'osk-widget',
