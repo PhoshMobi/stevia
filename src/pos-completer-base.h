@@ -14,14 +14,13 @@ G_BEGIN_DECLS
 
 G_DECLARE_DERIVABLE_TYPE (PosCompleterBase, pos_completer_base, POS, COMPLETER_BASE, GObject)
 
-PosCompleterBase *      pos_completer_base_new (void);
-GStrv                   pos_completer_base_get_additional_results (PosCompleterBase *self,
-                                                                   const char       *match,
-                                                                   guint             max_results);
-
 struct _PosCompleterBaseClass {
   GObjectClass parent_class;
 };
 
+PosCompleterBase *      pos_completer_base_new (void);
+GStrv                   pos_completer_base_get_additional_results (PosCompleterBase *self,
+                                                                   const char       *match,
+                                                                   guint             max_results);
 
 G_END_DECLS
