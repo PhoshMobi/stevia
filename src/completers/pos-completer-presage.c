@@ -459,7 +459,7 @@ pos_completer_presage_feed_symbol (PosCompleter *iface, const char *symbol)
   if (pos_completer_add_preedit (POS_COMPLETER (self), self->preedit, symbol)) {
     self->updating_preedit = TRUE;
 
-    g_signal_emit_by_name (self, "commit-string", self->preedit->str);
+    g_signal_emit_by_name (self, "commit-string", self->preedit->str, 0, 0);
     pos_completer_presage_set_preedit (POS_COMPLETER (self), NULL);
     /* Make sure enter is processed as raw keystroke */
     if (g_strcmp0 (symbol, "KEY_ENTER") == 0) {

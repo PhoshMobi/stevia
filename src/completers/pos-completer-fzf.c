@@ -312,7 +312,7 @@ pos_completer_fzf_feed_symbol (PosCompleter *iface, const char *symbol)
   int fzf_stdout_fd;
 
   if (pos_completer_add_preedit (POS_COMPLETER (self), self->preedit, symbol)) {
-    g_signal_emit_by_name (self, "commit-string", self->preedit->str);
+    g_signal_emit_by_name (self, "commit-string", self->preedit->str, 0, 0);
     pos_completer_fzf_set_preedit (POS_COMPLETER (self), NULL);
 
     /* Make sure enter is processed as raw keystroke */

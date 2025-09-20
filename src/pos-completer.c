@@ -104,6 +104,8 @@ pos_completer_default_init (PosCompleterInterface *iface)
    * PosCompleter::commit-string:
    * @iface: The completer interface
    * @string: The commit string
+   * @before: Number of bytes to delete before the cursor
+   * @after: Number of bytes to delete after the cursor
    *
    * The completer wants the given text to be committed as is. This can
    * happen when the completer encounters a word separating character
@@ -114,8 +116,10 @@ pos_completer_default_init (PosCompleterInterface *iface)
                 G_SIGNAL_RUN_LAST,
                 0, NULL, NULL, NULL,
                 G_TYPE_NONE,
-                1,
-                G_TYPE_STRING);
+                3,
+                G_TYPE_STRING,
+                G_TYPE_INT,
+                G_TYPE_INT);
   /**
    * PosCompleter::update
    * @iface: The completer interface

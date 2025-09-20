@@ -360,7 +360,7 @@ pos_completer_hunspell_feed_symbol (PosCompleter *iface, const char *symbol)
   int ret;
 
   if (pos_completer_add_preedit (POS_COMPLETER (self), self->preedit, symbol)) {
-    g_signal_emit_by_name (self, "commit-string", self->preedit->str);
+    g_signal_emit_by_name (self, "commit-string", self->preedit->str, 0, 0);
     pos_completer_hunspell_set_preedit (POS_COMPLETER (self), NULL);
 
     /* Make sure enter is processed as raw keystroke */
