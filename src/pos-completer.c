@@ -385,7 +385,7 @@ pos_completer_set_language (PosCompleter *self,
  * preedit is automatically deleted.
  *
  * Since `KEY_ENTER` is often used to toggle actions like "submit" we
- * handle it in a special way: `TRUE` is returned since but no `\n`
+ * handle it in a special way: `TRUE` is returned but no `\n` is
  * appended so the completer can submit the raw `KEY_ENTER` and
  * actions can still trigger.
  *
