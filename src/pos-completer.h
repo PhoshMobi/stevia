@@ -47,8 +47,6 @@ struct _PosCompleterInterface
   gboolean       (*feed_symbol) (PosCompleter *self, const char *symbol);
   const char *   (*get_preedit) (PosCompleter *self);
   void           (*set_preedit) (PosCompleter *self, const char *preedit);
-  const char *   (*get_before_text) (PosCompleter *self);
-  const char *   (*get_after_text) (PosCompleter *self);
   void           (*set_surrounding_text) (PosCompleter *self,
                                           const char *before_text,
                                           const char *after_text);
@@ -66,8 +64,6 @@ gboolean       pos_completer_feed_symbol (PosCompleter *self, const char *symbol
 GStrv          pos_completer_get_completions (PosCompleter *self);
 const char    *pos_completer_get_preedit (PosCompleter *self);
 void           pos_completer_set_preedit (PosCompleter *self, const char *preedit);
-const char    *pos_completer_get_before_text (PosCompleter *self);
-const char    *pos_completer_get_after_text (PosCompleter *self);
 void           pos_completer_set_surrounding_text (PosCompleter *self,
                                                    const char *before_text,
                                                    const char *after_text);

@@ -43,8 +43,6 @@ enum {
   PROP_0,
   PROP_NAME,
   PROP_PREEDIT,
-  PROP_BEFORE_TEXT,
-  PROP_AFTER_TEXT,
   PROP_COMPLETIONS,
   PROP_DICT_DIR,
   PROP_LAST_PROP
@@ -163,24 +161,6 @@ pos_completer_presage_set_preedit (PosCompleter *iface, const char *preedit)
 }
 
 
-static const char *
-pos_completer_presage_get_before_text (PosCompleter *iface)
-{
-  PosCompleterPresage *self = POS_COMPLETER_PRESAGE (iface);
-
-  return self->before_text;
-}
-
-
-static const char *
-pos_completer_presage_get_after_text (PosCompleter *iface)
-{
-  PosCompleterPresage *self = POS_COMPLETER_PRESAGE (iface);
-
-  return self->after_text;
-}
-
-
 static void
 pos_completer_presage_set_surrounding_text (PosCompleter *iface,
                                             const char   *before_text,
@@ -202,8 +182,6 @@ pos_completer_presage_set_surrounding_text (PosCompleter *iface,
   pos_completer_presage_predict (self);
 
   g_debug ("Updating:  b:'%s', a:'%s'", self->before_text, self->after_text);
-  g_object_notify_by_pspec (G_OBJECT (self), props[PROP_BEFORE_TEXT]);
-  g_object_notify_by_pspec (G_OBJECT (self), props[PROP_AFTER_TEXT]);
 }
 
 
@@ -336,12 +314,6 @@ pos_completer_presage_get_property (GObject    *object,
   case PROP_PREEDIT:
     g_value_set_string (value, self->preedit->str);
     break;
-  case PROP_BEFORE_TEXT:
-    g_value_set_string (value, self->before_text);
-    break;
-  case PROP_AFTER_TEXT:
-    g_value_set_string (value, self->after_text);
-    break;
   case PROP_COMPLETIONS:
     g_value_set_boxed (value, self->completions);
     break;
@@ -385,12 +357,6 @@ pos_completer_presage_class_init (PosCompleterPresageClass *klass)
 
   g_object_class_override_property (object_class, PROP_PREEDIT, "preedit");
   props[PROP_PREEDIT] = g_object_class_find_property (object_class, "preedit");
-
-  g_object_class_override_property (object_class, PROP_BEFORE_TEXT, "before-text");
-  props[PROP_BEFORE_TEXT] = g_object_class_find_property (object_class, "before-text");
-
-  g_object_class_override_property (object_class, PROP_AFTER_TEXT, "after-text");
-  props[PROP_AFTER_TEXT] = g_object_class_find_property (object_class, "after-text");
 
   g_object_class_override_property (object_class, PROP_COMPLETIONS, "completions");
   props[PROP_COMPLETIONS] = g_object_class_find_property (object_class, "completions");
@@ -525,8 +491,6 @@ pos_completer_presage_interface_init (PosCompleterInterface *iface)
   iface->feed_symbol = pos_completer_presage_feed_symbol;
   iface->get_preedit = pos_completer_presage_get_preedit;
   iface->set_preedit = pos_completer_presage_set_preedit;
-  iface->get_before_text = pos_completer_presage_get_before_text;
-  iface->get_after_text = pos_completer_presage_get_after_text;
   iface->set_surrounding_text = pos_completer_presage_set_surrounding_text;
   iface->set_language = pos_completer_presage_set_language;
 }

@@ -15,8 +15,6 @@ G_BEGIN_DECLS
   g_assert_cmpstr (display_name, ==, d); \
   g_assert_cmpstrv (pos_completer_get_completions (c), NULL); \
   g_assert_cmpstr (pos_completer_get_preedit (c), ==, ""); \
-  g_assert_cmpstr (pos_completer_get_before_text (c), ==, ""); \
-  g_assert_cmpstr (pos_completer_get_after_text (c), ==, ""); \
 } G_STMT_END
 
 G_END_DECLS
