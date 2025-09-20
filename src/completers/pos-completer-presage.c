@@ -1,5 +1,7 @@
 /*
  * Copyright (C) 2022 Purism SPC
+ *               2023-2024 The Phosh Developers
+ *               2025 Phosh.mobi e.V.
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  *
@@ -447,9 +449,17 @@ pos_completer_presage_feed_symbol (PosCompleter *iface, const char *symbol)
   g_autofree char *preedit = g_strdup (self->preedit->str);
 
   if (pos_completer_add_preedit (POS_COMPLETER (self), self->preedit, symbol)) {
-    self->updating_preedit = TRUE;
+    PosCompleterBase *base = POS_COMPLETER_BASE (self);
+    int before = 0;
 
-    g_signal_emit_by_name (self, "commit-string", self->preedit->str, 0, 0);
+    self->updating_preedit = TRUE;
+    if (pos_completer_base_wants_punctuation_swap (base, symbol) &&
+        /* Only swap if preedit is symbol + space */
+        self->preedit->len == 2) {
+      before = 1;
+    }
+
+    g_signal_emit_by_name (self, "commit-string", self->preedit->str, before, 0);
     pos_completer_presage_set_preedit (POS_COMPLETER (self), NULL);
     /* Make sure enter is processed as raw keystroke */
     if (g_strcmp0 (symbol, "KEY_ENTER") == 0) {
