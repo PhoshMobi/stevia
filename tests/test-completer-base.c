@@ -24,6 +24,16 @@ test_punctuation (void)
   g_assert_cmpstr (pos_completer_base_get_before_text (base), ==, "before");
   g_assert_cmpstr (pos_completer_base_get_after_text (base), ==, "after");
 
+  g_assert_false (pos_completer_base_wants_punctuation_swap (base, "."));
+  g_assert_false (pos_completer_base_wants_punctuation_swap (base, "abc"));
+
+  pos_completer_base_set_surrounding_text (base, "word ", NULL);
+  g_assert_cmpstr (pos_completer_base_get_before_text (base), ==, "word ");
+  g_assert_false (pos_completer_base_wants_punctuation_swap (base, "abc"));
+  g_assert_true (pos_completer_base_wants_punctuation_swap (base, "."));
+  g_assert_true (pos_completer_base_wants_punctuation_swap (base, ","));
+  g_assert_true (pos_completer_base_wants_punctuation_swap (base, "!"));
+
   g_assert_finalize_object (base);
 }
 

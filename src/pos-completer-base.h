@@ -27,5 +27,7 @@ void                    pos_completer_base_set_surrounding_text (PosCompleterBas
                                                                  const char       *after_text);
 const char *            pos_completer_base_get_before_text (PosCompleterBase *self);
 const char *            pos_completer_base_get_after_text (PosCompleterBase *self);
+gboolean                pos_completer_base_wants_punctuation_swap (PosCompleterBase *self,
+                                                                   const char       *symbol);
 
 G_END_DECLS

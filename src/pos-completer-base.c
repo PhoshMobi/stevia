@@ -27,6 +27,16 @@
  * Base class for completers implementing common functionality
  */
 
+static const char * const punctuation_symbols[] = {
+  ".",
+  ",",
+  ";",
+  ":",
+  "?",
+  "!",
+  NULL,
+};
+
 enum {
   PROP_0,
   PROP_SOURCES,
@@ -40,9 +50,22 @@ typedef struct _PosCompleterBasePrivate {
   char       *before_text;
   char       *after_text;
 
+  GHashTable *punctuations;
 } PosCompleterBasePrivate;
 
 G_DEFINE_TYPE_WITH_PRIVATE (PosCompleterBase, pos_completer_base, G_TYPE_OBJECT)
+
+
+static gboolean
+pos_completer_base_is_punctuation (PosCompleterBase *self, const char *punct)
+{
+  PosCompleterBasePrivate *priv = pos_completer_base_get_instance_private (self);
+
+  g_assert (POS_IS_COMPLETER_BASE (self));
+  g_assert (punct != NULL);
+
+  return g_hash_table_contains (priv->punctuations, punct);
+}
 
 
 static char *
@@ -122,13 +145,13 @@ pos_completer_base_finalize (GObject *object)
 
   g_clear_pointer (&priv->before_text, g_free);
   g_clear_pointer (&priv->after_text, g_free);
+  g_clear_pointer (&priv->punctuations, g_hash_table_unref);
 
   G_OBJECT_CLASS (pos_completer_base_parent_class)->finalize (object);
 }
 
 
 static void
-
 pos_completer_base_class_init (PosCompleterBaseClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
@@ -155,9 +178,14 @@ pos_completer_base_class_init (PosCompleterBaseClass *klass)
 static void
 pos_completer_base_init (PosCompleterBase *self)
 {
+  PosCompleterBasePrivate *priv = pos_completer_base_get_instance_private (self);
   g_autoptr (GSettings) settings = g_settings_new ("sm.puri.phosh.osk.Completers");
 
   g_settings_bind (settings, "sources", self, "sources",  G_SETTINGS_BIND_DEFAULT);
+
+  priv->punctuations = g_hash_table_new (g_str_hash, g_str_equal);
+  for (int i = 0; punctuation_symbols[i]; i++)
+    g_hash_table_insert (priv->punctuations, (gpointer)punctuation_symbols[i], NULL);
 }
 
 
@@ -244,4 +272,36 @@ pos_completer_base_get_after_text (PosCompleterBase *self)
   g_assert (POS_IS_COMPLETER_BASE (self));
 
   return priv->after_text ? priv->after_text : "";
+}
+
+/**
+ * pos_completer_base_wants_punctuation_swap:
+ * @self: The base completer
+ * @symbol: The added symbol
+ *
+ * Checks if the passed in symbol is a punctuation and `before_text` ends in a space.
+ * Completers can invoke this to figure out if they want to drop that trailing space.
+ *
+ * Returns: `TRUE` if the trailing space should be dropped
+ */
+gboolean
+pos_completer_base_wants_punctuation_swap (PosCompleterBase *self, const char *symbol)
+{
+  PosCompleterBasePrivate *priv = pos_completer_base_get_instance_private (self);
+  size_t len;
+
+  g_assert (POS_IS_COMPLETER_BASE (self));
+  g_assert (symbol);
+
+  if (!pos_completer_base_is_punctuation (self, symbol))
+    return FALSE;
+
+  if (gm_str_is_null_or_empty (priv->before_text))
+    return FALSE;
+
+  len = strlen (priv->before_text);
+  if (priv->before_text[len-1] != ' ')
+    return FALSE;
+
+  return TRUE;
 }
