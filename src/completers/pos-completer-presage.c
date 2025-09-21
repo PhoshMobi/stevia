@@ -68,7 +68,6 @@ struct _PosCompleterPresage {
 
   presage_t             presage;
   char                 *presage_past;
-  char                 *presage_future;
 
   char                 *dict_dir;
   char                 *lang;
@@ -323,7 +322,6 @@ pos_completer_presage_finalize (GObject *object)
   g_clear_pointer (&self->completions, g_strfreev);
   g_string_free (self->preedit, TRUE);
   g_clear_pointer (&self->presage_past, g_free);
-  g_clear_pointer (&self->presage_future, g_free);
   g_clear_pointer (&self->lang, g_free);
   g_clear_pointer (&self->dict_dir, g_free);
   presage_free (self->presage);
