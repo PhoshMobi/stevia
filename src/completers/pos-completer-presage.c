@@ -85,11 +85,10 @@ G_DEFINE_TYPE_WITH_CODE (PosCompleterPresage, pos_completer_presage, POS_TYPE_CO
 
 
 static void
-pos_completer_presage_set_completions (PosCompleter *iface,
-                                       GStrv         completions,
-                                       gboolean      additional_sources)
+pos_completer_presage_set_completions (PosCompleterPresage *self,
+                                       GStrv                completions,
+                                       gboolean             additional_sources)
 {
-  PosCompleterPresage *self = POS_COMPLETER_PRESAGE (iface);
   g_auto (GStrv) additional_results = NULL;
   g_auto (GStrv) caps_completions = NULL;
   g_autoptr (GStrvBuilder) builder = g_strv_builder_new ();
@@ -120,10 +119,10 @@ pos_completer_presage_predict (PosCompleterPresage *self)
   result = presage_predict (self->presage, &completions);
 
   if (result == PRESAGE_OK) {
-    pos_completer_presage_set_completions (POS_COMPLETER (self), completions, TRUE);
+    pos_completer_presage_set_completions (self, completions, TRUE);
   } else {
     g_warning ("Failed to complete %s", self->preedit->str);
-    pos_completer_presage_set_completions (POS_COMPLETER (self), NULL, FALSE);
+    pos_completer_presage_set_completions (self, NULL, FALSE);
   }
 }
 
@@ -150,7 +149,7 @@ pos_completer_presage_set_preedit (PosCompleter *iface, const char *preedit)
     g_string_append (self->preedit, preedit);
   else {
     /* No string: reset completions */
-    pos_completer_presage_set_completions (POS_COMPLETER (self), NULL, FALSE);
+    pos_completer_presage_set_completions (self, NULL, FALSE);
   }
 
   g_object_notify_by_pspec (G_OBJECT (self), props[PROP_PREEDIT]);
