@@ -1,5 +1,5 @@
 /*
- * 2025 Phosh e.V.
+ * 2025 Phosh.mobi e.V.
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  *
