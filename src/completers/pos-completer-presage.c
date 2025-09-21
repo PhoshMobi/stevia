@@ -15,9 +15,6 @@
 #include "pos-completer-base.h"
 #include "pos-completer-priv.h"
 #include "pos-completer-presage.h"
-#include "pos-emoji-db.h"
-
-#include "util.h"
 
 #include <presage.h>
 
