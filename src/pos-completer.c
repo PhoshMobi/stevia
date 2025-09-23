@@ -15,6 +15,8 @@
 #include "pos-completer-priv.h"
 #include "util.h"
 
+#include "gmobile.h"
+
 #include <ctype.h>
 
 /**
@@ -460,7 +462,7 @@ pos_completer_grab_last_word (const char *text, char **new_text, char **word)
   g_return_val_if_fail (word && *word == NULL, FALSE);
 
   /* Nothing to parse */
-  if (STR_IS_NULL_OR_EMPTY (text))
+  if (gm_str_is_null_or_empty (text))
     return FALSE;
 
   /* text ends with whitespace */
@@ -509,7 +511,7 @@ pos_completer_find_prev_word_break (const char *text)
   g_autofree char *symbol = NULL;
 
   /* Nothing to parse */
-  if (STR_IS_NULL_OR_EMPTY (text))
+  if (gm_str_is_null_or_empty (text))
     return -1;
 
   len = g_utf8_strlen (text, -1);
@@ -563,7 +565,7 @@ pos_completer_capitalize_by_template (const char *template, const GStrv completi
   g_autoptr (GStrvBuilder) builder = NULL;
   g_autofree gunichar *utemplate = NULL;
 
-  if (completions == NULL || STR_IS_NULL_OR_EMPTY (template))
+  if (completions == NULL || gm_str_is_null_or_empty (template))
     return g_strdupv (completions);
 
   utemplate = g_utf8_to_ucs4_fast (template, -1, &templ_len);

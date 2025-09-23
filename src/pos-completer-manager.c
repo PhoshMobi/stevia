@@ -23,7 +23,7 @@
 # include "completers/pos-completer-varnam.h"
 #endif
 
-#include "contrib/util.h"
+#include "gmobile.h"
 
 #include <gio/gio.h>
 
@@ -144,7 +144,7 @@ on_default_completer_changed (PosCompleterManager *self)
   g_assert (POS_IS_COMPLETER_MANAGER (self));
 
   default_name = g_settings_get_string (self->settings, "default");
-  if (!STR_IS_NULL_OR_EMPTY (default_name)) {
+  if (!gm_str_is_null_or_empty (default_name)) {
     default_ = init_completer (self, default_name, &err);
     if (default_ == NULL) {
       g_critical ("Failed to init default completer '%s': %s", default_name,

@@ -1893,7 +1893,7 @@ build_layout_name (const char *engine, const char *layout, const char *variant)
 {
   char *name;
 
-  if (STR_IS_NULL_OR_EMPTY (variant))
+  if (gm_str_is_null_or_empty (variant))
     name = g_strdup_printf ("%s:%s", engine, layout);
   else
     name = g_strdup_printf ("%s:%s+%s", engine, layout, variant);

@@ -20,6 +20,8 @@
 #include "pos-osk-key.h"
 #include "pos-osk-widget.h"
 
+#include "gmobile.h"
+
 #include <json-glib/json-glib.h>
 #include <pango/pangocairo.h>
 
@@ -1896,7 +1898,7 @@ parse_lang (PosOskWidget *self, const char *layout, const char *variant)
 
   /* Keyboard layout has language (`en`), region is from layout (`us`) */
   self->lang = g_strdup (self->layout.locale);
-  if (STR_IS_NULL_OR_EMPTY (variant)) {
+  if (gm_str_is_null_or_empty (variant)) {
     self->region = g_strdup (layout);
     return;
   }
@@ -1950,7 +1952,7 @@ pos_osk_widget_set_layout (PosOskWidget *self,
   g_free (self->layout_id);
   self->layout_id = g_strdup (layout_id);
 
-  if (!STR_IS_NULL_OR_EMPTY (variant))
+  if (!gm_str_is_null_or_empty (variant))
     path = g_strdup_printf ("/mobi/phosh/stevia/layouts/%s+%s.json", layout, variant);
   else
     path = g_strdup_printf ("/mobi/phosh/stevia/layouts/%s.json", layout);
