@@ -1,8 +1,10 @@
 /*
  * Copyright © 2020 Lugsole
- * Copyright (C) 2021 Purism SPC
+ *             2021 Purism SPC
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Author: Guido Günther <agx@sigxcpu.org>
  */
 
 #include "pos-completer-priv.h"
@@ -10,7 +12,7 @@
 #include <glib.h>
 
 static void
-test_grab_last_word(void)
+test_grab_last_word (void)
 {
   char *new_before = NULL;
   char *word = NULL;
@@ -40,12 +42,31 @@ test_grab_last_word(void)
 }
 
 
+static void
+test_find_prev_word_break (void)
+{
+  g_assert_cmpint (pos_completer_find_prev_word_break ("ends with word"), ==, 4);
+  g_assert_cmpint (pos_completer_find_prev_word_break ("ends with w😀rd"), ==, 7);
+  g_assert_cmpint (pos_completer_find_prev_word_break ("e😀😀s with w😀rd"), ==, 7);
+  g_assert_cmpint (pos_completer_find_prev_word_break ("justoneword"), ==, 11);
+
+  g_assert_cmpint (pos_completer_find_prev_word_break (NULL), ==, -1);
+  g_assert_cmpint (pos_completer_find_prev_word_break (""), ==, -1);
+
+  g_assert_cmpint (pos_completer_find_prev_word_break (" "), ==, 1);
+  g_assert_cmpint (pos_completer_find_prev_word_break (" \n\t"), ==, 3);
+
+  g_assert_cmpint (pos_completer_find_prev_word_break ("a \t "), ==, 3);
+}
+
+
 int
 main (int argc, char *argv[])
 {
   g_test_init (&argc, &argv, NULL);
 
   g_test_add_func ("/pos/completer/grab_last_word", test_grab_last_word);
+  g_test_add_func ("/pos/completer/find_prev_word_break", test_find_prev_word_break);
 
   return g_test_run ();
 }

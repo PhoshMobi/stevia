@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2023 The Phosh Developers
+ * Copyright (C) 2023-2024 The Phosh Developers
+ *               2025 Phosh.mobi e.V.
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  *
@@ -408,9 +409,8 @@ pos_completer_add_preedit (PosCompleter *self, GString *preedit, const char *sym
   }
 
   /* Return/Enter is special, see above. */
-  if (g_strcmp0 (symbol, "KEY_ENTER") == 0) {
+  if (g_strcmp0 (symbol, "KEY_ENTER") == 0)
     return TRUE;
-  }
 
   /* Ignore all other special keys */
   if (g_str_has_prefix (symbol, "KEY_"))
@@ -506,9 +506,9 @@ pos_completer_symbol_is_word_separator (const char *symbol, gboolean *is_ws)
  * @new_text:(out): The new text with the last word removed
  * @word: The last word of text
  *
- * Scans `text` from the end returns the last word. If `text` ends with
- * whitespace the last word is considered empty and `new_text` and `word`
- * remain unchanged.
+ * Scans `text` from the end and returns the last word. If `text` ends
+ * with whitespace the last word is considered empty and `new_text`
+ * and `word` remain unchanged.
  *
  * Returns: %TRUE `new_text` and `word` were filled.
  */
@@ -527,18 +527,18 @@ pos_completer_grab_last_word (const char *text, char **new_text, char **word)
 
   /* text ends with whitespace */
   len = g_utf8_strlen (text, -1);
-  symbol = g_utf8_substring (text, len-1, len);
+  symbol = g_utf8_substring (text, len - 1, len);
   if (pos_completer_symbol_is_word_separator (symbol, NULL))
     return FALSE;
 
   /* Get last word in text */
   for (glong start = len - 1; start >= 0; start--) {
     g_free (symbol);
-    symbol = g_utf8_substring (text, start, start+1);
+    symbol = g_utf8_substring (text, start, start + 1);
 
     if (pos_completer_symbol_is_word_separator (symbol, NULL)) {
-      *word = g_strdup (g_utf8_offset_to_pointer (text, start+1));
-      *new_text = g_utf8_substring (text, 0, start+1);
+      *word = g_strdup (g_utf8_offset_to_pointer (text, start + 1));
+      *new_text = g_utf8_substring (text, 0, start + 1);
       return TRUE;
     }
   }
@@ -548,6 +548,62 @@ pos_completer_grab_last_word (const char *text, char **new_text, char **word)
   *word = g_strdup (text);
 
   return TRUE;
+}
+
+/**
+ * pos_completer_find_prev_word_break:
+ * @text: the text to find the word break in
+ *
+ * Scans `text` from the end and returns the last word break in bytes
+ * counted from the end of the string. The word break is the position
+ * of the last two words separated by `completion_end_symbols`.
+ *
+ * If the string has trailing whitespace the amount of whitespace at the
+ * end is returned instead.
+ *
+ * Returns: The position of the last word break or `-1` if none was found.
+ */
+long
+pos_completer_find_prev_word_break (const char *text)
+{
+  char *addr;
+  long len, pos, byte_len;
+  g_autofree char *symbol = NULL;
+
+  /* Nothing to parse */
+  if (STR_IS_NULL_OR_EMPTY (text))
+    return -1;
+
+  len = g_utf8_strlen (text, -1);
+  if (!len)
+    return -1;
+
+  /* Check trailing whitespace */
+  for (pos = len - 1; pos >= 0; pos--) {
+    g_free (symbol);
+    symbol = g_utf8_substring (text, pos, pos + 1);
+
+    if (!pos_completer_symbol_is_word_separator (symbol, NULL))
+      break;
+  }
+
+  if (pos != len - 1)
+    goto out;
+
+  for (; pos >= 0; pos--) {
+    g_free (symbol);
+    symbol = g_utf8_substring (text, pos, pos + 1);
+
+    g_debug ("%s", symbol);
+
+    if (pos_completer_symbol_is_word_separator (symbol, NULL))
+      break;
+  }
+
+ out:
+  byte_len = strlen (text);
+  addr = g_utf8_offset_to_pointer (text, pos);
+  return &(text[byte_len]) - addr - 1;
 }
 
 /**
@@ -562,7 +618,7 @@ pos_completer_grab_last_word (const char *text, char **new_text, char **word)
  * Returns: (transfer full): copy of completions with changed capitalization
  */
 GStrv
-pos_completer_capitalize_by_template (const char  *template, const GStrv  completions)
+pos_completer_capitalize_by_template (const char *template, const GStrv completions)
 {
   gboolean has_caps;
   glong templ_len;

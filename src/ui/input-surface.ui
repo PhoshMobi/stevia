@@ -39,8 +39,10 @@
                 <child>
                   <object class="PosOskWidget" id="osk_terminal">
                     <property name="visible">1</property>
+                    <signal name="key-cancelled" handler="on_osk_key_cancelled" object="PosInputSurface" swapped="yes"/>
                     <signal name="key-down" handler="on_osk_key_down" object="PosInputSurface" swapped="yes"/>
                     <signal name="key-symbol" handler="on_osk_key_symbol" object="PosInputSurface" swapped="yes"/>
+                    <signal name="key-up" handler="on_osk_key_up" object="PosInputSurface" swapped="yes"/>
                     <signal name="notify::mode" handler="on_osk_mode_changed" object="PosInputSurface" swapped="yes"/>
                     <signal name="popover-shown" handler="on_osk_popover_shown" object="PosInputSurface" swapped="yes"/>
                     <signal name="popover-hidden" handler="on_osk_popover_hidden" object="PosInputSurface" swapped="yes"/>

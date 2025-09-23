@@ -81,4 +81,6 @@ void           pos_completer_learn_accepted (PosCompleter *self, const char *wor
 GStrv          pos_completer_capitalize_by_template (const char *template,
                                                      const GStrv completions);
 
+glong          pos_completer_find_prev_word_break (const char *text);
+
 G_END_DECLS

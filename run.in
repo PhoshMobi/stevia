@@ -1,15 +1,36 @@
-#!/bin/sh
+#!/bin/bash
 set -e
 
+handle_done() {
+  echo "Caught SIGINT"
+  kill -TERM $child
+}
+
+trap handle_done SIGTERM
+
 ABS_BUILDDIR='@ABS_BUILDDIR@'
-ABS_SRCDIR='@ABS_SRCDIR@'
 
 export GSETTINGS_SCHEMA_DIR="${ABS_BUILDDIR}/data"
+
+STATE=$(gsettings get org.gnome.desktop.a11y.applications screen-keyboard-enabled)
+gsettings set org.gnome.desktop.a11y.applications screen-keyboard-enabled true
 
 if [ "${POS_GDB}" = 1 ]; then
     echo "Running phosh-osk-stevia under gdb"
     WRAPPER="gdb --args"
 fi
 
+set +e
 set -x
-exec ${WRAPPER} "${ABS_BUILDDIR}/src/phosh-osk-stevia" "$@"
+${WRAPPER} "${ABS_BUILDDIR}/src/phosh-osk-stevia" "$@"
+child=$!
+set +x
+ret=$?
+set -e
+
+if [ "${STATE}" == false ]; then
+  echo "Disabling OSK"
+  gsettings set org.gnome.desktop.a11y.applications screen-keyboard-enabled "${STATE}"
+fi
+
+exit "$ret"

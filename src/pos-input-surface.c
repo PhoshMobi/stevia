@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2021 Purism SPC
  *               2022-2024 The Phosh Developers
+ *               2025 Phosh.mobi e.V.
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  *
@@ -27,7 +28,6 @@
 #include "pos-shortcuts-bar.h"
 #include "pos-style-manager.h"
 #include "pos-vk-driver.h"
-#include "pos-virtual-keyboard.h"
 #include "pos-vk-driver.h"
 #include "util.h"
 
@@ -40,6 +40,15 @@
 #include <libgnome-desktop/gnome-xkb-info.h>
 
 #include <glib/gi18n-lib.h>
+
+#define KEY_PRESS_EVENT "key-pressed"
+#define BUTTON_PRESS_EVENT "button-pressed"
+
+#define MIN_Y_VELOCITY 1000
+
+#define BS_KEY_REPEAT_DELAY 700
+#define BS_KEY_REPEAT_INTERVAL_CHAR 50
+#define BS_KEY_REPEAT_INTERVAL_WORD 150
 
 /**
  * POS_INPUT_SURFACE_IS_LANG_LAYOUT:
@@ -150,8 +159,15 @@ struct _PosInputSurface {
 
   /* emission hook for clicks */
   gulong                   clicked_id;
+
+  /* Backspace handling */
+  guint                    bs_repeat_id;
+  PosBackspaceMode         bs_mode;
+  char                    *surround_before;
 };
 
+
+static void pos_input_surface_submit_symbol (PosInputSurface *self, const char *symbol);
 
 static void pos_input_surface_action_group_iface_init (GActionGroupInterface *iface);
 static void pos_input_surface_action_map_iface_init (GActionMapInterface *iface);
@@ -161,7 +177,128 @@ G_DEFINE_TYPE_WITH_CODE (PosInputSurface, pos_input_surface, PHOSH_TYPE_LAYER_SU
                          G_IMPLEMENT_INTERFACE (G_TYPE_ACTION_MAP, pos_input_surface_action_map_iface_init)
   )
 
-#define MIN_Y_VELOCITY 1000
+
+static void
+pos_input_surface_trigger_feedback (PosInputSurface *self, const char *event_name)
+{
+  g_autoptr (LfbEvent) event = NULL;
+
+  g_assert (POS_IS_INPUT_SURFACE (self));
+
+  event = lfb_event_new (event_name);
+  lfb_event_set_important (event, TRUE);
+  lfb_event_trigger_feedback_async (event, NULL, NULL, NULL);
+}
+
+
+static void
+pos_input_surface_set_backspace_mode (PosInputSurface *self, PosBackspaceMode mode)
+{
+  if (self->bs_mode == mode)
+    return;
+
+  self->bs_mode = mode;
+  g_debug ("Backspace mode: %d", self->bs_mode);
+}
+
+/**
+ * pos_input_surface_delete_last_word:
+ * @self: The input surface
+ *
+ * Delete the last word from the current surrounding text.
+ *
+ * Returns: `TRUE` if anything was deleted, otherwise `FALSE`
+ */
+static gboolean
+pos_input_surface_delete_last_word (PosInputSurface *self)
+{
+  long len = 0;
+
+  if (self->surround_before)
+    len = pos_completer_find_prev_word_break (self->surround_before);
+
+  /* We didn't find anything to delete or it's just a single char */
+  if (len <= 1)
+    return FALSE;
+
+  g_debug ("Deleting last word of length %ld", len);
+  pos_input_method_delete_surrounding_text (self->input_method, MAX (1, len), 0, TRUE);
+  return TRUE;
+}
+
+
+static gboolean
+on_bs_key_repeat (gpointer data)
+{
+  PosInputSurface *self = data;
+
+  pos_input_surface_trigger_feedback (self, KEY_PRESS_EVENT);
+  pos_input_surface_submit_symbol (self, "KEY_BACKSPACE");
+
+  return G_SOURCE_CONTINUE;
+}
+
+
+static void
+on_bs_long_press_timeout (gpointer data)
+{
+  PosInputSurface *self = data;
+  guint interval;
+
+  if (pos_input_method_get_active (self->input_method)) {
+    interval = BS_KEY_REPEAT_INTERVAL_WORD;
+    pos_input_surface_set_backspace_mode (self, POS_BACKSPACE_MODE_WORD);
+  } else {
+    /* When no input method is active we delete individual chars which should
+     * happen faster than deleting whole words */
+    interval = BS_KEY_REPEAT_INTERVAL_CHAR;
+  }
+
+  self->bs_repeat_id = g_timeout_add (interval, on_bs_key_repeat, self);
+  g_source_set_name_by_id (self->bs_repeat_id, "[pos-bs-key-repeat]");
+ }
+
+
+static gboolean
+pos_input_surface_set_backspace_pressed (PosInputSurface *self, const char *symbol)
+{
+  gboolean pressed;
+
+  pressed = symbol && g_str_equal (symbol, "KEY_BACKSPACE");
+  if (!pressed) {
+    pos_input_surface_set_backspace_mode (self, POS_BACKSPACE_MODE_CHAR);
+    g_clear_handle_id (&self->bs_repeat_id, g_source_remove);
+    return FALSE;
+  }
+
+  if (!self->bs_repeat_id) {
+    self->bs_repeat_id = g_timeout_add_once (BS_KEY_REPEAT_DELAY,
+                                             on_bs_long_press_timeout,
+                                             self);
+    g_source_set_name_by_id (self->bs_repeat_id, "[pos-bs-long-press-timeout]");
+  }
+
+  return TRUE;
+}
+
+
+static void
+pos_input_surface_handle_backsapce (PosInputSurface *self)
+{
+  gboolean handled = FALSE;
+
+  g_assert (pos_input_method_get_active (self->input_method));
+
+  if (self->bs_mode == POS_BACKSPACE_MODE_WORD)
+    handled = pos_input_surface_delete_last_word (self);
+
+  if (handled)
+    return;
+
+  pos_vk_driver_key_down (self->keyboard_driver, "KEY_BACKSPACE", POS_KEYCODE_MODIFIER_NONE);
+  pos_vk_driver_key_up (self->keyboard_driver, "KEY_BACKSPACE");
+}
+
 
 static void
 on_swipe (GtkGestureSwipe *swipe, double velocity_x, double velocity_y, gpointer data)
@@ -236,31 +373,6 @@ on_num_shortcuts_changed (PosInputSurface *self)
 }
 
 
-static void
-pos_input_surface_notify_key_press (PosInputSurface *self)
-{
-  g_autoptr (LfbEvent) event = NULL;
-
-  g_assert (POS_IS_INPUT_SURFACE (self));
-
-  event = lfb_event_new ("key-pressed");
-  lfb_event_set_important (event, TRUE);
-  lfb_event_trigger_feedback_async (event, NULL, NULL, NULL);
-}
-
-
-static void
-pos_input_surface_notify_button_press (PosInputSurface *self)
-{
-  g_autoptr (LfbEvent) event = NULL;
-
-  g_assert (POS_IS_INPUT_SURFACE (self));
-
-  event = lfb_event_new ("button-pressed");
-  lfb_event_trigger_feedback_async (event, NULL, NULL, NULL);
-}
-
-
 static gboolean
 on_click_hook (GSignalInvocationHint *ihint,
                guint                  n_param_values,
@@ -269,7 +381,7 @@ on_click_hook (GSignalInvocationHint *ihint,
 {
   PosInputSurface *self = POS_INPUT_SURFACE (user_data);
 
-  pos_input_surface_notify_button_press (self);
+  pos_input_surface_trigger_feedback (self, BUTTON_PRESS_EVENT);
   return TRUE;
 }
 
@@ -388,18 +500,47 @@ on_osk_key_down (PosInputSurface *self, const char *symbol, GtkWidget *osk_widge
   g_return_if_fail (POS_IS_INPUT_SURFACE (self));
   g_return_if_fail (POS_IS_OSK_WIDGET (osk_widget));
 
-  pos_input_surface_notify_key_press (self);
+  pos_input_surface_trigger_feedback (self, KEY_PRESS_EVENT);
+
+  pos_input_surface_set_backspace_pressed (self, symbol);
+}
+
+
+static void
+on_osk_key_up (PosInputSurface *self)
+{
+  g_assert (POS_IS_INPUT_SURFACE (self));
+
+  pos_input_surface_set_backspace_pressed (self, NULL);
+}
+
+
+static void
+on_osk_key_cancelled (PosInputSurface *self)
+{
+  g_assert (POS_IS_INPUT_SURFACE (self));
+
+  pos_input_surface_set_backspace_pressed (self, NULL);
 }
 
 
 static void
 on_osk_key_symbol (PosInputSurface *self, const char *symbol)
 {
-  gboolean handled;
+  g_assert (POS_IS_INPUT_SURFACE (self));
 
-  g_return_if_fail (POS_IS_INPUT_SURFACE (self));
+  pos_input_surface_submit_symbol (self, symbol);
+}
+
+
+static void
+pos_input_surface_submit_symbol (PosInputSurface *self, const char *symbol)
+{
+  gboolean handled, is_bs;
 
   g_debug ("Key: '%s' symbol", symbol);
+
+  is_bs = pos_input_surface_set_backspace_pressed (self, symbol);
 
   /* Latched modifiers, send as virtual-keyboard */
   if (self->latched_modifiers) {
@@ -424,7 +565,9 @@ on_osk_key_symbol (PosInputSurface *self, const char *symbol)
       return;
   }
 
-  if (g_str_has_prefix (symbol, "KEY_")) {
+  if (is_bs) {
+    pos_input_surface_handle_backsapce (self);
+  } else if (g_str_has_prefix (symbol, "KEY_")) {
     pos_vk_driver_key_down (self->keyboard_driver, symbol, POS_KEYCODE_MODIFIER_NONE);
     pos_vk_driver_key_up (self->keyboard_driver, symbol);
   } else {
@@ -590,7 +733,7 @@ on_emoji_picked (PosInputSurface *self, const char *emoji, PosEmojiPicker *emoji
     send_emoji_via_vk (self, emoji);
   }
 
-  pos_input_surface_notify_key_press (self);
+  pos_input_surface_trigger_feedback (self, KEY_PRESS_EVENT);
 }
 
 
@@ -604,8 +747,8 @@ on_emoji_picker_done (PosInputSurface *self)
 static void
 on_emoji_picker_delete_last (PosInputSurface *self)
 {
-  g_debug ("%s", __func__);
-  on_osk_key_symbol (self, "KEY_BACKSPACE");
+  g_debug ("Deleting last emoji");
+  pos_input_surface_submit_symbol (self, "KEY_BACKSPACE");
 }
 
 /* Keypads */
@@ -624,7 +767,7 @@ on_keypad_symbol_pressed (PosInputSurface *self, const char *symbol, PosKeypad *
     pos_vk_driver_key_up (self->keyboard_driver, symbol);
   }
 
-  pos_input_surface_notify_key_press (self);
+  pos_input_surface_trigger_feedback (self, KEY_PRESS_EVENT);
 }
 
 
@@ -1281,7 +1424,6 @@ on_im_surrounding_text_changed (PosInputSurface *self, GParamSpec *pspec, PosInp
 {
   const char *text;
   guint anchor, cursor;
-  g_autofree char *before = NULL;
   g_autofree char *after = NULL;
 
   g_assert (POS_IS_INPUT_SURFACE (self));
@@ -1292,12 +1434,15 @@ on_im_surrounding_text_changed (PosInputSurface *self, GParamSpec *pspec, PosInp
   if (!pos_input_surface_is_completion_mode (self))
     return;
 
-  before = g_strndup (text, cursor);
+  g_free (self->surround_before);
+  self->surround_before = g_strndup (text, cursor);
 
   if (text)
     after = g_strdup (&(text[cursor]));
 
-  pos_completer_set_surrounding_text (POS_COMPLETER (self->completer), before, after);
+  pos_completer_set_surrounding_text (POS_COMPLETER (self->completer),
+                                      self->surround_before,
+                                      after);
 }
 
 
@@ -1399,6 +1544,7 @@ pos_input_surface_finalize (GObject *object)
   self->clicked_id = 0;
 
   g_clear_handle_id (&self->animation.id, g_source_remove);
+  g_clear_handle_id (&self->bs_repeat_id, g_source_remove);
 
   g_clear_object (&self->logind_session);
   g_clear_object (&self->keyboard_driver);
@@ -1413,6 +1559,7 @@ pos_input_surface_finalize (GObject *object)
   g_clear_object (&self->swipe_down);
   g_clear_object (&self->style_manager);
   g_clear_pointer (&self->osks, g_hash_table_destroy);
+  g_clear_pointer (&self->surround_before, g_free);
 
   G_OBJECT_CLASS (pos_input_surface_parent_class)->finalize (object);
 }
@@ -1602,7 +1749,9 @@ pos_input_surface_class_init (PosInputSurfaceClass *klass)
 
   gtk_widget_class_bind_template_callback (widget_class, on_latched_modifiers_changed);
   gtk_widget_class_bind_template_callback (widget_class, on_num_shortcuts_changed);
+  gtk_widget_class_bind_template_callback (widget_class, on_osk_key_cancelled);
   gtk_widget_class_bind_template_callback (widget_class, on_osk_key_down);
+  gtk_widget_class_bind_template_callback (widget_class, on_osk_key_up);
   gtk_widget_class_bind_template_callback (widget_class, on_osk_key_symbol);
   gtk_widget_class_bind_template_callback (widget_class, on_osk_mode_changed);
   gtk_widget_class_bind_template_callback (widget_class, on_osk_popover_shown);
@@ -1786,8 +1935,10 @@ insert_osk (PosInputSurface   *self,
   g_debug ("Adding osk for layout '%s'", name);
   gtk_widget_set_visible (GTK_WIDGET (osk_widget), TRUE);
   g_object_connect (osk_widget,
+                    "swapped-signal::key-cancelled", G_CALLBACK (on_osk_key_cancelled), self,
                     "swapped-signal::key-down", G_CALLBACK (on_osk_key_down), self,
                     "swapped-signal::key-symbol", G_CALLBACK (on_osk_key_symbol), self,
+                    "swapped-signal::key-up", G_CALLBACK (on_osk_key_up), self,
                     "swapped-signal::notify::mode", G_CALLBACK (on_osk_mode_changed), self,
                     "swapped-signal::popover-shown", G_CALLBACK (on_osk_popover_shown), self,
                     "swapped-signal::popover-hidden", G_CALLBACK (on_osk_popover_hidden), self,
@@ -1981,6 +2132,7 @@ pos_input_surface_init (PosInputSurface *self)
 
   gtk_widget_init_template (GTK_WIDGET (self));
 
+  self->bs_mode = POS_BACKSPACE_MODE_CHAR;
   self->style_manager = pos_style_manager_new ();
   self->action_map = g_simple_action_group_new ();
   g_action_map_add_action_entries (G_ACTION_MAP (self->action_map),
