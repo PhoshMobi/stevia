@@ -56,12 +56,14 @@ struct _PosCompleterInterface
                                   GError       **error);
   char *         (*get_display_name) (PosCompleter *self);
   void           (*learn_accepted) (PosCompleter *self, const char *word);
+  const char *   (*lookup_completion) (PosCompleter *self, const char *completion);
 };
 
 /* Used by completion users */
 const char    *pos_completer_get_name (PosCompleter *self);
 gboolean       pos_completer_feed_symbol (PosCompleter *self, const char *symbol);
 GStrv          pos_completer_get_completions (PosCompleter *self);
+const char    *pos_completer_lookup_completion (PosCompleter *self, const char *completion);
 const char    *pos_completer_get_preedit (PosCompleter *self);
 void           pos_completer_set_preedit (PosCompleter *self, const char *preedit);
 void           pos_completer_set_surrounding_text (PosCompleter *self,

@@ -207,6 +207,32 @@ pos_completer_get_completions (PosCompleter *self)
 }
 
 /**
+ * pos_completer_lookup_completion:
+ * @self: the completer
+ * @completion: The completion to lookup
+ *
+ * Given a given completion string lookup what should actually
+ * be completed. This allows completers to e.g. provide the full
+ * word as completion "handle" and fill in just the last chars as
+ * actual completions.
+ *
+ * Returns: the actual completion string
+ */
+const char *
+pos_completer_lookup_completion (PosCompleter *self, const char *completion)
+{
+  PosCompleterInterface *iface;
+
+  g_return_val_if_fail (POS_IS_COMPLETER (self), NULL);
+
+  iface = POS_COMPLETER_GET_IFACE (self);
+  if (!iface->lookup_completion)
+    return NULL;
+
+  return (iface->lookup_completion)(self, completion);
+}
+
+/**
  * pos_completer_get_preedit:
  * @self: the completer
  *
