@@ -86,9 +86,39 @@ G_DEFINE_TYPE_WITH_CODE (PosCompleterPresage, pos_completer_presage, POS_TYPE_CO
 
 
 static void
+pos_completer_presage_update_compmap (PosCompleterPresage *self,
+                                      GStrv                completions,
+                                      GStrv                caps_completions,
+                                      GHashTable          *compmap)
+{
+  g_hash_table_remove_all (self->compmap);
+
+  if (g_strv_length (completions) != g_strv_length (caps_completions)) {
+    g_warning ("Capitalized completions don't match: %d != %d",
+               g_strv_length (completions),
+               g_strv_length (caps_completions));
+    return;
+  }
+
+  if (!compmap)
+    return;
+
+  /* Transform the keys from lowercase to their capitalized versions */
+  for (int i = 0; completions[i]; i++) {
+    gpointer value;
+
+    /* No need to free key as passed in `compmap` doesn't have key ownership */
+    if (g_hash_table_steal_extended (compmap, completions[i], NULL, &value))
+      g_hash_table_insert (self->compmap, g_strdup (caps_completions[i]), value);
+  }
+}
+
+
+static void
 pos_completer_presage_set_completions (PosCompleterPresage *self,
                                        GStrv                completions,
-                                       gboolean             additional_sources)
+                                       gboolean             additional_sources,
+                                       GHashTable          *compmap)
 {
   g_auto (GStrv) additional_results = NULL;
   g_auto (GStrv) caps_completions = NULL;
@@ -100,8 +130,11 @@ pos_completer_presage_set_completions (PosCompleterPresage *self,
                                                                     MAX_ADDITIONAL_RESULTS);
 
   caps_completions = pos_completer_capitalize_by_template (self->preedit->str, completions);
-  if (caps_completions)
+
+  if (caps_completions) {
     g_strv_builder_addv (builder, (const char **)caps_completions);
+    pos_completer_presage_update_compmap (self, completions, caps_completions, compmap);
+  }
   if (additional_results)
     g_strv_builder_addv (builder, (const char **)additional_results);
   g_strfreev (self->completions);
@@ -122,8 +155,9 @@ pos_completer_presage_predict (PosCompleterPresage *self)
   if (result == PRESAGE_OK) {
     g_autoptr (GStrvBuilder) builder = g_strv_builder_new ();
     g_auto (GStrv) completions = NULL;
+    g_autoptr (GHashTable) compmap = NULL;
 
-    g_hash_table_remove_all (self->compmap);
+    compmap = g_hash_table_new_full (g_str_hash, g_str_equal, NULL, g_free);
     for (int i = 0; predictions[i]; i++) {
       g_autofree char *str = NULL;
       g_autofree char *compl = NULL;
@@ -134,13 +168,12 @@ pos_completer_presage_predict (PosCompleterPresage *self)
 
       /* preedit is part of `presage_past` so we need to add it to the completion */
       compl = g_strdup_printf ("%s%s", self->preedit->str, str);
-      /* FIXME: this breaks when we capitalize later on */
-      g_hash_table_insert (self->compmap, g_strdup (predictions[i]), g_steal_pointer (&compl));
+      g_hash_table_insert (compmap, predictions[i], g_steal_pointer (&compl));
     }
-    pos_completer_presage_set_completions (self, predictions, TRUE);
+    pos_completer_presage_set_completions (self, predictions, TRUE, compmap);
   } else {
     g_warning ("Failed to complete %s", self->preedit->str);
-    pos_completer_presage_set_completions (self, NULL, FALSE);
+    pos_completer_presage_set_completions (self, NULL, FALSE, NULL);
   }
 }
 
@@ -167,7 +200,7 @@ pos_completer_presage_set_preedit (PosCompleter *iface, const char *preedit)
     g_string_append (self->preedit, preedit);
   else {
     /* No string: reset completions */
-    pos_completer_presage_set_completions (self, NULL, FALSE);
+    pos_completer_presage_set_completions (self, NULL, FALSE, NULL);
   }
 
   g_object_notify_by_pspec (G_OBJECT (self), props[PROP_PREEDIT]);
