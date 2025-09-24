@@ -27,8 +27,6 @@ enum {
   PROP_0,
   PROP_NAME,
   PROP_PREEDIT,
-  PROP_BEFORE_TEXT,
-  PROP_AFTER_TEXT,
   PROP_COMPLETIONS,
   PROP_LAST_PROP
 };
@@ -167,12 +165,6 @@ pos_completer_fzf_get_property (GObject    *object,
   case PROP_PREEDIT:
     g_value_set_string (value, self->preedit->str);
     break;
-  case PROP_BEFORE_TEXT:
-    g_value_set_string (value, "");
-    break;
-  case PROP_AFTER_TEXT:
-    g_value_set_string (value, "");
-    break;
   case PROP_COMPLETIONS:
     g_value_set_boxed (value, self->completions);
     break;
@@ -209,12 +201,6 @@ pos_completer_fzf_class_init (PosCompleterFzfClass *klass)
 
   g_object_class_override_property (object_class, PROP_PREEDIT, "preedit");
   props[PROP_PREEDIT] = g_object_class_find_property (object_class, "preedit");
-
-  g_object_class_override_property (object_class, PROP_BEFORE_TEXT, "before-text");
-  props[PROP_BEFORE_TEXT] = g_object_class_find_property (object_class, "before-text");
-
-  g_object_class_override_property (object_class, PROP_AFTER_TEXT, "after-text");
-  props[PROP_AFTER_TEXT] = g_object_class_find_property (object_class, "after-text");
 
   g_object_class_override_property (object_class, PROP_COMPLETIONS, "completions");
   props[PROP_COMPLETIONS] = g_object_class_find_property (object_class, "completions");
@@ -326,7 +312,7 @@ pos_completer_fzf_feed_symbol (PosCompleter *iface, const char *symbol)
   int fzf_stdout_fd;
 
   if (pos_completer_add_preedit (POS_COMPLETER (self), self->preedit, symbol)) {
-    g_signal_emit_by_name (self, "commit-string", self->preedit->str);
+    g_signal_emit_by_name (self, "commit-string", self->preedit->str, 0, 0);
     pos_completer_fzf_set_preedit (POS_COMPLETER (self), NULL);
 
     /* Make sure enter is processed as raw keystroke */

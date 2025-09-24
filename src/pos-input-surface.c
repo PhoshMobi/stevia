@@ -454,9 +454,14 @@ on_completer_completions_changed (PosInputSurface *self)
 
 
 static void
-on_completer_commit_string (PosInputSurface *self, const char *text)
+on_completer_commit_string (PosInputSurface *self,
+                            const char      *text,
+                            int              before,
+                            int              after)
 {
-  g_debug ("%s: %s", __func__, text);
+  g_debug ("%s: %s, (%d,%d)", __func__, text, before, after);
+  if (before || after)
+    pos_input_method_delete_surrounding_text (self->input_method, before, after, FALSE);
   pos_input_method_send_string (self->input_method, text, TRUE);
 }
 

@@ -1,5 +1,7 @@
 /*
  * Copyright (C) 2022 Purism SPC
+ *               2023-2024 The Phosh Developers
+ *               2025 Phosh.mobi e.V.
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  *
@@ -43,8 +45,6 @@ enum {
   PROP_0,
   PROP_NAME,
   PROP_PREEDIT,
-  PROP_BEFORE_TEXT,
-  PROP_AFTER_TEXT,
   PROP_COMPLETIONS,
   PROP_DICT_DIR,
   PROP_LAST_PROP
@@ -62,8 +62,6 @@ struct _PosCompleterPresage {
   PosCompleterBase      parent;
 
   char                 *name;
-  char                 *before_text;
-  char                 *after_text;
   GString              *preedit;
   GStrv                 completions;
   guint                 max_completions;
@@ -163,24 +161,6 @@ pos_completer_presage_set_preedit (PosCompleter *iface, const char *preedit)
 }
 
 
-static const char *
-pos_completer_presage_get_before_text (PosCompleter *iface)
-{
-  PosCompleterPresage *self = POS_COMPLETER_PRESAGE (iface);
-
-  return self->before_text;
-}
-
-
-static const char *
-pos_completer_presage_get_after_text (PosCompleter *iface)
-{
-  PosCompleterPresage *self = POS_COMPLETER_PRESAGE (iface);
-
-  return self->after_text;
-}
-
-
 static void
 pos_completer_presage_set_surrounding_text (PosCompleter *iface,
                                             const char   *before_text,
@@ -188,22 +168,11 @@ pos_completer_presage_set_surrounding_text (PosCompleter *iface,
 {
   PosCompleterPresage *self = POS_COMPLETER_PRESAGE (iface);
 
-  if (g_strcmp0 (self->after_text, after_text) == 0 &&
-      g_strcmp0 (self->before_text, before_text) == 0) {
-    return;
-  }
-
-  g_free (self->after_text);
-  self->after_text = g_strdup (after_text);
-
-  g_free (self->before_text);
-  self->before_text = g_strdup (before_text);
+  pos_completer_base_set_surrounding_text (POS_COMPLETER_BASE (self),
+                                           before_text,
+                                           after_text);
 
   pos_completer_presage_predict (self);
-
-  g_debug ("Updating:  b:'%s', a:'%s'", self->before_text, self->after_text);
-  g_object_notify_by_pspec (G_OBJECT (self), props[PROP_BEFORE_TEXT]);
-  g_object_notify_by_pspec (G_OBJECT (self), props[PROP_AFTER_TEXT]);
 }
 
 
@@ -336,12 +305,6 @@ pos_completer_presage_get_property (GObject    *object,
   case PROP_PREEDIT:
     g_value_set_string (value, self->preedit->str);
     break;
-  case PROP_BEFORE_TEXT:
-    g_value_set_string (value, self->before_text);
-    break;
-  case PROP_AFTER_TEXT:
-    g_value_set_string (value, self->after_text);
-    break;
   case PROP_COMPLETIONS:
     g_value_set_boxed (value, self->completions);
     break;
@@ -359,8 +322,6 @@ pos_completer_presage_finalize (GObject *object)
 
   g_clear_pointer (&self->completions, g_strfreev);
   g_string_free (self->preedit, TRUE);
-  g_clear_pointer (&self->before_text, g_free);
-  g_clear_pointer (&self->after_text, g_free);
   g_clear_pointer (&self->presage_past, g_free);
   g_clear_pointer (&self->presage_future, g_free);
   g_clear_pointer (&self->lang, g_free);
@@ -386,12 +347,6 @@ pos_completer_presage_class_init (PosCompleterPresageClass *klass)
   g_object_class_override_property (object_class, PROP_PREEDIT, "preedit");
   props[PROP_PREEDIT] = g_object_class_find_property (object_class, "preedit");
 
-  g_object_class_override_property (object_class, PROP_BEFORE_TEXT, "before-text");
-  props[PROP_BEFORE_TEXT] = g_object_class_find_property (object_class, "before-text");
-
-  g_object_class_override_property (object_class, PROP_AFTER_TEXT, "after-text");
-  props[PROP_AFTER_TEXT] = g_object_class_find_property (object_class, "after-text");
-
   g_object_class_override_property (object_class, PROP_COMPLETIONS, "completions");
   props[PROP_COMPLETIONS] = g_object_class_find_property (object_class, "completions");
 
@@ -407,9 +362,12 @@ static const char*
 pos_completer_presage_get_past_stream (void *data)
 {
   PosCompleterPresage *self = POS_COMPLETER_PRESAGE (data);
+  PosCompleterBase *base = POS_COMPLETER_BASE (self);
 
   g_free (self->presage_past);
-  self->presage_past = g_strdup_printf ("%s%s", self->before_text ?: "", self->preedit->str);
+  self->presage_past = g_strdup_printf ("%s%s",
+                                        pos_completer_base_get_before_text (base),
+                                        self->preedit->str);
 
   g_debug ("Past: %s", self->presage_past);
   return self->presage_past;
@@ -491,9 +449,17 @@ pos_completer_presage_feed_symbol (PosCompleter *iface, const char *symbol)
   g_autofree char *preedit = g_strdup (self->preedit->str);
 
   if (pos_completer_add_preedit (POS_COMPLETER (self), self->preedit, symbol)) {
-    self->updating_preedit = TRUE;
+    PosCompleterBase *base = POS_COMPLETER_BASE (self);
+    int before = 0;
 
-    g_signal_emit_by_name (self, "commit-string", self->preedit->str);
+    self->updating_preedit = TRUE;
+    if (pos_completer_base_wants_punctuation_swap (base, symbol) &&
+        /* Only swap if preedit is symbol + space */
+        self->preedit->len == 2) {
+      before = 1;
+    }
+
+    g_signal_emit_by_name (self, "commit-string", self->preedit->str, before, 0);
     pos_completer_presage_set_preedit (POS_COMPLETER (self), NULL);
     /* Make sure enter is processed as raw keystroke */
     if (g_strcmp0 (symbol, "KEY_ENTER") == 0) {
@@ -525,8 +491,6 @@ pos_completer_presage_interface_init (PosCompleterInterface *iface)
   iface->feed_symbol = pos_completer_presage_feed_symbol;
   iface->get_preedit = pos_completer_presage_get_preedit;
   iface->set_preedit = pos_completer_presage_set_preedit;
-  iface->get_before_text = pos_completer_presage_get_before_text;
-  iface->get_after_text = pos_completer_presage_get_after_text;
   iface->set_surrounding_text = pos_completer_presage_set_surrounding_text;
   iface->set_language = pos_completer_presage_set_language;
 }
@@ -538,8 +502,6 @@ pos_completer_presage_init (PosCompleterPresage *self)
   self->max_completions = MAX_COMPLETIONS;
   self->preedit = g_string_new (NULL);
   self->name = "presage";
-  self->before_text = g_strdup ("");
-  self->after_text = g_strdup ("");
 }
 
 /**

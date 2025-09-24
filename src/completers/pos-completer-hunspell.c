@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2022 Purism SPC
- *               2025 Phosh e.V.
+ *               2025 Phosh.mobi e.V.
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  *
@@ -26,8 +26,6 @@ enum {
   PROP_0,
   PROP_NAME,
   PROP_PREEDIT,
-  PROP_BEFORE_TEXT,
-  PROP_AFTER_TEXT,
   PROP_COMPLETIONS,
   PROP_LAST_PROP
 };
@@ -150,12 +148,6 @@ pos_completer_hunspell_get_property (GObject    *object,
   case PROP_PREEDIT:
     g_value_set_string (value, self->preedit->str);
     break;
-  case PROP_BEFORE_TEXT:
-    g_value_set_string (value, "");
-    break;
-  case PROP_AFTER_TEXT:
-    g_value_set_string (value, "");
-    break;
   case PROP_COMPLETIONS:
     g_value_set_boxed (value, self->completions);
     break;
@@ -208,12 +200,6 @@ pos_completer_hunspell_class_init (PosCompleterHunspellClass *klass)
 
   g_object_class_override_property (object_class, PROP_PREEDIT, "preedit");
   props[PROP_PREEDIT] = g_object_class_find_property (object_class, "preedit");
-
-  g_object_class_override_property (object_class, PROP_BEFORE_TEXT, "before-text");
-  props[PROP_BEFORE_TEXT] = g_object_class_find_property (object_class, "before-text");
-
-  g_object_class_override_property (object_class, PROP_AFTER_TEXT, "after-text");
-  props[PROP_AFTER_TEXT] = g_object_class_find_property (object_class, "after-text");
 
   g_object_class_override_property (object_class, PROP_COMPLETIONS, "completions");
   props[PROP_COMPLETIONS] = g_object_class_find_property (object_class, "completions");
@@ -374,7 +360,16 @@ pos_completer_hunspell_feed_symbol (PosCompleter *iface, const char *symbol)
   int ret;
 
   if (pos_completer_add_preedit (POS_COMPLETER (self), self->preedit, symbol)) {
-    g_signal_emit_by_name (self, "commit-string", self->preedit->str);
+    PosCompleterBase *base = POS_COMPLETER_BASE (self);
+    int before = 0;
+
+    if (pos_completer_base_wants_punctuation_swap (base, symbol) &&
+        /* Only swap if preedit is symbol + space */
+        self->preedit->len == 2) {
+      before = 1;
+    }
+
+    g_signal_emit_by_name (self, "commit-string", self->preedit->str, before, 0);
     pos_completer_hunspell_set_preedit (POS_COMPLETER (self), NULL);
 
     /* Make sure enter is processed as raw keystroke */

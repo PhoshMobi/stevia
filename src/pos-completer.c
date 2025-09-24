@@ -93,26 +93,6 @@ pos_completer_default_init (PosCompleterInterface *iface)
     iface, g_param_spec_string ("preedit", "", "", NULL, G_PARAM_READWRITE));
 
   /**
-   * PosCompleter:before-text:
-   *
-   * The text before the current cursor position. The completer has to
-   * make sense of it e.g. by parsing backwards for the last separation char.
-   * No guarantee is made that it contains the start of a sentence.
-   * It should be used as context for better completions.
-   */
-  g_object_interface_install_property (
-    iface, g_param_spec_string ("before-text", "", "", NULL, G_PARAM_READABLE));
-
-  /**
-   * PosCompleter:after-text:
-   *
-   * The text after the current cursor position. The completer has to
-   * make sense of it e.g. by parsing forward for the next word end.
-   */
-  g_object_interface_install_property (
-    iface, g_param_spec_string ("after-text", "", "", NULL, G_PARAM_READABLE));
-
-  /**
    * PosCompleter:completions:
    *
    * The list of completions for a given preedit.
@@ -124,6 +104,8 @@ pos_completer_default_init (PosCompleterInterface *iface)
    * PosCompleter::commit-string:
    * @iface: The completer interface
    * @string: The commit string
+   * @before: Number of bytes to delete before the cursor
+   * @after: Number of bytes to delete after the cursor
    *
    * The completer wants the given text to be committed as is. This can
    * happen when the completer encounters a word separating character
@@ -134,8 +116,10 @@ pos_completer_default_init (PosCompleterInterface *iface)
                 G_SIGNAL_RUN_LAST,
                 0, NULL, NULL, NULL,
                 G_TYPE_NONE,
-                1,
-                G_TYPE_STRING);
+                3,
+                G_TYPE_STRING,
+                G_TYPE_INT,
+                G_TYPE_INT);
   /**
    * PosCompleter::update
    * @iface: The completer interface
@@ -262,52 +246,6 @@ pos_completer_set_preedit (PosCompleter *self, const char *preedit)
   return iface->set_preedit (self, preedit);
 }
 
-/**
- * pos_completer_get_before_text:
- * @self: the completer
- *
- * Returns the current [property@Pos.Completer:before-text].
- *
- * Returns: (transfer none): the current before_text
- */
-const char *
-pos_completer_get_before_text (PosCompleter *self)
-{
-  PosCompleterInterface *iface;
-
-  g_return_val_if_fail (POS_IS_COMPLETER (self), NULL);
-
-  iface = POS_COMPLETER_GET_IFACE (self);
-  /* optional */
-  if (iface->get_before_text == NULL)
-    return "";
-
-  return iface->get_before_text (self);
-}
-
-/**
- * pos_completer_get_after_text:
- * @self: the completer
- *
- * Returns the current [property@Pos.Completer:after-text].
- *
- * Returns: (transfer none): the current after_text
- */
-const char *
-pos_completer_get_after_text (PosCompleter *self)
-{
-  PosCompleterInterface *iface;
-
-  g_return_val_if_fail (POS_IS_COMPLETER (self), NULL);
-
-  iface = POS_COMPLETER_GET_IFACE (self);
-  /* optional */
-  if (iface->get_after_text == NULL)
-    return "";
-
-  return iface->get_after_text (self);
-}
-
 
 /**
  * pos_completer_set_surrounding_text:
@@ -385,7 +323,7 @@ pos_completer_set_language (PosCompleter *self,
  * preedit is automatically deleted.
  *
  * Since `KEY_ENTER` is often used to toggle actions like "submit" we
- * handle it in a special way: `TRUE` is returned since but no `\n`
+ * handle it in a special way: `TRUE` is returned but no `\n` is
  * appended so the completer can submit the raw `KEY_ENTER` and
  * actions can still trigger.
  *
