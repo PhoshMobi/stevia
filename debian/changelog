@@ -1,3 +1,110 @@
+phosh-osk-stevia (0.50~rc1) experimental; urgency=medium
+
+  [ Guido Günther ]
+  * Revert "emoji-db: Take endianess into account"
+    This reverts commit 87a7a84812416ac80752efbcf7d21f974b420ed9.
+    When using GTK's emoji data we don't need to convert things.
+    Fixes: c66d8a248 ("emoji-db: Use GTKs emoji data")
+  * input-surface: Scale new layouts.
+    This ensures they get the correct height.
+    Closes: https://gitlab.gnome.org/guidog/stevia/-/issues/73
+  * util: Use memfd when available.
+    Update the code from phosh. To keep further updates simple we
+    keep the PHOSH_ symbol prefix.
+  * vk-driver: Clarify function naming.
+    These functions are only for the terminal layouts
+    Fixes: 10093f1eb ("vk-driver: Use the built-in keymap for the terminal layout")
+  * vk-driver: Add some missing terminal keysyms.
+    Thanks to 2rkdddcp9i4
+  * char-popup: Don't constrain the popover.
+    This makes it show up above the long-pressed key which
+    is more predictable.
+  * char-popup: Make style similar to typing indicator.
+    Makes it look less out of place and the larger symbols are easier
+    to hit.
+    Helps: https://gitlab.gnome.org/guidog/stevia/-/issues/59
+  * treewide: Switch URL to World/Phosh.
+    Part-of: <https://gitlab.gnome.org/World/Phosh/stevia/-/merge_requests/233>
+  * build: Avoid meson warning.
+    We use a prefix of type list with `cc.has_function`
+    Fixes: c1f97f48a ("util: Use memfd when available")
+    Part-of: <https://gitlab.gnome.org/World/Phosh/stevia/-/merge_requests/234>
+  * run: Ease running the OSK.
+    We usually want the OSK enabled to handle that and turn it off
+    when we hit CTRL-C.
+  * build: Rename options
+    `meson.options` is the recommended name nowadays
+  * completer: Rename test.
+    We can test more features of the completer there
+  * completer: Add helper to get last word offset.
+    To delete surrounding text we need the offset of the last word.
+    We'll use that in the next commit but it will also be useful in
+    more clever replacements later on.
+  * osk-widget: Emit up after symbol.
+    Otherwise it's not possible to do anything after the symbol was
+    emitted. We're not using the up signal anywhere at the moment so
+    this is no functional change.
+  * input-surface: Remove unused header
+  * input-surface: Move define upwards.
+    They go before the structs and enums
+  * input-surface: Move feedback triggering upwards.
+    This will avoid a forward declaration. While at that we unify
+    it into a single function.
+  * input-surface: Ease submitting a symbol.
+    Add a forward declaration so we can use it more easily and avoid
+    using the a `on_` handler but rather use a proper function name.
+    This cleans up the emoji delete and will be further used in the next
+    commit.
+  * input-surface: Move key repeat handling out of osk-widget.
+    We only use it to track backspace so name it accordingly
+  * input-surface: Delete last word on backspace long press.
+    Instead of deleting individual chars fast delete whole words
+    at a slightly lower speed instead. This gives better control
+    and doesn't let haptic buzz like crazy.
+  * completer: Drop before-text and after-text properties.
+    The input method passes this to us, we don't set it.
+    Part-of: <https://gitlab.gnome.org/World/Phosh/stevia/-/merge_requests/238>
+  * completer: Enhance commit-string.
+    Make it possible to submit the amount of bytes to delete from
+    surrounding text too.
+    Part-of: <https://gitlab.gnome.org/World/Phosh/stevia/-/merge_requests/238>
+  * completer-base: Allow to track surrounding text.
+    Offer a helper to completers that want to do this so we don't
+    need to duplicate the code.
+    Part-of: <https://gitlab.gnome.org/World/Phosh/stevia/-/merge_requests/238>
+  * completer-base: Make it simple to check for punctuation.
+    Part-of: <https://gitlab.gnome.org/World/Phosh/stevia/-/merge_requests/238>
+  * completers/presage: Try to be clever when inserting punctuation.
+    If the preceding char is a space we drop it as that usually means
+    a completed word was inserted.
+    Closes: https://gitlab.gnome.org/World/Phosh/stevia/-/issues/30
+    Part-of: <https://gitlab.gnome.org/World/Phosh/stevia/-/merge_requests/238>
+  * completers/hunspell: Try to be clever when inserting punctuation.
+    If the preceding char is a space we drop it as that usually means
+    a completed word was inserted.
+    Closes: https://gitlab.gnome.org/World/Phosh/stevia/-/issues/30
+    Part-of: <https://gitlab.gnome.org/World/Phosh/stevia/-/merge_requests/238>
+  * osk-widget: Track drag events.
+    This allows us to use the velocity for cursor movements
+    Somwhat inspired from what hdy's swipe tracker does.
+  * osk-widget: Allow to switch direction during drag.
+    A high velocity in the vertical direction allows to switch the
+    drag direction.
+
+  [ Caleb Connolly ]
+  * osk-widget: Only allow dragging in one direction.
+    Draging the cursor both horizontally AND virtually is useful in some
+    scenarios, but for the most common cases of typing messages or using a
+    terminal it's easy for one to accidentally trigger a vertical keypress
+    while trying to move the cursor horizontally.
+    Adjust the logic to lock dragging to whichever direction the pointer
+    moves in first.
+    A potential idea for improving this would be to "unlock" the direction
+    if the finger hasn't moved for some time, this would allow switching
+    directions without having to exit and re-enter the cursor mode.
+
+ -- Guido Günther <agx@sigxcpu.org>  Sat, 27 Sep 2025 18:27:13 +0200
+
 phosh-osk-stevia (0.49.0) experimental; urgency=medium
 
   [ Guido Günther ]
