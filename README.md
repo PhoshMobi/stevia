@@ -112,7 +112,7 @@ system via `man phosh-osk-stevia`).
 ## Getting in Touch
 
 - Issue tracker: <https://gitlab.gnome.org/World/Phosh/stevia/issues>
-- Matrix: <https://matrix.to/#/#phosh:sigxcpu.org>
+- Matrix: <https://matrix.to/#/#phosh:phosh.mobi>
 
 [main]: https://gitlab.gnome.org/World/Phosh/stevia/-/tree/main
 [.gitlab-ci.yml]: https://gitlab.gnome.org/World/Phosh/stevia/-/blob/main/.gitlab-ci.yml
