@@ -20,9 +20,17 @@ desktopdir = join_paths(datadir, 'applications')
 sessiondir = join_paths(datadir, 'gnome-session')
 pkgdatadir = join_paths(datadir, meson.project_name())
 pkglibdir = join_paths(libdir, meson.project_name())
-systemddir = join_paths(prefix, 'lib/systemd')
-systemduserdir = join_paths(systemddir, 'user')
 schemasdir = datadir / 'glib-2.0' / 'schemas'
+
+systemd_user_unit_dir = get_option('systemd_user_unit_dir')
+systemd_dep = dependency('systemd', required: false)
+if systemd_user_unit_dir == ''
+  if systemd_dep.found()
+    systemd_user_unit_dir = systemd_dep.get_variable('systemd_user_unit_dir')
+  else
+    systemd_user_unit_dir = prefix / libdir / 'systemd' / 'user'
+  endif
+endif
 
 glib_ver = '2.80'
 glib_ver_str = 'GLIB_VERSION_@0@'.format(glib_ver.replace('.', '_'))
