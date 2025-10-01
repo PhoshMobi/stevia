@@ -2,3 +2,6 @@ Name: Phosh-OSK
 Link: /usr/share/applications/sm.puri.OSK0.desktop
 Alternative: /usr/share/phosh-osk-stevia/mobi.phosh.Stevia.desktop
 Priority: 30
+Dependents:
+  /usr/lib/systemd/user/mobi.phosh.OSK.service Phosh-OSK.service /usr/share/phosh-osk-stevia/mobi.phosh.Stevia.service
+
