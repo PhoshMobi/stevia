@@ -409,12 +409,18 @@ static void
 on_completion_selected (PosInputSurface *self, const char *completion)
 {
   g_autofree char *send = NULL;
+  const char *lookup;
 
   g_return_if_fail (POS_IS_INPUT_SURFACE (self));
   g_return_if_fail (completion != NULL);
 
-  g_debug ("completion: %s", completion);
-  send = g_strdup_printf ("%s ", completion);
+  lookup = pos_completer_lookup_completion (self->completer, completion);
+  g_debug ("completion: %s -> lookup: %s", completion, lookup);
+
+  if (lookup)
+    send = g_strdup (lookup);
+  else
+    send = g_strdup_printf ("%s ", completion);
 
   pos_input_method_send_string (self->input_method, send, TRUE);
 
@@ -1893,7 +1899,7 @@ build_layout_name (const char *engine, const char *layout, const char *variant)
 {
   char *name;
 
-  if (STR_IS_NULL_OR_EMPTY (variant))
+  if (gm_str_is_null_or_empty (variant))
     name = g_strdup_printf ("%s:%s", engine, layout);
   else
     name = g_strdup_printf ("%s:%s+%s", engine, layout, variant);

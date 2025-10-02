@@ -15,9 +15,6 @@
 #include "pos-completer-base.h"
 #include "pos-completer-priv.h"
 #include "pos-completer-presage.h"
-#include "pos-emoji-db.h"
-
-#include "util.h"
 
 #include <presage.h>
 
@@ -64,11 +61,11 @@ struct _PosCompleterPresage {
   char                 *name;
   GString              *preedit;
   GStrv                 completions;
+  GHashTable           *compmap; /* key: displayed completion, value: actual completion to use */
   guint                 max_completions;
 
   presage_t             presage;
   char                 *presage_past;
-  char                 *presage_future;
 
   char                 *dict_dir;
   char                 *lang;
@@ -89,11 +86,40 @@ G_DEFINE_TYPE_WITH_CODE (PosCompleterPresage, pos_completer_presage, POS_TYPE_CO
 
 
 static void
-pos_completer_presage_set_completions (PosCompleter *iface,
-                                       GStrv         completions,
-                                       gboolean      additional_sources)
+pos_completer_presage_update_compmap (PosCompleterPresage *self,
+                                      GStrv                completions,
+                                      GStrv                caps_completions,
+                                      GHashTable          *compmap)
 {
-  PosCompleterPresage *self = POS_COMPLETER_PRESAGE (iface);
+  g_hash_table_remove_all (self->compmap);
+
+  if (g_strv_length (completions) != g_strv_length (caps_completions)) {
+    g_warning ("Capitalized completions don't match: %d != %d",
+               g_strv_length (completions),
+               g_strv_length (caps_completions));
+    return;
+  }
+
+  if (!compmap)
+    return;
+
+  /* Transform the keys from lowercase to their capitalized versions */
+  for (int i = 0; completions[i]; i++) {
+    gpointer value;
+
+    /* No need to free key as passed in `compmap` doesn't have key ownership */
+    if (g_hash_table_steal_extended (compmap, completions[i], NULL, &value))
+      g_hash_table_insert (self->compmap, g_strdup (caps_completions[i]), value);
+  }
+}
+
+
+static void
+pos_completer_presage_set_completions (PosCompleterPresage *self,
+                                       GStrv                completions,
+                                       gboolean             additional_sources,
+                                       GHashTable          *compmap)
+{
   g_auto (GStrv) additional_results = NULL;
   g_auto (GStrv) caps_completions = NULL;
   g_autoptr (GStrvBuilder) builder = g_strv_builder_new ();
@@ -104,8 +130,11 @@ pos_completer_presage_set_completions (PosCompleter *iface,
                                                                     MAX_ADDITIONAL_RESULTS);
 
   caps_completions = pos_completer_capitalize_by_template (self->preedit->str, completions);
-  if (caps_completions)
+
+  if (caps_completions) {
     g_strv_builder_addv (builder, (const char **)caps_completions);
+    pos_completer_presage_update_compmap (self, completions, caps_completions, compmap);
+  }
   if (additional_results)
     g_strv_builder_addv (builder, (const char **)additional_results);
   g_strfreev (self->completions);
@@ -119,15 +148,32 @@ static void
 pos_completer_presage_predict (PosCompleterPresage *self)
 {
   presage_error_code_t result;
-  g_auto (GStrv) completions = NULL;
+  g_auto (GStrv) predictions = NULL;
 
-  result = presage_predict (self->presage, &completions);
+  result = presage_predict (self->presage, &predictions);
 
   if (result == PRESAGE_OK) {
-    pos_completer_presage_set_completions (POS_COMPLETER (self), completions, TRUE);
+    g_autoptr (GStrvBuilder) builder = g_strv_builder_new ();
+    g_auto (GStrv) completions = NULL;
+    g_autoptr (GHashTable) compmap = NULL;
+
+    compmap = g_hash_table_new_full (g_str_hash, g_str_equal, NULL, g_free);
+    for (int i = 0; predictions[i]; i++) {
+      g_autofree char *str = NULL;
+      g_autofree char *compl = NULL;
+
+      result = presage_completion (self->presage, predictions[i], &str);
+      if (result != PRESAGE_OK)
+        continue;
+
+      /* preedit is part of `presage_past` so we need to add it to the completion */
+      compl = g_strdup_printf ("%s%s", self->preedit->str, str);
+      g_hash_table_insert (compmap, predictions[i], g_steal_pointer (&compl));
+    }
+    pos_completer_presage_set_completions (self, predictions, TRUE, compmap);
   } else {
     g_warning ("Failed to complete %s", self->preedit->str);
-    pos_completer_presage_set_completions (POS_COMPLETER (self), NULL, FALSE);
+    pos_completer_presage_set_completions (self, NULL, FALSE, NULL);
   }
 }
 
@@ -154,7 +200,7 @@ pos_completer_presage_set_preedit (PosCompleter *iface, const char *preedit)
     g_string_append (self->preedit, preedit);
   else {
     /* No string: reset completions */
-    pos_completer_presage_set_completions (POS_COMPLETER (self), NULL, FALSE);
+    pos_completer_presage_set_completions (self, NULL, FALSE, NULL);
   }
 
   g_object_notify_by_pspec (G_OBJECT (self), props[PROP_PREEDIT]);
@@ -268,6 +314,17 @@ pos_completer_presage_set_language (PosCompleter *completer,
 }
 
 
+static const char *
+pos_completer_presage_lookup_completion (PosCompleter *completer, const char *completion)
+{
+  PosCompleterPresage *self = POS_COMPLETER_PRESAGE (completer);
+  const char *lookup;
+
+  lookup = g_hash_table_lookup (self->compmap, completion);
+  return lookup ? lookup : completion;
+}
+
+
 static void
 pos_completer_presage_set_property (GObject      *object,
                                     guint         property_id,
@@ -321,9 +378,9 @@ pos_completer_presage_finalize (GObject *object)
   PosCompleterPresage *self = POS_COMPLETER_PRESAGE (object);
 
   g_clear_pointer (&self->completions, g_strfreev);
+  g_clear_pointer (&self->compmap, g_hash_table_unref);
   g_string_free (self->preedit, TRUE);
   g_clear_pointer (&self->presage_past, g_free);
-  g_clear_pointer (&self->presage_future, g_free);
   g_clear_pointer (&self->lang, g_free);
   g_clear_pointer (&self->dict_dir, g_free);
   presage_free (self->presage);
@@ -493,6 +550,7 @@ pos_completer_presage_interface_init (PosCompleterInterface *iface)
   iface->set_preedit = pos_completer_presage_set_preedit;
   iface->set_surrounding_text = pos_completer_presage_set_surrounding_text;
   iface->set_language = pos_completer_presage_set_language;
+  iface->lookup_completion = pos_completer_presage_lookup_completion;
 }
 
 
@@ -502,6 +560,7 @@ pos_completer_presage_init (PosCompleterPresage *self)
   self->max_completions = MAX_COMPLETIONS;
   self->preedit = g_string_new (NULL);
   self->name = "presage";
+  self->compmap = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
 }
 
 /**
