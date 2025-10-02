@@ -1,12 +1,16 @@
-desktop_file = 'sm.puri.OSK0.desktop'
-target = 'sm.puri.OSK0.desktop'
+busname = 'sm.puri.OSK0'
+desktop_file = f'@busname@.desktop'
+desktop_target = f'@busname@.desktop'
+service_target = 'mobi.phosh.OSK.service'
 
 if get_option('default_osk') == false
-  target = '@0@.desktop'.format(app_id)
+  desktop_target = '@0@.desktop'.format(app_id)
+  service_target = f'@app_id@.service'
 endif
 
 desktopconf = configuration_data()
 desktopconf.set('bindir', bindir)
+desktopconf.set('busname', busname)
 
 i18n.merge_file(
   input: configure_file(
@@ -14,12 +18,21 @@ i18n.merge_file(
     output: desktop_file + '.in',
     configuration: desktopconf,
   ),
-  output: target,
+  output: desktop_target,
   po_dir: '../po',
   install: true,
   install_dir: desktopdir,
   type: 'desktop',
 )
+
+configure_file(
+  input: f'@app_id@.service.in',
+  output: service_target,
+  configuration: desktopconf,
+  install: true,
+  install_dir: systemd_user_unit_dir,
+)
+
 #generate XML enum definitions for GSettings schema
 schema_enum_headers = files('../src/phosh-osk-enums.h')
 generate_enums_schema = gnome.mkenums(

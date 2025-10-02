@@ -24,6 +24,7 @@ Build-Depends:
  presage <!nocheck>,
  meson,
  python3-docutils <!nodoc>,
+ systemd-dev,
  xauth <!nocheck>,
  xvfb <!nocheck>,
 Standards-Version: 4.7.2

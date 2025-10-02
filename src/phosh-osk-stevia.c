@@ -188,6 +188,7 @@ pos_session_register (const char *client_id, GMainLoop *loop)
                      NULL,
                      (GAsyncReadyCallback) on_client_registered,
                      loop);
+  g_unsetenv ("DESKTOP_AUTOSTART_ID");
 
   return proxy;
 }

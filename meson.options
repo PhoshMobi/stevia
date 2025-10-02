@@ -14,3 +14,7 @@ option('default_osk',
 option('man',
        type: 'boolean', value : false,
        description : 'generate man pages (requires rst2man)')
+
+option('systemd_user_unit_dir',
+       type: 'string', value: '',
+       description: 'Directory for systemd user units')
