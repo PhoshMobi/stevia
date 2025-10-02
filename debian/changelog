@@ -1,3 +1,52 @@
+phosh-osk-stevia (0.50.0) experimental; urgency=medium
+
+  * treewide: Use gm_str_is_null_or_empty()
+    Let's drop our custom macro
+  * completers/presage: Remove unused future
+  * completers/presage: Remove unused headers
+  * completers/presage: Use self for non public function.
+    No need to use the interface here
+  * completer: Add interface to lookup completions.
+    What should be displayed as completion to the user is not necessarily
+    what needs to be appended as text. E.g. we want to show the full word
+    while we only append the remaining bit.
+    Add an interface so completer users can lookup the "better" result.
+  * input-surface: Lookup better completions
+  * completers/presage: Lookup better completions.
+    Presage knows the difference between the prediction and what should
+    actually be completed. So if the user e.g. types "time" then the
+    predictions are "time" and "timetable". The actual completions are
+    " " and "table ". Make use of that feature so e.g. deleting backwards
+    into a word works better.
+  * completers/presage: Handle capitalized completions.
+    We need to transform the compmap in this case. We do that past
+    captialization.
+  * doc: Use canonical matrix room address
+  * stevia: Make sure we don't leak autostart id.
+    Child processes like the pipe completer must not ever see these.
+  * stevia: Add systemd unit.
+    Add a systemd unit that will be pulled in by Phosh's mobi.phosh.OSK target.
+    This ensures the OSK is started with gnome-session >= 49.
+  * packaging: Add alternative.
+    This way we manage both together
+  * packaging: Ignore Part-of: when generating changelog
+  * vk-driver: Fix argument names. Silence some doc generation warnings.
+  * size-manager: Fall back to default hight.
+    When we have multiple outputs and thus can't yet reliably determine
+    the optimal height fall back to the default height rather than 0.
+    This frees the upper layer from guessing a suitable height (which
+    it got wrong 😀).
+    Fixes: ad7bc05df ("size-manager: New object to calculate input surface size")
+    Closes: https://gitlab.gnome.org/World/Phosh/stevia/-/issues/75
+  * osk-widget: Use bold font for keys.
+    Makes the appearance a bit more prominent. We don't make the
+    "123/ABC" toggle bold to match the icons.
+    We don't make the popover hints bold either as that lowers readability.
+  * osk-widget: Make return more prominent.
+    Make it a bit larger and bump line width
+
+ -- Guido Günther <agx@sigxcpu.org>  Thu, 02 Oct 2025 22:13:49 +0200
+
 phosh-osk-stevia (0.50~rc1) experimental; urgency=medium
 
   [ Guido Günther ]
@@ -7,7 +56,7 @@ phosh-osk-stevia (0.50~rc1) experimental; urgency=medium
     Fixes: c66d8a248 ("emoji-db: Use GTKs emoji data")
   * input-surface: Scale new layouts.
     This ensures they get the correct height.
-    Closes: https://gitlab.gnome.org/guidog/stevia/-/issues/73
+    Closes: https://gitlab.gnome.org/World/Phosh/stevia/-/issues/73
   * util: Use memfd when available.
     Update the code from phosh. To keep further updates simple we
     keep the PHOSH_ symbol prefix.
@@ -22,7 +71,7 @@ phosh-osk-stevia (0.50~rc1) experimental; urgency=medium
   * char-popup: Make style similar to typing indicator.
     Makes it look less out of place and the larger symbols are easier
     to hit.
-    Helps: https://gitlab.gnome.org/guidog/stevia/-/issues/59
+    Helps: https://gitlab.gnome.org/World/Phosh/stevia/-/issues/59
   * treewide: Switch URL to World/Phosh.
     Part-of: <https://gitlab.gnome.org/World/Phosh/stevia/-/merge_requests/233>
   * build: Avoid meson warning.

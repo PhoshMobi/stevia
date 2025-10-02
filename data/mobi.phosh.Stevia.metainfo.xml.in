@@ -64,6 +64,19 @@
   </screenshots>
 
   <releases>
+    <release version="0.50.0" date="2025-10-03">
+      <description translate="no">
+        <ul>
+          <li>Make backspace delete more useful by deleting complete words</li>
+          <li>Delete space before inserted punctuation</li>
+          <li>Make cursor navigation less sensitive to wiggles</li>
+          <li>presage completer: Fix completing partially deleted words</li>
+          <li>Make the char popup styling more similar to typing indicator</li>
+          <li>Fix rendering with multiple outputs attached</li>
+          <li>Make keys and `Return` look a bit more prominent</li>
+        </ul>
+      </description>
+    </release>
     <release version="0.49.0" date="2025-08-14">
       <description translate="no">
         <ul>
