@@ -223,7 +223,7 @@ handle_zwlr_data_control_offer_offer (void                              *data,
     return;
 
   if (g_strcmp0 (mime_type, "text/plain;charset=utf-8") == 0) {
-    g_debug ("Found utf8 text in offoer");
+    g_debug ("Found utf8 text in offer");
     self->data_type = POS_CLIPBOARD_DATA_TEXT;
 
     g_free (self->mime_type);

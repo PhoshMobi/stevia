@@ -181,7 +181,7 @@ on_outputs_changed (PosSizeManager *self, GParamSpec *pspec, PosWayland *wayland
     /* TODO: we can do better: if we didn't get a "surface enter" we can assume we're on
        the same output */
     set_output (self, NULL);
-    set_height (self, 0);
+    set_height (self, POS_INPUT_SURFACE_DEFAULT_HEIGHT);
     return;
   }
 
