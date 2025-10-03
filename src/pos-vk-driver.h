@@ -24,11 +24,11 @@ typedef enum {
   POS_KEYCODE_MODIFIER_ALTGR = 1 << 3,
 } PosKeycodeModifier;
 
-PosVkDriver *pos_vk_driver_new (PosVirtualKeyboard *virtual_keyboard);
-void         pos_vk_driver_key_down (PosVkDriver        *virtual_keyboard,
+PosVkDriver *pos_vk_driver_new (PosVirtualKeyboard *self);
+void         pos_vk_driver_key_down (PosVkDriver        *self,
                                      const char         *key,
                                      PosKeycodeModifier  modifier);
-void        pos_vk_driver_key_up (PosVkDriver *virtual_keyboard, const char *key);
+void        pos_vk_driver_key_up (PosVkDriver *self, const char *key);
 void        pos_vk_driver_key_press_gdk (PosVkDriver    *self,
                                          guint           gdk_keycode,
                                          GdkModifierType modifiers);
