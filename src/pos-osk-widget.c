@@ -522,6 +522,7 @@ get_key (PosOskWidget *self, const char *symbol, GStrv symbols, const char *labe
                          "symbols", symbols,
                          "width", 2.0,
                          "expand", TRUE,
+                         "style", "space",
                          NULL);
   }
   return g_object_new (POS_TYPE_OSK_KEY,
@@ -1362,8 +1363,9 @@ render_hint (cairo_t *cr, GtkStyleContext *context, const char *hint, const GdkR
   int hint_margin = 1;
   float hint_scale = 0.75;
 
-  gtk_style_context_set_state (context, state);
   cairo_save (cr);
+
+  gtk_style_context_add_class (context, "hint");
 
   gtk_style_context_get (context, state, "font", &font, NULL);
   size = pango_font_description_get_size (font);
@@ -1393,7 +1395,7 @@ render_hint (cairo_t *cr, GtkStyleContext *context, const char *hint, const GdkR
   pango_cairo_show_layout (cr, layout);
 
   cairo_restore (cr);
-  gtk_style_context_set_state (context, GTK_STATE_FLAG_NORMAL);
+  gtk_style_context_remove_class (context, "hint");
 }
 
 

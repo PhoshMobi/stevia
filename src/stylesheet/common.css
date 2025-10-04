@@ -13,6 +13,7 @@ pos-key {
   background: @pos_key_bg_color;
   border-radius: 6px;
   margin: 2px;
+  font-weight: bold;
 }
 
 pos-key:disabled {
@@ -23,9 +24,20 @@ pos-key.pressed {
   background: shade(@pos_key_bg_color, 0.8);
 }
 
+/* The hint indicating a popover */
+pos-key.hint {
+  font-weight: normal;
+}
+
 /* A non-character key (ESC, tab, ...) */
 pos-key.sys {
   background: shade(@pos_key_bg_color, 0.75);
+  font-weight: normal;
+}
+
+/* The space bar */
+pos-key.space {
+  font-weight: normal;
 }
 
 pos-key.sys.pressed {
@@ -35,6 +47,7 @@ pos-key.sys.pressed {
 /* a layer toggle */
 pos-key.toggle {
   background: shade(@pos_key_bg_color, 0.75);
+  font-weight: normal;
 }
 
 pos-key.toggle.pressed {
