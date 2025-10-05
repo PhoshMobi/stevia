@@ -1,13 +1,16 @@
-phosh-osk-stevia 0.50~rc1
--------------------------
-Released September 2025
-* Make the char popup more similar to typing indicator
+phosh-osk-stevia 0.50.0
+-----------------------
+Released October 2025
 * Make backspace delete more useful by deleting complete words
 * Delete space before inserted punctuation
 * Make cursor navigation less sensitive to wiggles
+* presage completer: Fix completing partially deleted words
+* Make the char popup styling more similar to typing indicator
+* Fix rendering with multiple outputs attached
+* Add systemd unit to work with gnome-session >= 49
+* Make keys and `Return` look a bit more prominent
 * Issues fixed:
-    * https://gitlab.gnome.org/guidog/stevia/-/issues/73
-    * https://gitlab.gnome.org/World/Phosh/stevia/-/issues/30
+    * https://gitlab.gnome.org/World/Phosh/stevia/-/issues/73
     * https://gitlab.gnome.org/World/Phosh/stevia/-/issues/30
 * Contributors:
     * Caleb Connolly
