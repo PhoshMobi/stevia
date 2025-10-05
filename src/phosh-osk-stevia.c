@@ -535,11 +535,11 @@ main (int argc, char *argv[])
   if (version)
     print_version ();
 
+  gdk_set_allowed_backends ("wayland");
   pos_init ();
   lfb_init (APP_ID, NULL);
   _debug_flags = parse_debug_env ();
   gtk_init (&argc, &argv);
-  gdk_set_allowed_backends ("wayland");
 
   wayland = pos_wayland_get_default ();
   stevia = g_object_new (PHOSH_TYPE_OSK_STEVIA, NULL);
