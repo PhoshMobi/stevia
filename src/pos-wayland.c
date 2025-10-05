@@ -182,7 +182,6 @@ pos_wayland_constructed (GObject *object)
 
   G_OBJECT_CLASS (pos_wayland_parent_class)->constructed (object);
 
-  gdk_set_allowed_backends ("wayland");
   gdk_display = gdk_display_get_default ();
   self->display = gdk_wayland_display_get_wl_display (gdk_display);
 
