@@ -1365,6 +1365,7 @@ render_hint (cairo_t *cr, GtkStyleContext *context, const char *hint, const GdkR
 
   cairo_save (cr);
 
+  gtk_style_context_set_state (context, state);
   gtk_style_context_add_class (context, "hint");
 
   gtk_style_context_get (context, state, "font", &font, NULL);
@@ -1396,6 +1397,7 @@ render_hint (cairo_t *cr, GtkStyleContext *context, const char *hint, const GdkR
 
   cairo_restore (cr);
   gtk_style_context_remove_class (context, "hint");
+  gtk_style_context_set_state (context, GTK_STATE_FLAG_NORMAL);
 }
 
 
