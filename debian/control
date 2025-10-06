@@ -71,12 +71,15 @@ Replaces: phosh-osk-stub-doc (<< 0.48~)
 Breaks:
  phosh-osk-stub-doc (<< 0.48~),
 Description: API documentation for Phosh's OSK stub
- Stevia implements phosh's keyboard interface for ease of
- experimentation. The focus is on ease of change and debugging rather than
- stability. It features character popoversa and gesture based cursor
- navigation.
+ Stevia is an on screen keyboard (OSK) for Phosh. It features
  .
- For production use it's recommended to use Phosh's official on screen
- keyboard squeekboard.
+  * Character popovers
+  * Emoji layout
+  * Cursor navigation via space-bar long-press
+  * Word correction and completion via hunspell or presage
+  * Special layouts for pin, digit and phone number input purpose
+  * A customizable shortcut bar in the terminal layout
+  * Paste buttons in the completion bar and menu
+  * Experimental input of Indic languages using govarnam
  .
  This package contains the development documentation.
