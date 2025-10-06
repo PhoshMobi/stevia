@@ -356,6 +356,27 @@ create_input_surface (PhoshOskStevia *self)
 
 
 static void
+maybe_create_input_surface (PhoshOskStevia *self)
+{
+  if (self->input_surface)
+    return;
+
+  if (!pos_wayland_has_wl_protcols (pos_wayland_get_default ())) {
+    g_debug ("Wayland not yet ready, skipping input surface creation");
+    return;
+  }
+
+  if (!self->osk_dbus) {
+    g_debug ("Don't have DBus name yet, skipping input surface creation");
+    return;
+  }
+
+  g_debug ("Creating new input surface");
+  create_input_surface (self);
+}
+
+
+static void
 on_input_surface_gone (gpointer data, GObject *unused)
 {
   PhoshOskStevia *self = PHOSH_OSK_STEVIA (data);
@@ -363,7 +384,7 @@ on_input_surface_gone (gpointer data, GObject *unused)
   g_assert (PHOSH_IS_OSK_STEVIA (self));
 
   g_debug ("Input surface gone, recreating");
-  create_input_surface (self);
+  maybe_create_input_surface (self);
 }
 
 
@@ -374,16 +395,13 @@ on_has_dbus_name_changed (PosOskDbus *dbus, GParamSpec *pspec, gpointer data)
   gboolean has_name;
 
   has_name = pos_osk_dbus_has_name (dbus);
-  g_debug ("Has dbus name: %d", has_name);
+  g_debug ("Has DBus name: %d", has_name);
 
   if (has_name == FALSE) {
     dispose_input_surface (self);
     self->input_surface = NULL;
-  } else if (self->input_surface == NULL) {
-    if (self && pos_wayland_has_wl_protcols (pos_wayland_get_default ()))
-      create_input_surface (self);
-    else
-      g_debug ("Wayland globals not yet read");
+  } else {
+    maybe_create_input_surface (self);
   }
 }
 
@@ -399,6 +417,8 @@ on_wayland_ready (PhoshOskStevia *self, PosWayland *wayland)
     pos_activation_filter_new (pos_wayland_get_zwlr_foreign_toplevel_manager_v1 (wayland));
   self->hw_tracker =
     pos_hw_tracker_new (pos_wayland_get_zphoc_device_state_v1 (wayland));
+
+  maybe_create_input_surface (self);
 }
 
 
@@ -535,11 +555,11 @@ main (int argc, char *argv[])
   if (version)
     print_version ();
 
+  gdk_set_allowed_backends ("wayland");
   pos_init ();
   lfb_init (APP_ID, NULL);
   _debug_flags = parse_debug_env ();
   gtk_init (&argc, &argv);
-  gdk_set_allowed_backends ("wayland");
 
   wayland = pos_wayland_get_default ();
   stevia = g_object_new (PHOSH_TYPE_OSK_STEVIA, NULL);
