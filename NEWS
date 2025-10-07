@@ -1,3 +1,14 @@
+phosh-osk-stevia 0.50.1
+-----------------------
+Released October 2025
+* Fix OSK not showing up in some cases after login
+* Drop 'Ѕ' from Serbian layout
+* Issues fixed:
+    * https://gitlab.gnome.org/World/Phosh/stevia/-/issues/76
+* Contributors:
+    * Guido Günther
+    * Иван Јањић
+
 phosh-osk-stevia 0.50.0
 -----------------------
 Released October 2025
