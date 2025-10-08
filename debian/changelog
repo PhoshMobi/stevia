@@ -1,3 +1,23 @@
+phosh-osk-stevia (0.50.1) experimental; urgency=medium
+
+  [ Иван Јањић ]
+  * layout: Remove letter S from serbian layout.
+    Closes: https://gitlab.gnome.org/World/Phosh/stevia/-/issues/76
+
+  [ Guido Günther ]
+  * packaging: Update dev doc description as well
+  * osk-widget: Set state flags.
+    Fetching state when the widget's state doesn't match causes
+    needless debug messages making debugging harder.
+  * main: Set gdk backends before initing anything
+  * wayland: No need to set backends twice
+  * stevia: Consolidate input surface creation.
+    Use a single path that ensures all needed bits are there. This
+    should fix the case where the OSK doesn't show after login with
+    gnome-session >= 49.
+
+ -- Guido Günther <agx@sigxcpu.org>  Tue, 07 Oct 2025 10:27:17 +0200
+
 phosh-osk-stevia (0.50.0) experimental; urgency=medium
 
   * treewide: Use gm_str_is_null_or_empty()

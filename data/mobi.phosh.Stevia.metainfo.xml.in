@@ -64,6 +64,14 @@
   </screenshots>
 
   <releases>
+    <release version="0.50.1" date="2025-10-07">
+      <description translate="no">
+        <ul>
+          <li>Robustify OSK startup</li>
+          <li>Drop 'Ѕ' from Serbian layout</li>
+        </ul>
+      </description>
+    </release>
     <release version="0.50.0" date="2025-10-03">
       <description translate="no">
         <ul>
