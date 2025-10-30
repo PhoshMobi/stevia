@@ -760,6 +760,7 @@ on_emoji_picker_delete_last (PosInputSurface *self)
 {
   g_debug ("Deleting last emoji");
   pos_input_surface_submit_symbol (self, "KEY_BACKSPACE");
+  pos_input_surface_set_backspace_pressed (self, FALSE);
 }
 
 /* Keypads */
