@@ -60,7 +60,7 @@
                   <object class="PosKeypad" id="keypad">
                     <property name="visible">1</property>
                     <signal name="done" handler="on_keypad_done" object="PosInputSurface" swapped="yes"/>
-                    <signal name="key" handler="on_osk_key_symbol" object="PosInputSurface" swapped="yes"/>
+                    <signal name="key" handler="on_keypad_key_symbol" object="PosInputSurface" swapped="yes"/>
                   </object>
                 </child>
               </object>

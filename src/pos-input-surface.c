@@ -790,6 +790,15 @@ on_keypad_done (PosInputSurface *self)
 }
 
 
+static void
+on_keypad_key_symbol (PosInputSurface *self, const char *symbol)
+{
+  g_assert (POS_IS_INPUT_SURFACE (self));
+
+  pos_input_surface_submit_symbol (self, symbol);
+  pos_input_surface_set_backspace_pressed (self, FALSE);
+}
+
 /* menu button */
 
 
@@ -1768,6 +1777,7 @@ pos_input_surface_class_init (PosInputSurfaceClass *klass)
   gtk_widget_class_bind_template_callback (widget_class, on_osk_mode_changed);
   gtk_widget_class_bind_template_callback (widget_class, on_osk_popover_shown);
   gtk_widget_class_bind_template_callback (widget_class, on_osk_popover_hidden);
+  gtk_widget_class_bind_template_callback (widget_class, on_keypad_key_symbol);
   gtk_widget_class_bind_template_callback (widget_class, on_shortcut_activated);
   gtk_widget_class_bind_template_callback (widget_class, on_visible_child_changed);
 
