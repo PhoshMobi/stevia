@@ -168,6 +168,7 @@ struct _PosInputSurface {
 
 
 static void pos_input_surface_submit_symbol (PosInputSurface *self, const char *symbol);
+static void select_layout_by_im_purpose (PosInputSurface *self);
 
 static void pos_input_surface_action_group_iface_init (GActionGroupInterface *iface);
 static void pos_input_surface_action_map_iface_init (GActionMapInterface *iface);
@@ -1093,8 +1094,11 @@ animate_cb (GtkWidget     *widget,
 
   pos_input_surface_move (self);
 
-  if (finished)
+  if (finished) {
+    if (!self->animation.show)
+      select_layout_by_im_purpose (self);
     return G_SOURCE_REMOVE;
+  }
 
   return G_SOURCE_CONTINUE;
 }
@@ -1353,19 +1357,16 @@ pos_input_surface_get_property (GObject    *object,
 
 
 static void
-on_im_purpose_changed (PosInputSurface *self, GParamSpec *pspec, PosInputMethod *im)
+select_layout_by_im_purpose (PosInputSurface *self)
 {
   GtkWidget *widget = NULL;
   PosOskWidgetLayer layer = POS_OSK_WIDGET_LAYER_NORMAL;
   PosInputMethodPurpose purpose;
 
-  g_assert (POS_IS_INPUT_SURFACE (self));
-  g_assert (POS_IS_INPUT_METHOD (im));
-
   /* We only have completer active on `normal` input purpose */
   g_object_notify_by_pspec (G_OBJECT (self), props[PROP_COMPLETER_ACTIVE]);
 
-  purpose = pos_input_method_get_purpose (im);
+  purpose = pos_input_method_get_purpose (self->input_method);
   switch (purpose) {
   case POS_INPUT_METHOD_PURPOSE_ALPHA:
   case POS_INPUT_METHOD_PURPOSE_EMAIL:
@@ -1424,6 +1425,17 @@ on_im_purpose_changed (PosInputSurface *self, GParamSpec *pspec, PosInputMethod 
   }
 
   hdy_deck_set_visible_child (self->deck, widget);
+}
+
+
+static void
+on_im_purpose_changed (PosInputSurface *self, GParamSpec *pspec, PosInputMethod *im)
+{
+  g_assert (POS_IS_INPUT_SURFACE (self));
+  g_assert (POS_IS_INPUT_METHOD (im));
+  g_assert (self->input_method == im);
+
+  select_layout_by_im_purpose (self);
 }
 
 
