@@ -179,6 +179,23 @@ G_DEFINE_TYPE_WITH_CODE (PosInputSurface, pos_input_surface, PHOSH_TYPE_LAYER_SU
                                                 pos_input_surface_action_map_iface_init)
   )
 
+/**
+ * pos_input_surface_reset_layout:
+ * @self: The input surface
+ *
+ * Reset the state after switching from special layouts like emoji or keypad
+ */
+static void
+pos_input_surface_reset_layout (PosInputSurface *self)
+{
+  GtkWidget *child = hdy_deck_get_visible_child (self->deck);
+
+  if (POS_INPUT_SURFACE_IS_LANG_LAYOUT (child) || POS_INPUT_SURFACE_IS_TERMINAL_LAYOUT (child))
+    return;
+
+  hdy_deck_set_visible_child (self->deck, self->last_layout);
+}
+
 
 static void
 pos_input_surface_trigger_feedback (PosInputSurface *self, const char *event_name)
@@ -753,7 +770,7 @@ on_emoji_picked (PosInputSurface *self, const char *emoji, PosEmojiPicker *emoji
 static void
 on_emoji_picker_done (PosInputSurface *self)
 {
-  hdy_deck_set_visible_child (self->deck, self->last_layout);
+  pos_input_surface_reset_layout (self);
 }
 
 
@@ -788,7 +805,7 @@ on_keypad_symbol_pressed (PosInputSurface *self, const char *symbol, PosKeypad *
 static void
 on_keypad_done (PosInputSurface *self)
 {
-  hdy_deck_set_visible_child (self->deck, self->last_layout);
+  pos_input_surface_reset_layout (self);
 }
 
 
@@ -801,8 +818,8 @@ on_keypad_key_symbol (PosInputSurface *self, const char *symbol)
   pos_input_surface_set_backspace_pressed (self, FALSE);
 }
 
-/* menu button */
 
+/* menu button */
 
 static const char *
 pos_osk_get_display_name (PosOskWidget *osk_widget)
