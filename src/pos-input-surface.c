@@ -173,8 +173,10 @@ static void pos_input_surface_action_group_iface_init (GActionGroupInterface *if
 static void pos_input_surface_action_map_iface_init (GActionMapInterface *iface);
 
 G_DEFINE_TYPE_WITH_CODE (PosInputSurface, pos_input_surface, PHOSH_TYPE_LAYER_SURFACE,
-                         G_IMPLEMENT_INTERFACE (G_TYPE_ACTION_GROUP, pos_input_surface_action_group_iface_init)
-                         G_IMPLEMENT_INTERFACE (G_TYPE_ACTION_MAP, pos_input_surface_action_map_iface_init)
+                         G_IMPLEMENT_INTERFACE (G_TYPE_ACTION_GROUP,
+                                                pos_input_surface_action_group_iface_init)
+                         G_IMPLEMENT_INTERFACE (G_TYPE_ACTION_MAP,
+                                                pos_input_surface_action_map_iface_init)
   )
 
 
