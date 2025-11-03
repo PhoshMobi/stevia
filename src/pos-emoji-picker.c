@@ -622,7 +622,7 @@ pos_emoji_picker_finalize (GObject *object)
   if (self->populate_idle)
     g_source_remove (self->populate_idle);
 
-  g_variant_unref (self->data);
+  g_clear_pointer (&self->data, g_variant_unref);
   g_object_unref (self->settings);
 
   g_clear_object (&self->recent_long_press);
