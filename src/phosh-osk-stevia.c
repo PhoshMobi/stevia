@@ -43,7 +43,7 @@ typedef enum _PosDebugFlags {
   POS_DEBUG_FLAG_DEBUG_SURFACE     = 1 << 2,
 } PosDebugFlags;
 
-typedef struct _PhoshOskStevia {
+typedef struct _PosApp {
   GObject              parent_instance;
 
   PosInputSurface     *input_surface;
@@ -55,11 +55,11 @@ typedef struct _PhoshOskStevia {
   PosHwTracker        *hw_tracker;
   PosEmojiDb          *emoji_db;
   PosSizeManager      *size_manager;
-} PhoshOskStevia;
+} PosApp;
 
-#define PHOSH_TYPE_OSK_STEVIA (phosh_osk_stevia_get_type ())
-G_DECLARE_FINAL_TYPE (PhoshOskStevia, phosh_osk_stevia, PHOSH, OSK_STEVIA, GObject)
-G_DEFINE_TYPE (PhoshOskStevia, phosh_osk_stevia, G_TYPE_OBJECT)
+#define POS_TYPE_APP (pos_app_get_type ())
+G_DECLARE_FINAL_TYPE (PosApp, pos_app, POS, APP, GObject)
+G_DEFINE_TYPE (PosApp, pos_app, G_TYPE_OBJECT)
 
 
 /* TODO: allow to force virtual-keyboard instead of input-method */
@@ -196,7 +196,7 @@ set_surface_prop_surface_visible (GBinding     *binding,
                                   GValue       *to_value,
                                   gpointer      user_data)
 {
-  PhoshOskStevia *self = PHOSH_OSK_STEVIA (user_data);
+  PosApp *self = POS_APP (user_data);
   gboolean enabled, visible = g_value_get_boolean (from_value);
 
   if (_debug_flags & POS_DEBUG_FLAG_FORCE_SHOW) {
@@ -247,9 +247,9 @@ static void on_input_surface_gone (gpointer data, GObject *unused);
 static void on_has_dbus_name_changed (PosOskDbus *dbus, GParamSpec *pspec, gpointer unused);
 
 static void
-dispose_input_surface (PhoshOskStevia *self)
+dispose_input_surface (PosApp *self)
 {
-  g_assert (PHOSH_IS_OSK_STEVIA (self));
+  g_assert (POS_IS_APP (self));
   g_assert (POS_IS_INPUT_SURFACE (self->input_surface));
 
   /* Remove weak ref so input-surface doesn't get recreated */
@@ -260,7 +260,7 @@ dispose_input_surface (PhoshOskStevia *self)
 
 
 static void
-create_input_surface (PhoshOskStevia *self)
+create_input_surface (PosApp *self)
 {
   g_autoptr (PosVirtualKeyboard) virtual_keyboard = NULL;
   g_autoptr (PosVkDriver) vk_driver = NULL;
@@ -270,7 +270,7 @@ create_input_surface (PhoshOskStevia *self)
   PosWayland *wayland = pos_wayland_get_default ();
   gboolean force_completion;
 
-  g_assert (PHOSH_IS_OSK_STEVIA (self));
+  g_assert (POS_IS_APP (self));
   g_assert (POS_IS_OSK_DBUS (self->osk_dbus));
 
   virtual_keyboard =
@@ -353,7 +353,7 @@ create_input_surface (PhoshOskStevia *self)
 
 
 static void
-maybe_create_input_surface (PhoshOskStevia *self)
+maybe_create_input_surface (PosApp *self)
 {
   if (self->input_surface)
     return;
@@ -376,9 +376,9 @@ maybe_create_input_surface (PhoshOskStevia *self)
 static void
 on_input_surface_gone (gpointer data, GObject *unused)
 {
-  PhoshOskStevia *self = PHOSH_OSK_STEVIA (data);
+  PosApp *self = POS_APP (data);
 
-  g_assert (PHOSH_IS_OSK_STEVIA (self));
+  g_assert (POS_IS_APP (self));
 
   g_debug ("Input surface gone, recreating");
   maybe_create_input_surface (self);
@@ -388,7 +388,7 @@ on_input_surface_gone (gpointer data, GObject *unused)
 static void
 on_has_dbus_name_changed (PosOskDbus *dbus, GParamSpec *pspec, gpointer data)
 {
-  PhoshOskStevia *self = PHOSH_OSK_STEVIA (data);
+  PosApp *self = POS_APP (data);
   gboolean has_name;
 
   has_name = pos_osk_dbus_has_name (dbus);
@@ -404,9 +404,9 @@ on_has_dbus_name_changed (PosOskDbus *dbus, GParamSpec *pspec, gpointer data)
 
 
 static void
-on_wayland_ready (PhoshOskStevia *self, PosWayland *wayland)
+on_wayland_ready (PosApp *self, PosWayland *wayland)
 {
-  g_assert (PHOSH_IS_OSK_STEVIA (self));
+  g_assert (POS_IS_APP (self));
   g_assert (POS_IS_WAYLAND (wayland));
   g_assert (pos_wayland_has_wl_protcols (wayland));
 
@@ -421,9 +421,9 @@ on_wayland_ready (PhoshOskStevia *self, PosWayland *wayland)
 
 /* TODO: this could happen in constructed */
 static gboolean
-phosh_osk_stevia_setup_input_method (PhoshOskStevia *self, PosOskDbus *osk_dbus)
+pos_app_setup_input_method (PosApp *self, PosOskDbus *osk_dbus)
 {
-  g_assert (PHOSH_IS_OSK_STEVIA (self));
+  g_assert (POS_IS_APP (self));
   g_assert (POS_IS_OSK_DBUS (osk_dbus));
 
   self->osk_dbus = g_object_ref (osk_dbus);
@@ -460,7 +460,7 @@ parse_debug_env (void)
 static void
 pos_input_surface_finalize (GObject *object)
 {
-  PhoshOskStevia *self = PHOSH_OSK_STEVIA (object);
+  PosApp *self = POS_APP (object);
 
   g_clear_object (&self->osk_dbus);
   g_clear_object (&self->activation_filter);
@@ -474,12 +474,12 @@ pos_input_surface_finalize (GObject *object)
   g_clear_object (&self->emoji_db);
   g_clear_object (&self->size_manager);
 
-  G_OBJECT_CLASS (phosh_osk_stevia_parent_class)->finalize (object);
+  G_OBJECT_CLASS (pos_app_parent_class)->finalize (object);
 }
 
 
 static void
-phosh_osk_stevia_class_init (PhoshOskSteviaClass *klass)
+pos_app_class_init (PosAppClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
@@ -488,7 +488,7 @@ phosh_osk_stevia_class_init (PhoshOskSteviaClass *klass)
 
 
 void
-phosh_osk_stevia_init (PhoshOskStevia *self)
+pos_app_init (PosApp *self)
 {
   PosWayland *wayland = pos_wayland_get_default ();
 
@@ -514,7 +514,7 @@ phosh_osk_stevia_init (PhoshOskStevia *self)
 
 
 static void
-phosh_osk_stevia_run (PhoshOskStevia *self)
+pos_app_run (PosApp *self)
 {
   g_main_loop_run (self->loop);
 }
@@ -525,7 +525,7 @@ main (int argc, char *argv[])
 {
   g_autoptr (GOptionContext) opt_context = NULL;
   g_autoptr (GError) err = NULL;
-  PhoshOskStevia *stevia;
+  PosApp *stevia;
   g_autoptr (PosOskDbus) osk_dbus = NULL;
   gboolean version = FALSE, replace = FALSE, allow_replace = FALSE;
   GBusNameOwnerFlags flags;
@@ -558,16 +558,16 @@ main (int argc, char *argv[])
   gtk_init (&argc, &argv);
 
   wayland = pos_wayland_get_default ();
-  stevia = g_object_new (PHOSH_TYPE_OSK_STEVIA, NULL);
+  stevia = g_object_new (POS_TYPE_APP, NULL);
 
   flags = (allow_replace ? G_BUS_NAME_OWNER_FLAGS_ALLOW_REPLACEMENT : 0) |
     (replace ? G_BUS_NAME_OWNER_FLAGS_REPLACE : 0);
   osk_dbus = pos_osk_dbus_new (flags);
 
-  if (!phosh_osk_stevia_setup_input_method (stevia, osk_dbus))
+  if (!pos_app_setup_input_method (stevia, osk_dbus))
     return EXIT_FAILURE;
 
-  phosh_osk_stevia_run (stevia);
+  pos_app_run (stevia);
 
   g_clear_object (&stevia);
   pos_uninit ();
