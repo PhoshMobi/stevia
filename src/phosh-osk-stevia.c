@@ -60,6 +60,7 @@ G_DEFINE_TYPE (PosApp, pos_app, G_TYPE_OBJECT)
 
 /* TODO: allow to force virtual-keyboard instead of input-method */
 static PosDebugFlags _debug_flags;
+static PosApp *_app;
 
 
 static void G_GNUC_NORETURN
@@ -516,12 +517,20 @@ pos_app_run (PosApp *self)
 }
 
 
+PosApp *
+pos_app_get_default (void)
+{
+  g_assert (POS_IS_APP (_app));
+
+  return _app;
+}
+
+
 int
 main (int argc, char *argv[])
 {
   g_autoptr (GOptionContext) opt_context = NULL;
   g_autoptr (GError) err = NULL;
-  PosApp *stevia;
   g_autoptr (PosOskDbus) osk_dbus = NULL;
   gboolean version = FALSE, replace = FALSE, allow_replace = FALSE;
   GBusNameOwnerFlags flags;
@@ -554,18 +563,19 @@ main (int argc, char *argv[])
   gtk_init (&argc, &argv);
 
   wayland = pos_wayland_get_default ();
-  stevia = g_object_new (POS_TYPE_APP, NULL);
+  _app = g_object_new (POS_TYPE_APP, NULL);
+  g_object_add_weak_pointer (G_OBJECT (_app), (gpointer *)&_app);
 
   flags = (allow_replace ? G_BUS_NAME_OWNER_FLAGS_ALLOW_REPLACEMENT : 0) |
     (replace ? G_BUS_NAME_OWNER_FLAGS_REPLACE : 0);
   osk_dbus = pos_osk_dbus_new (flags);
 
-  if (!pos_app_setup_input_method (stevia, osk_dbus))
+  if (!pos_app_setup_input_method (_app, osk_dbus))
     return EXIT_FAILURE;
 
-  pos_app_run (stevia);
+  pos_app_run (_app);
 
-  g_clear_object (&stevia);
+  g_clear_object (&_app);
   pos_uninit ();
 
   return EXIT_SUCCESS;
