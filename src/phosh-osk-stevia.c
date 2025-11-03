@@ -55,8 +55,6 @@ typedef struct _PosApp {
   PosSizeManager      *size_manager;
 } PosApp;
 
-#define POS_TYPE_APP (pos_app_get_type ())
-G_DECLARE_FINAL_TYPE (PosApp, pos_app, POS, APP, GObject)
 G_DEFINE_TYPE (PosApp, pos_app, G_TYPE_OBJECT)
 
 
