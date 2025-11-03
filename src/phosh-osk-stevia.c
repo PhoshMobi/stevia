@@ -186,7 +186,7 @@ pos_session_register (const char *client_id, GMainLoop *loop)
                      G_DBUS_CALL_FLAGS_NONE,
                      -1,
                      NULL,
-                     (GAsyncReadyCallback) on_client_registered,
+                     on_client_registered,
                      loop);
   g_unsetenv ("DESKTOP_AUTOSTART_ID");
 
