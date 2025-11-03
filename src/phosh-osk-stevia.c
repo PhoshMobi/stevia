@@ -62,11 +62,8 @@ G_DECLARE_FINAL_TYPE (PhoshOskStevia, phosh_osk_stevia, PHOSH, OSK_STEVIA, GObje
 G_DEFINE_TYPE (PhoshOskStevia, phosh_osk_stevia, G_TYPE_OBJECT)
 
 
+/* TODO: allow to force virtual-keyboard instead of input-method */
 PosDebugFlags _debug_flags;
-
-/* TODO:
- *  - allow to force virtual-keyboard instead of input-method
- */
 
 static void G_GNUC_NORETURN
 print_version (void)
@@ -122,9 +119,7 @@ client_proxy_signal_cb (GDBusProxy *proxy,
 
 
 static void
-on_client_registered (GObject      *source_object,
-                      GAsyncResult *res,
-                      gpointer      user_data)
+on_client_registered (GObject *source_object, GAsyncResult *res, gpointer user_data)
 {
   GMainLoop *loop = user_data;
   GDBusProxy *client_proxy;
@@ -237,6 +232,7 @@ on_screen_keyboard_enabled_changed (PosInputSurface *input_surface)
   enabled = pos_input_surface_get_screen_keyboard_enabled (input_surface);
   pos_input_surface_set_visible (input_surface, enabled);
 }
+
 
 static void
 on_hw_tracker_allow_active_changed (PosHwTracker *hw_tracker, GParamSpec *pspec, PosInputMethod *im)
@@ -453,9 +449,8 @@ parse_debug_env (void)
   PosDebugFlags flags = POS_DEBUG_FLAG_NONE;
 
   debugenv = g_getenv ("POS_DEBUG");
-  if (!debugenv) {
+  if (!debugenv)
     return flags;
-  }
 
   return g_parse_debug_string (debugenv, debug_keys, G_N_ELEMENTS (debug_keys));
 }
