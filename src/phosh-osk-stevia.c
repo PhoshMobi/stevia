@@ -53,6 +53,7 @@ typedef struct _PosApp {
   PosHwTracker        *hw_tracker;
   PosEmojiDb          *emoji_db;
   PosSizeManager      *size_manager;
+  int                  exit_status;
 } PosApp;
 
 G_DEFINE_TYPE (PosApp, pos_app, G_TYPE_OBJECT)
@@ -74,11 +75,11 @@ print_version (void)
 static gboolean
 quit_cb (gpointer user_data)
 {
-  GMainLoop *loop = user_data;
+  PosApp *self = POS_APP (user_data);
 
   g_info ("Caught signal, shutting down...");
 
-  g_main_loop_quit (loop);
+  pos_app_quit (self, EXIT_SUCCESS);
   return FALSE;
 }
 
@@ -101,7 +102,7 @@ client_proxy_signal_cb (GDBusProxy *proxy,
                         GVariant   *parameters,
                         gpointer    user_data)
 {
-  GMainLoop *loop = user_data;
+  PosApp *self = POS_APP (user_data);
 
   if (g_strcmp0 (signal_name, "QueryEndSession") == 0) {
     g_debug ("Got QueryEndSession signal");
@@ -111,7 +112,7 @@ client_proxy_signal_cb (GDBusProxy *proxy,
     respond_to_end_session (proxy);
   } else if (g_strcmp0 (signal_name, "Stop") == 0) {
     g_debug ("Got Stop signal");
-    quit_cb (loop);
+    pos_app_quit (self, EXIT_SUCCESS);
   }
 }
 
@@ -119,7 +120,7 @@ client_proxy_signal_cb (GDBusProxy *proxy,
 static void
 on_client_registered (GObject *source_object, GAsyncResult *res, gpointer user_data)
 {
-  GMainLoop *loop = user_data;
+  PosApp *self = POS_APP (user_data);
   GDBusProxy *client_proxy;
   g_autoptr (GVariant) variant = NULL;
   g_autoptr (GError) err = NULL;
@@ -146,13 +147,12 @@ on_client_registered (GObject *source_object, GAsyncResult *res, gpointer user_d
     return;
   }
 
-  g_signal_connect (client_proxy, "g-signal",
-                    G_CALLBACK (client_proxy_signal_cb), loop);
+  g_signal_connect (client_proxy, "g-signal", G_CALLBACK (client_proxy_signal_cb), self);
 }
 
 
 static GDBusProxy *
-pos_session_register (const char *client_id, GMainLoop *loop)
+pos_app_session_register (PosApp *self, const char *client_id)
 {
   GDBusProxy *proxy;
   const char *startup_id;
@@ -180,7 +180,7 @@ pos_session_register (const char *client_id, GMainLoop *loop)
                      -1,
                      NULL,
                      on_client_registered,
-                     loop);
+                     self);
   g_unsetenv ("DESKTOP_AUTOSTART_ID");
 
   return proxy;
@@ -494,10 +494,10 @@ pos_app_init (PosApp *self)
   self->loop = g_main_loop_new (NULL, FALSE);
   self->emoji_db = pos_emoji_db_get_default ();
 
-  g_unix_signal_add (SIGTERM, quit_cb, self->loop);
-  g_unix_signal_add (SIGINT, quit_cb, self->loop);
+  g_unix_signal_add (SIGTERM, quit_cb, self);
+  g_unix_signal_add (SIGINT, quit_cb, self);
 
-  self->session_proxy = pos_session_register (APP_ID, self->loop);
+  self->session_proxy = pos_app_session_register (self, APP_ID);
   self->size_manager = pos_size_manager_new ();
 
   g_signal_connect_object (wayland,
@@ -510,10 +510,12 @@ pos_app_init (PosApp *self)
 }
 
 
-static void
+static int
 pos_app_run (PosApp *self)
 {
   g_main_loop_run (self->loop);
+
+  return self->exit_status;
 }
 
 
@@ -526,6 +528,16 @@ pos_app_get_default (void)
 }
 
 
+void
+pos_app_quit (PosApp *self, int exit_status)
+{
+  g_assert (POS_IS_APP (self));
+
+  self->exit_status = exit_status;
+  g_main_loop_quit (self->loop);
+}
+
+
 int
 main (int argc, char *argv[])
 {
@@ -535,6 +547,7 @@ main (int argc, char *argv[])
   gboolean version = FALSE, replace = FALSE, allow_replace = FALSE;
   GBusNameOwnerFlags flags;
   g_autoptr (PosWayland) wayland = NULL;
+  int ret;
 
   const GOptionEntry options [] = {
     {"replace", 0, 0, G_OPTION_ARG_NONE, &replace,
@@ -573,10 +586,10 @@ main (int argc, char *argv[])
   if (!pos_app_setup_input_method (_app, osk_dbus))
     return EXIT_FAILURE;
 
-  pos_app_run (_app);
+  ret = pos_app_run (_app);
 
   g_clear_object (&_app);
   pos_uninit ();
 
-  return EXIT_SUCCESS;
+  return ret;
 }
