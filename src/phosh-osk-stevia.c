@@ -63,7 +63,8 @@ G_DEFINE_TYPE (PhoshOskStevia, phosh_osk_stevia, G_TYPE_OBJECT)
 
 
 /* TODO: allow to force virtual-keyboard instead of input-method */
-PosDebugFlags _debug_flags;
+static PosDebugFlags _debug_flags;
+
 
 static void G_GNUC_NORETURN
 print_version (void)
