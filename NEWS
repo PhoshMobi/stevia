@@ -1,3 +1,14 @@
+phosh-osk-stevia 0.51~rc1
+-------------------------
+Released November 2025
+* Give up when we fail to claim the DBus name on startup
+* Don't spawn two instances with gnome-session-bin < 49
+* Fix backspace delete issues in emoji and numeric layouts
+* Issues fixed:
+    * https://gitlab.gnome.org/World/Phosh/stevia/-/issues/77
+* Contributors:
+    * Guido Günther
+
 phosh-osk-stevia 0.50.1
 -----------------------
 Released October 2025
