@@ -1,3 +1,49 @@
+phosh-osk-stevia (0.51~rc1) experimental; urgency=medium
+
+  * input-surface: Don't trigger key repeat when deleting in emoji layout.
+    Otherwise we delete until the user presses another symbol
+    Fixes: 1de94920e ("input-surface: Delete last word on backspace long press")
+  * input-surface: Don't trigger key repeat when deleting in number layout.
+    Fixes: 1de94920e ("input-surface: Delete last word on backspace long press")
+  * run: Better restore keyboard state.
+    Always restore the state when the script exits
+  * input-surface: Reset layout in one place.
+    We do the same thing when switching away from special layouts, to that in a single place.
+    No functional change.
+  * input-surface: Restore old layout when hiding keyboard.
+    When hiding the keyboard we want to make sure the next time it is opened the layout matches the
+    input purpose rather than what the user selected. Otherwise the user might see the emoji
+    layout rather than a regular layout after swipe closing the keyboard and unfolding it again.
+  * stevia: Remove pointless cast
+  * stevia: Make debug flags static.
+    They should move into PhoshOskStevia at some point
+  * stevia: Rename application class object.
+    Name the application object as such. This is shorter but more
+    importantly fits our name space.
+  * app: Add to shared header.
+    This makes the application object available to other parts
+    of the OSK.
+  * build: Exclude pos-osk-dbus from library.
+    We want to spit pos-app out out into its own file at some point
+    but that needs more disentangling so rather move pos-osk-dbus
+    out of the shared lib for the moment to fix the doc build.
+  * stevia: Allow to get app singleton
+  * app: Allow to quit with exit status.
+    Add a method to exit the main loop with an exit status. Using
+    this we can pass our app object around rather than the main loop
+    giving us more type safety.
+  * emoji-picker: Only unref `data` when set.
+    Otherwise we might throw a critical when the data was never
+    loaded.
+  * dbus: Exit when we couldn't ever grab the DBus name.
+    This makes sure stevia exits when it grab the DBus name on startup.
+    We still allow for another instance to temporarily grab the name.
+    Closes: https://gitlab.gnome.org/World/Phosh/stevia/-/issues/77
+  * data: Let gnome-session-bin prefer the systemd unit.
+    This avoids having multiple instances spawned.
+
+ -- Guido Günther <agx@sigxcpu.org>  Tue, 04 Nov 2025 15:15:16 +0100
+
 phosh-osk-stevia (0.50.1) experimental; urgency=medium
 
   [ Иван Јањић ]

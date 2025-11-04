@@ -68,7 +68,7 @@ def screenshot_layouts(out):
             continue
 
         p_osk = subprocess.Popen(
-            ["_build/run", "--replace"],
+            ["_build/run", "--allow-replacement", "--replace"],
             env=dict(
                 os.environ,
                 G_DEBUG="fatal-criticals",
