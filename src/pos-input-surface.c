@@ -168,14 +168,34 @@ struct _PosInputSurface {
 
 
 static void pos_input_surface_submit_symbol (PosInputSurface *self, const char *symbol);
+static void select_layout_by_im_purpose (PosInputSurface *self);
 
 static void pos_input_surface_action_group_iface_init (GActionGroupInterface *iface);
 static void pos_input_surface_action_map_iface_init (GActionMapInterface *iface);
 
 G_DEFINE_TYPE_WITH_CODE (PosInputSurface, pos_input_surface, PHOSH_TYPE_LAYER_SURFACE,
-                         G_IMPLEMENT_INTERFACE (G_TYPE_ACTION_GROUP, pos_input_surface_action_group_iface_init)
-                         G_IMPLEMENT_INTERFACE (G_TYPE_ACTION_MAP, pos_input_surface_action_map_iface_init)
+                         G_IMPLEMENT_INTERFACE (G_TYPE_ACTION_GROUP,
+                                                pos_input_surface_action_group_iface_init)
+                         G_IMPLEMENT_INTERFACE (G_TYPE_ACTION_MAP,
+                                                pos_input_surface_action_map_iface_init)
   )
+
+/**
+ * pos_input_surface_reset_layout:
+ * @self: The input surface
+ *
+ * Reset the state after switching from special layouts like emoji or keypad
+ */
+static void
+pos_input_surface_reset_layout (PosInputSurface *self)
+{
+  GtkWidget *child = hdy_deck_get_visible_child (self->deck);
+
+  if (POS_INPUT_SURFACE_IS_LANG_LAYOUT (child) || POS_INPUT_SURFACE_IS_TERMINAL_LAYOUT (child))
+    return;
+
+  hdy_deck_set_visible_child (self->deck, self->last_layout);
+}
 
 
 static void
@@ -751,7 +771,7 @@ on_emoji_picked (PosInputSurface *self, const char *emoji, PosEmojiPicker *emoji
 static void
 on_emoji_picker_done (PosInputSurface *self)
 {
-  hdy_deck_set_visible_child (self->deck, self->last_layout);
+  pos_input_surface_reset_layout (self);
 }
 
 
@@ -786,7 +806,7 @@ on_keypad_symbol_pressed (PosInputSurface *self, const char *symbol, PosKeypad *
 static void
 on_keypad_done (PosInputSurface *self)
 {
-  hdy_deck_set_visible_child (self->deck, self->last_layout);
+  pos_input_surface_reset_layout (self);
 }
 
 
@@ -799,8 +819,8 @@ on_keypad_key_symbol (PosInputSurface *self, const char *symbol)
   pos_input_surface_set_backspace_pressed (self, FALSE);
 }
 
-/* menu button */
 
+/* menu button */
 
 static const char *
 pos_osk_get_display_name (PosOskWidget *osk_widget)
@@ -1074,8 +1094,11 @@ animate_cb (GtkWidget     *widget,
 
   pos_input_surface_move (self);
 
-  if (finished)
+  if (finished) {
+    if (!self->animation.show)
+      select_layout_by_im_purpose (self);
     return G_SOURCE_REMOVE;
+  }
 
   return G_SOURCE_CONTINUE;
 }
@@ -1334,19 +1357,16 @@ pos_input_surface_get_property (GObject    *object,
 
 
 static void
-on_im_purpose_changed (PosInputSurface *self, GParamSpec *pspec, PosInputMethod *im)
+select_layout_by_im_purpose (PosInputSurface *self)
 {
   GtkWidget *widget = NULL;
   PosOskWidgetLayer layer = POS_OSK_WIDGET_LAYER_NORMAL;
   PosInputMethodPurpose purpose;
 
-  g_assert (POS_IS_INPUT_SURFACE (self));
-  g_assert (POS_IS_INPUT_METHOD (im));
-
   /* We only have completer active on `normal` input purpose */
   g_object_notify_by_pspec (G_OBJECT (self), props[PROP_COMPLETER_ACTIVE]);
 
-  purpose = pos_input_method_get_purpose (im);
+  purpose = pos_input_method_get_purpose (self->input_method);
   switch (purpose) {
   case POS_INPUT_METHOD_PURPOSE_ALPHA:
   case POS_INPUT_METHOD_PURPOSE_EMAIL:
@@ -1405,6 +1425,17 @@ on_im_purpose_changed (PosInputSurface *self, GParamSpec *pspec, PosInputMethod 
   }
 
   hdy_deck_set_visible_child (self->deck, widget);
+}
+
+
+static void
+on_im_purpose_changed (PosInputSurface *self, GParamSpec *pspec, PosInputMethod *im)
+{
+  g_assert (POS_IS_INPUT_SURFACE (self));
+  g_assert (POS_IS_INPUT_METHOD (im));
+  g_assert (self->input_method == im);
+
+  select_layout_by_im_purpose (self);
 }
 
 
