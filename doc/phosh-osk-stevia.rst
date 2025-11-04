@@ -68,7 +68,7 @@ systems this can be achieved by running
 
    update-alternatives --config Phosh-OSK
 
-as root and selecting the entry ending in ``sm.puri.Phosh.Stevia.desktop``.
+as root and selecting the entry ending in ``mobi.phosh.Stevia.desktop``.
 
 
 CONFIGURATION

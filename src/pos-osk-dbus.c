@@ -10,6 +10,7 @@
 
 #include "pos-config.h"
 
+#include "pos-app.h"
 #include "pos-osk-dbus.h"
 #include "pos-osk0-dbus.h"
 
@@ -152,6 +153,7 @@ on_name_lost (GDBusConnection *connection,
     g_object_notify_by_pspec (G_OBJECT (self), props[PROP_HAS_NAME]);
   } else {
     g_warning ("Failed to acquire DBus name '%s'", name);
+    pos_app_quit (pos_app_get_default (), EXIT_FAILURE);
   }
 }
 

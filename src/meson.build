@@ -67,8 +67,6 @@ libpos_sources = files(
   'pos-logind-session.h',
   'pos-main.c',
   'pos-main.h',
-  'pos-osk-dbus.c',
-  'pos-osk-dbus.h',
   'pos-osk-key.c',
   'pos-osk-key.h',
   'pos-osk-widget.c',
@@ -133,6 +131,7 @@ libpos_dep = declare_dependency(
 executable(
   'phosh-osk-stevia',
   'phosh-osk-stevia.c',
+  'pos-osk-dbus.c',
   include_directories: pos_includes,
   install: true,
   dependencies: libpos_dep,

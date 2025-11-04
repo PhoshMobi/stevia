@@ -9,6 +9,7 @@
 
 G_BEGIN_DECLS
 
+#include "pos-app.h"
 #include "pos-main.h"
 #include "pos-activation-filter.h"
 #include "pos-clipboard-manager.h"

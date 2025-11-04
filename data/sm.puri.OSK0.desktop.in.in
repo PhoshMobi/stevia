@@ -12,3 +12,4 @@ X-GNOME-Provides=inputmethod
 X-GNOME-Autostart-Notify=true
 X-GNOME-AutoRestart=true
 X-Phosh-UsesFeedback=true
+X-GNOME-HiddenUnderSystemd=true
