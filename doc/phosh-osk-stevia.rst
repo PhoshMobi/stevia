@@ -16,8 +16,7 @@ SYNOPSIS
 DESCRIPTION
 -----------
 
-``phosh-osk-stevia`` is an on screen keyboard (OSK) for phosh. It can
-replace Phosh's default keyboard ``squeekboard(1)``.
+``phosh-osk-stevia`` is an on screen keyboard (OSK) for phosh.
 
 ``phosh-osk-stevia`` has two modes of operation. If the application
 supports and uses ``text-input-unstable-v3`` the Wayland compositor
@@ -348,4 +347,4 @@ Use ``swipeGuess`` for swipe input:
 See also
 --------
 
-``phosh(1)`` ``squeekboard(1)`` ``text2ngram(1)`` ``gsettings(1)`` ``hunspell(5)`` ``swipeGuess(1)``
+``phosh(1)`` ``text2ngram(1)`` ``gsettings(1)`` ``hunspell(5)`` ``swipeGuess(1)``
