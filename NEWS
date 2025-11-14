@@ -1,5 +1,5 @@
-phosh-osk-stevia 0.51~rc1
--------------------------
+phosh-osk-stevia 0.51.0
+-----------------------
 Released November 2025
 * Give up when we fail to claim the DBus name on startup
 * Don't spawn two instances with gnome-session-bin < 49

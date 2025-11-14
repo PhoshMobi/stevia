@@ -99,7 +99,7 @@ else
 fi
 
 REGISTRY="registry.gitlab.gnome.org"
-REPO="world/phosh"
+REPO="world/phosh/stevia"
 TAG="${REGISTRY}/${REPO}/${base}:${base_version}"
 
 if [ $build == 1 ]; then

@@ -64,6 +64,14 @@
   </screenshots>
 
   <releases>
+    <release version="0.51.0" date="2025-11-14">
+      <description translate="no">
+        <ul>
+          <li>Give up when we fail to claim the DBus name on startup</li>
+          <li>Don't spawn two instances with gnome-session-bin &lt; 49</li>
+        </ul>
+      </description>
+    </release>
     <release version="0.50.1" date="2025-10-07">
       <description translate="no">
         <ul>
