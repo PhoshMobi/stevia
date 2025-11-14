@@ -1,7 +1,6 @@
 # Stevia
 
-Stevia is an alternative keyboard for Phosh. It can replace the default OSK
-[squeekboard][].
+Stevia is a on screen keyboard for Phosh.
 
 The purpose of Stevia is:
 
@@ -12,8 +11,8 @@ The purpose of Stevia is:
 
 Features:
 
-- easy to swap out with squeekboard (implements phosh's [sm.puri.OSK0]() DBus
-  interface) for low risk experimentation
+- easy to swap out with other keyboards (implements phosh's [sm.puri.OSK0]() DBus
+  interface)
 - easy to temporarily replace running instance (`--replace` option)
 - no language boundaries within the codebase to lower the entrance barrier
 - use current GTK and GObject patterns (actions, bindings, …)
@@ -118,7 +117,6 @@ system via `man phosh-osk-stevia`).
 [.gitlab-ci.yml]: https://gitlab.gnome.org/World/Phosh/stevia/-/blob/main/.gitlab-ci.yml
 [debian/control]:https://gitlab.gnome.org/World/Phosh/stevia/-/blob/main/debian/control
 [phosh]: https://gitlab.gnome.org/World/Phosh/phosh
-[squeekboard]: https://gitlab.gnome.org/World/Phosh/squeekboard
 [sm.puri.OSK0]: https://gitlab.gnome.org/World/Phosh/phosh/-/blob/main/src/dbus/sm.puri.OSK0.xml
 [phosh-osk-data]: https://gitlab.gnome.org/guidog/phosh-osk-data/
 [manpage]: ./doc/phosh-osk-stevia.rst
