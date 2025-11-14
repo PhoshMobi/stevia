@@ -1,3 +1,11 @@
+phosh-osk-stevia (0.51.0) experimental; urgency=medium
+
+  * doc: Fix default keyboard mention.
+    Most distros ship stevia as default so it can be confusing if
+    we say something else in the docs.
+
+ -- Guido Günther <agx@sigxcpu.org>  Fri, 14 Nov 2025 17:13:29 +0100
+
 phosh-osk-stevia (0.51~rc1) experimental; urgency=medium
 
   * input-surface: Don't trigger key repeat when deleting in emoji layout.
