@@ -1,4 +1,4 @@
-FROM debian:trixie-slim
+FROM debian:forky-slim
 
 RUN export DEBIAN_FRONTEND=noninteractive \
    && apt-get -y update \

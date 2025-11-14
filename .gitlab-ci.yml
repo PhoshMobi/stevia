@@ -39,7 +39,7 @@ workflow:
 variables:
   # For ci-fairy
   FDO_UPSTREAM_REPO: World/Phosh/stevia
-  DEBIAN_IMAGE: $CI_REGISTRY/world/phosh/stevia/debian:v0.0.2025-09-18
+  DEBIAN_IMAGE: $CI_REGISTRY/world/phosh/stevia/debian:v0.0.2025-11-14
   XVFB_RUN: xvfb-run -a -s -noreset
   COMMON_BUILD_OPTS: --werror -Db_coverage=true -Dprefix=/usr
   ALPINE_EDGE_DEPS: alpine-sdk feedbackd-dev git glib-dev gnome-desktop-dev
@@ -47,12 +47,12 @@ variables:
                     elogind-dev wayland-dev wayland-protocols ttf-dejavu presage-dev
                     gmobile-dev
 
-.trixie_vars: &trixie_vars
+.forky_vars: &forky_vars
   variables:
-    DIST: trixie
+    DIST: forky
     BUILD_OPTS: ${COMMON_BUILD_OPTS}
 
-.trixie_prep: &trixie_prep
+.forky_prep: &forky_prep
   before_script:
     - apt-get -y update
     - apt-get -y build-dep .
@@ -105,11 +105,11 @@ sanity:
   rules:
     - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME'
 
-build:native-debian-trixie:
+build:native-debian-forky:
   stage: build
   image: ${DEBIAN_IMAGE}
-  <<: *trixie_prep
-  <<: *trixie_vars
+  <<: *forky_prep
+  <<: *forky_vars
   <<: *build_step
   artifacts:
     paths:
@@ -118,13 +118,13 @@ build:native-debian-trixie:
     variables:
       - $PKG_ONLY == "1"
 
-test:native-debian-trixie:
+test:native-debian-forky:
   stage: test+docs
   image: ${DEBIAN_IMAGE}
-  <<: *trixie_prep
+  <<: *forky_prep
   needs:
-    - build:native-debian-trixie
-  <<: *trixie_vars
+    - build:native-debian-forky
+  <<: *forky_vars
   <<: *test_step
   coverage: '/^lines:\s+([\d.]+\%)\s+/'
   artifacts:
@@ -138,7 +138,7 @@ test:native-debian-trixie:
 doc:
   stage: test+docs
   image: ${DEBIAN_IMAGE}
-  <<: *trixie_prep
+  <<: *forky_prep
   needs: []
   variables:
     BUILD_OPTS: >-
@@ -163,7 +163,7 @@ test-layouts:
       phosh-wallpapers dbus-x11
       fonts-noto-core
   needs:
-    - build:native-debian-trixie
+    - build:native-debian-forky
   script:
     - !reference [.phosh-prepare-apt]
     - XDG_RUNTIME_DIR=$PWD
