@@ -276,7 +276,7 @@ on_bs_long_press_timeout (gpointer data)
 
   self->bs_repeat_id = g_timeout_add (interval, on_bs_key_repeat, self);
   g_source_set_name_by_id (self->bs_repeat_id, "[pos-bs-key-repeat]");
- }
+}
 
 
 static gboolean
@@ -1048,7 +1048,7 @@ pos_input_surface_move (PosInputSurface *self)
 
   phosh_layer_surface_set_margins (PHOSH_LAYER_SURFACE (self), 0, 0, margin, 0);
 
-  if (self->animation.progress >= 1.0 &&  self->animation.show) {
+  if (self->animation.progress >= 1.0 && self->animation.show) {
     /* On unfold adjust the exclusive zone at the very end to avoid flickering */
     phosh_layer_surface_set_exclusive_zone (PHOSH_LAYER_SURFACE (self), height);
   } else if (self->animation.progress < 1.0 && !self->animation.show) {
@@ -1510,9 +1510,8 @@ on_im_active_changed (PosInputSurface *self, GParamSpec *pspec, PosInputMethod *
 
   if (active) {
     /* TODO: Reset buffered commit_string, delete_surrounding_text */
-    if (pos_input_surface_is_completer_active (self)) {
+    if (pos_input_surface_is_completer_active (self))
       pos_completer_set_preedit (self->completer, NULL);
-    }
   }
 
   /* Completer can only be active with input method, not vk */
@@ -1644,7 +1643,8 @@ pos_input_surface_query_action (GActionGroup        *group,
     return FALSE;
 
   return g_action_group_query_action (G_ACTION_GROUP (self->action_map),
-                                      action_name, enabled, parameter_type, state_type, state_hint, state);
+                                      action_name, enabled, parameter_type, state_type, state_hint,
+                                      state);
 }
 
 
@@ -1687,7 +1687,7 @@ pos_input_surface_action_group_iface_init (GActionGroupInterface *iface)
 
 
 static GAction *
-pos_input_surface_lookup_action (GActionMap  *action_map, const char *action_name)
+pos_input_surface_lookup_action (GActionMap *action_map, const char *action_name)
 {
   PosInputSurface *self = POS_INPUT_SURFACE (action_map);
 
@@ -1720,7 +1720,8 @@ pos_input_surface_remove_action (GActionMap *action_map, const char *action_name
 }
 
 
-static void pos_input_surface_action_map_iface_init (GActionMapInterface *iface)
+static void
+pos_input_surface_action_map_iface_init (GActionMapInterface *iface)
 {
   iface->lookup_action = pos_input_surface_lookup_action;
   iface->add_action = pos_input_surface_add_action;
@@ -1745,9 +1746,8 @@ pos_input_surface_check_resize (GtkContainer *container)
   if (gtk_widget_get_mapped (GTK_WIDGET (self)) && min.height != height) {
     phosh_layer_surface_set_size (PHOSH_LAYER_SURFACE (self), -1, min.height);
     /* Don't interfere with animation */
-    if (self->animation.progress >= 1.0) {
+    if (self->animation.progress >= 1.0)
       phosh_layer_surface_set_exclusive_zone (PHOSH_LAYER_SURFACE (self), min.height);
-    }
   }
 
   GTK_CONTAINER_CLASS (pos_input_surface_parent_class)->check_resize (container);
@@ -2128,9 +2128,8 @@ on_input_setting_changed (PosInputSurface *self, const char *key, GSettings *set
   }
 
   /* If nothing is left add a default */
-  if (g_hash_table_size (self->osks) == 0) {
+  if (g_hash_table_size (self->osks) == 0)
     insert_osk (self, "us", "us", "English (USA)", "us", NULL, NULL);
-  }
 
   set_keymap (self);
 }
