@@ -1750,6 +1750,10 @@ pos_input_surface_check_resize (GtkContainer *container)
       phosh_layer_surface_set_exclusive_zone (PHOSH_LAYER_SURFACE (self), min.height);
   }
 
+  /* Ensure unfold animation starts from the screen bottom */
+  if (G_APPROX_VALUE (self->animation.progress, 0.0, DBL_EPSILON))
+    phosh_layer_surface_set_margins (PHOSH_LAYER_SURFACE (self), 0, 0, -min.height, 0);
+
   GTK_CONTAINER_CLASS (pos_input_surface_parent_class)->check_resize (container);
 }
 
