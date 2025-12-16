@@ -18,3 +18,7 @@ option('man',
 option('systemd_user_unit_dir',
        type: 'string', value: '',
        description: 'Directory for systemd user units')
+
+option('wordlist',
+       type: 'string', value : '/usr/share/dict/words',
+       description : 'Filename of the word list used by the fzf completer')

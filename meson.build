@@ -171,6 +171,7 @@ have_memfd_create = cc.has_function(
 config_h = configuration_data()
 config_h.set_quoted('GETTEXT_PACKAGE', 'phosh-osk-stevia')
 config_h.set_quoted('LOCALEDIR', localedir)
+config_h.set_quoted('WORD_LIST', get_option('wordlist'))
 config_h.set_quoted('PHOSH_OSK_STEVIA_VERSION', meson.project_version())
 config_h.set('POS_HAVE_FZF', fzf.found())
 config_h.set('POS_HAVE_HUNSPELL', hunspell_dep.found())
