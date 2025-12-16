@@ -20,7 +20,6 @@
 #include <signal.h>
 
 #define MAX_COMPLETIONS 3
-#define WORD_LIST       "/usr/share/dict/words"
 #define PROG_FZF        "fzf"
 
 enum {
