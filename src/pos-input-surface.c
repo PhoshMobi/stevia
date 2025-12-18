@@ -1051,7 +1051,7 @@ pos_input_surface_move (PosInputSurface *self)
   if (self->animation.progress >= 1.0 && self->animation.show) {
     /* On unfold adjust the exclusive zone at the very end to avoid flickering */
     phosh_layer_surface_set_exclusive_zone (PHOSH_LAYER_SURFACE (self), height);
-  } else if (self->animation.progress < 1.0 && !self->animation.show) {
+  } else if (self->animation.progress <= 0.0 && !self->animation.show) {
     /* On fold adjust the exclusive zone at the start to avoid flickering */
     phosh_layer_surface_set_exclusive_zone (PHOSH_LAYER_SURFACE (self), 0);
   }
