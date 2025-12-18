@@ -195,7 +195,14 @@ pos_completer_base_new (void)
   return g_object_new (POS_TYPE_COMPLETER_BASE, NULL);
 }
 
-
+/**
+ * pos_completer_base_get_additional_results:
+ * @self: The completer base
+ * @match: The match
+ * @max_results: The maximum number of results to return
+ *
+ * Returns:(transfer full): The additional results
+ */
 GStrv
 pos_completer_base_get_additional_results (PosCompleterBase *self,
                                            const char       *match,
