@@ -28,7 +28,6 @@ typedef enum {
 
 /**
  * PhoshOskFeatures:
- *
  * @PHOSH_OSK_FEATURE_DEFAULT: no special features
  * @PHOSH_OSK_FEATURE_KEY_DRAG: When set crossing a key boundary
  *   by dragging the finger across the keyboard sends a

@@ -27,7 +27,7 @@ typedef enum {
 PosVkDriver *pos_vk_driver_new (PosVirtualKeyboard *self);
 void         pos_vk_driver_key_down (PosVkDriver        *self,
                                      const char         *key,
-                                     PosKeycodeModifier  modifier);
+                                     PosKeycodeModifier  modifiers);
 void        pos_vk_driver_key_up (PosVkDriver *self, const char *key);
 void        pos_vk_driver_key_press_gdk (PosVkDriver    *self,
                                          guint           gdk_keycode,

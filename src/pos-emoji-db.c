@@ -98,10 +98,10 @@ pos_emoji_db_get_data (PosEmojiDb *self)
 }
 
 /**
- * pos_emoji_match_by_name:
+ * pos_emoji_db_match_by_name:
  * @self: The emoji db
- * @name: The emoji name (or prefix) to match on
- * @max_mathces: The maximum number of matches. `0` means "all matches".
+ * @match: The emoji name (or prefix) to match on
+ * @max_matches: The maximum number of matches. `0` means "all matches".
  *
  * Returns: (transfer full): The matched emojis
  */

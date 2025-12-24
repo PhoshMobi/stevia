@@ -287,7 +287,7 @@ pos_completer_manager_get_default_completer (PosCompleterManager *self)
 }
 
 /**
- * pos_completer_manager_get_info:
+ * pos_completer_manager_get_info: (skip)
  * @self: The completer manager
  * @engine: The desired completion engine
  * @lang: The desired language to use with `engine`

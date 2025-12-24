@@ -415,7 +415,14 @@ pos_completer_get_display_name (PosCompleter *self)
   return iface->get_display_name (self);
 }
 
-
+/**
+ * pos_completer_varnam_learn_accepted:
+ * @iface: The completer iface
+ * @word: The word to learn
+ *
+ * The completer should learn the given word and offer it for
+ * completions in the future.
+ */
 void
 pos_completer_learn_accepted (PosCompleter *self, const char *word)
 {
@@ -424,7 +431,7 @@ pos_completer_learn_accepted (PosCompleter *self, const char *word)
   g_return_if_fail (POS_IS_COMPLETER (self));
 
   iface = POS_COMPLETER_GET_IFACE (self);
-  if (iface->get_display_name == NULL)
+  if (iface->learn_accepted == NULL)
     return;
 
   return iface->learn_accepted (self, word);
