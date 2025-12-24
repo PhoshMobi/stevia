@@ -1,3 +1,12 @@
+phosh-osk-stevia 0.52~rc1
+-------------------------
+Released December 2025
+* Fix delayed osk unfold when vertical size changed
+* Make fzf word list a compile time option
+* Contributors:
+    * Achill Gilgenast
+    * Guido Günther
+
 phosh-osk-stevia 0.51.0
 -----------------------
 Released November 2025
