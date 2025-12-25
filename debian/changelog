@@ -1,3 +1,25 @@
+phosh-osk-stevia (0.52~rc1) experimental; urgency=medium
+
+  [ Achill Gilgenast ]
+  * completers/fzf: Add meson option for a custom word list file.
+    There doesn't seem to be a global default path for a word list. Debian packages
+    a scowl word list of american dictionary as /words. Alpine ships Aspell
+    dictionaries with the language as filename (like /american-english).
+    So make this path configure, that distributions can adapt that to their word list.
+
+  [ Guido Günther ]
+  * input-surface: Adjust surface height when animation starts.
+    This avoids the
+       Animation did not finish in time: 0.000000
+    warnings and the delayed OSK unfold.
+  * input-surface: Actually set exclusive zone at the start.
+    This makes the code match the comment
+  * completer: Check correct vfunc
+  * completer-base: Add docstring.
+    This fixes the doc build warning
+
+ -- Guido Günther <agx@sigxcpu.org>  Wed, 24 Dec 2025 13:06:02 +0100
+
 phosh-osk-stevia (0.51.0) experimental; urgency=medium
 
   * doc: Fix default keyboard mention.
