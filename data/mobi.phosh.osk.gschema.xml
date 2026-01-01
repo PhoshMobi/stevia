@@ -11,7 +11,7 @@
     </key>
 
     <key name="osk-features" flags="mobi.phosh.osk.PhoshOskFeatures">
-      <default>[]</default>
+      <default>['key-indicator']</default>
       <summary>Features to enable on all layouts</summary>
       <description>
         A list of features that should be enabled on all configured layouts.
