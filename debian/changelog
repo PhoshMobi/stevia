@@ -1,3 +1,15 @@
+phosh-osk-stevia (0.52.0) experimental; urgency=medium
+
+  * settings: Use key indicator popover by default.
+    See https://social.phosh.mobi/@phosh/statuses/01KD3NS5DN8AZB94VG6W0CRS4R
+  * settings: Use auto-portrait by default.
+    While not as prominent as the key indicator in
+    https://social.phosh.mobi/@phosh/statuses/01KD3NS5DN8AZB94VG6W0CRS4R
+    it doesn't change anything (or at least not much) in the default scales
+    and it is quick to disable.
+
+ -- Guido Günther <agx@sigxcpu.org>  Sat, 03 Jan 2026 11:28:10 +0100
+
 phosh-osk-stevia (0.52~rc1) experimental; urgency=medium
 
   [ Achill Gilgenast ]
