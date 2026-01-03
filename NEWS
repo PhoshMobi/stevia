@@ -1,8 +1,10 @@
-phosh-osk-stevia 0.52~rc1
--------------------------
-Released December 2025
+phosh-osk-stevia 0.52.0
+-----------------------
+Released January 2026
 * Fix delayed osk unfold when vertical size changed
 * Make fzf word list a compile time option
+* Enable typed character popover by default
+* Scale OSK by default
 * Contributors:
     * Achill Gilgenast
     * Guido Günther

@@ -64,6 +64,13 @@
   </screenshots>
 
   <releases>
+    <release version="0.52.0" date="2026-01-03">
+      <description translate="no">
+        <ul>
+          <li>Enable typed character popover and scaling by default</li>
+        </ul>
+      </description>
+    </release>
     <release version="0.51.0" date="2025-11-14">
       <description translate="no">
         <ul>
