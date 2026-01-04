@@ -68,6 +68,7 @@
     <file preprocess="json-stripblanks">layouts/tr.json</file>
     <file preprocess="json-stripblanks">layouts/ua.json</file>
     <file preprocess="json-stripblanks">layouts/us.json</file>
+    <file preprocess="json-stripblanks">layouts/us+colemak.json</file>
     <file preprocess="json-stripblanks">layouts/us+dvorak.json</file>
     <file preprocess="json-stripblanks">layouts/vn.json</file>
     <file preprocess="json-stripblanks">layouts/za.json</file>
