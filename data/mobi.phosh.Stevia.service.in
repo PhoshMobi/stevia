@@ -9,7 +9,7 @@ After=gnome-session-initialized.target
 
 [Service]
 Slice=session.slice
-Type=simple
+Type=dbus
 BusName=@busname@
 ExecStart=@bindir@/phosh-osk-stevia --allow-replacement
 Restart=on-failure
