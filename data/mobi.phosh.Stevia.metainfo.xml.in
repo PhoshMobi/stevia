@@ -64,6 +64,14 @@
   </screenshots>
 
   <releases>
+    <release version="0.52.1" date="2026-01-16">
+      <description translate="no">
+        <ul>
+          <li>Critical startup bug fix</li>
+          <li>New US+colemak layout</li>
+        </ul>
+      </description>
+    </release>
     <release version="0.52.0" date="2026-01-03">
       <description translate="no">
         <ul>

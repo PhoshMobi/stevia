@@ -1,7 +1,7 @@
 project(
   'phosh-osk-stevia',
   'c',
-  version: '0.52.0',
+  version: '0.52.1',
   license: 'GPLv3+',
   meson_version: '>= 1.1',
   default_options: ['warning_level=1', 'buildtype=debugoptimized', 'c_std=gnu11'],

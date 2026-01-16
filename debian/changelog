@@ -1,3 +1,13 @@
+phosh-osk-stevia (0.52.1) experimental; urgency=medium
+
+  [ Paul Black ]
+  * layout: Added us+colemak
+
+  [ Guido Günther ]
+  * data: Use type=dbus for the system unit
+
+ -- Guido Günther <agx@sigxcpu.org>  Fri, 16 Jan 2026 12:43:33 +0100
+
 phosh-osk-stevia (0.52.0) experimental; urgency=medium
 
   * settings: Use key indicator popover by default.
