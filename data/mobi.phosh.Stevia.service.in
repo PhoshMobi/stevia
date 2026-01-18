@@ -13,4 +13,5 @@ Type=dbus
 BusName=@busname@
 ExecStart=@bindir@/phosh-osk-stevia --allow-replacement
 Restart=on-failure
+RestartSec=1s
 TimeoutStopSec=5
