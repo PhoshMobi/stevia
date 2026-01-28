@@ -125,6 +125,7 @@ struct _PosInputSurface {
   /* OSK */
   GHashTable              *osks;
   HdyDeck                 *deck;
+  HdyClamp                *clamp;
   GtkWidget               *osk_terminal;
   GtkWidget               *emoji_picker;
   GtkWidget               *last_layout;
@@ -1786,6 +1787,7 @@ pos_input_surface_class_init (PosInputSurfaceClass *klass)
 
   gtk_widget_class_set_template_from_resource (widget_class,
                                                "/mobi/phosh/stevia/ui/input-surface.ui");
+  gtk_widget_class_bind_template_child (widget_class, PosInputSurface, clamp);
   gtk_widget_class_bind_template_child (widget_class, PosInputSurface, completion_bar);
   gtk_widget_class_bind_template_child (widget_class, PosInputSurface, deck);
   gtk_widget_class_bind_template_child (widget_class, PosInputSurface, emoji_picker);
@@ -2169,6 +2171,25 @@ on_completion_mode_changed (PosInputSurface *self, const char *key, GSettings *s
 }
 
 
+static gboolean
+surface_height_to_clamp (GBinding     *binding,
+                         const GValue *from_value,
+                         GValue       *to_value,
+                         gpointer      user_data)
+{
+  double width, height = g_value_get_uint (from_value);
+  /* This an approximation as we use the full surface height including the completion bars
+   *  but it's close enough */
+  double scale = MAX (1.0, height / POS_INPUT_SURFACE_DEFAULT_HEIGHT);
+
+  width = POS_INPUT_SURFACE_DEFAULT_CLAMP_WIDTH * scale;
+  g_debug ("Scaling clamp width to %.2ff", width);
+  g_value_set_int (to_value, (int)width);
+
+  return TRUE;
+}
+
+
 static GActionEntry entries[] =
 {
   { .name = "clipboard-paste", .activate = clipboard_paste_activated },
@@ -2249,6 +2270,16 @@ pos_input_surface_init (PosInputSurface *self)
   g_object_bind_property (self->logind_session, "locked",
                           action, "enabled",
                           G_BINDING_SYNC_CREATE | G_BINDING_INVERT_BOOLEAN);
+
+  g_object_bind_property_full (self,
+                               "height",
+                               self->clamp,
+                               "maximum-size",
+                               G_BINDING_SYNC_CREATE,
+                               surface_height_to_clamp,
+                               NULL,
+                               NULL,
+                               NULL);
 }
 
 
