@@ -59,15 +59,14 @@ typedef enum {
 /**
  * PhoshOskScalingFlags:
  * @PHOSH_OSK_SCALING_NONE: no scaling
- * @PHOSH_OSK_SCALING_AUTO_PORTRAIT: automatic scaling in portrait mode
- * @PHOSH_OSK_SCALING_AUTO_LANDSCAPE: automatic scaling in landscape mode
+ * @PHOSH_OSK_SCALING_AUTO_PORTRAIT: automatic upscaling in portrait mode
+ * @PHOSH_OSK_SCALING_AUTO_LANDSCAPE: automatic upscaling in landscape mode
  * @PHOSH_OSK_SCALING_BOTTOM_DEAD_ZONE: Dead zone at the bottom of the OSK
  */
 typedef enum {
   PHOSH_OSK_SCALING_NONE = 0, /*< skip >*/
   PHOSH_OSK_SCALING_AUTO_PORTRAIT = (1 << 0),
-  /* TODO: not yet implemented */
-  /* PHOSH_OSK_SCALING_AUTO_LANDSCAPE = (1 << 1), */
+  PHOSH_OSK_SCALING_AUTO_LANDSCAPE = (1 << 1),
   PHOSH_OSK_SCALING_BOTTOM_DEAD_ZONE = (1 << 2),
 } PhoshOskScalingFlags;
 

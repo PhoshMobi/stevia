@@ -429,4 +429,10 @@ pos_output_set_physical_width (PosOutput *self, guint width)
   self->current.width_mm = width;
 }
 
+void
+pos_output_set_transform (PosOutput *self, enum wl_output_transform transform)
+{
+  self->current.transform = transform;
+}
+
 /****************************************************/

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Phosh.mobi e.V.
+ * Copyright (C) 2025-2026 Phosh.mobi e.V.
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  *
@@ -65,10 +65,16 @@ set_dead_zone (PosSizeManager *self, guint dead_zone)
   g_object_notify_by_pspec (G_OBJECT (self), props[PROP_DEAD_ZONE]);
 }
 
-
+/* Portrait */
 #define MIN_PORTRAIT_RATIO 0.4
 #define TARGET_PORTRAIT_PHYS_HEIGHT 40 /* mm */
 #define TARGET_PORTRAIT_BOTTOM_DEAD_ZONE 8 /* mm */
+
+/* Landscape */
+#define MIN_LANDSCAPE_RATIO 0.4
+/* We don't scale up below this height in landscape */
+#define TABLET_LANDSCAPE_MIN_HEIGHT 100 /* mm */
+#define TARGET_LANDSCAPE_PHYS_HEIGHT 45 /* mm */
 
 static guint
 calc_height (PosOutput *output, guint *dead_zone, PhoshOskScalingFlags flags)
@@ -88,34 +94,50 @@ calc_height (PosOutput *output, guint *dead_zone, PhoshOskScalingFlags flags)
   if (!flags)
     return osk_height;
 
-  if (!pos_output_is_portrait (output)) {
-    /* TODO: set small height on phone displays so there's more screen estate but
-     * use enough vertical space on landscape tablets */
-    return osk_height;
-  }
-
   screen_logical_height = pos_output_get_logical_height (output);
-
-  /* vertical resolution not high enough to take up any extra space */
-  if (osk_height > screen_logical_height * MIN_PORTRAIT_RATIO)
-    return osk_height;
-
   screen_physical_height = pos_output_get_transformed_phys_height (output);
-  /* vertical size not large enough for a larger OSK */
-  if (TARGET_PORTRAIT_PHYS_HEIGHT > screen_physical_height * MIN_PORTRAIT_RATIO)
-    return osk_height;
-
   pixel_size = pos_output_get_logical_pixel_size (output);
 
-  if (flags & PHOSH_OSK_SCALING_AUTO_PORTRAIT)
-    osk_height = TARGET_PORTRAIT_PHYS_HEIGHT / pixel_size;
+  /* Physical height might be unknown */
+  if (G_APPROX_VALUE (screen_physical_height, 0.0, DBL_EPSILON))
+      return osk_height;
 
-  phys_dz = (MIN_PORTRAIT_RATIO * screen_physical_height) - (osk_height * pixel_size);
+  /* Portrait */
+  if (pos_output_is_portrait (output)) {
+    /* vertical resolution not high enough to take up any extra space */
+    if (osk_height > screen_logical_height * MIN_PORTRAIT_RATIO)
+      return osk_height;
 
-  if (flags & PHOSH_OSK_SCALING_BOTTOM_DEAD_ZONE)
-    *dead_zone = MIN (TARGET_PORTRAIT_BOTTOM_DEAD_ZONE, phys_dz) / pixel_size;
+    /* vertical size not large enough for a larger OSK */
+    if (TARGET_PORTRAIT_PHYS_HEIGHT > screen_physical_height * MIN_PORTRAIT_RATIO)
+      return osk_height;
 
-  return osk_height;
+    if (flags & PHOSH_OSK_SCALING_AUTO_PORTRAIT)
+      osk_height = TARGET_PORTRAIT_PHYS_HEIGHT / pixel_size;
+
+    phys_dz = (MIN_PORTRAIT_RATIO * screen_physical_height) - (osk_height * pixel_size);
+    if (flags & PHOSH_OSK_SCALING_BOTTOM_DEAD_ZONE)
+      *dead_zone = MIN (TARGET_PORTRAIT_BOTTOM_DEAD_ZONE, phys_dz) / pixel_size;
+
+    return osk_height;
+  } else {
+    /* Landscape */
+    if (screen_physical_height < TABLET_LANDSCAPE_MIN_HEIGHT)
+      return osk_height;
+
+    /* vertical resolution not high enough to take up any extra space */
+    if (osk_height > screen_logical_height * MIN_LANDSCAPE_RATIO)
+      return osk_height;
+
+    /* vertical size not large enough for a larger OSK */
+    if (TARGET_LANDSCAPE_PHYS_HEIGHT > screen_physical_height * MIN_LANDSCAPE_RATIO)
+      return osk_height;
+
+    if (flags & PHOSH_OSK_SCALING_AUTO_LANDSCAPE)
+      osk_height = MAX (osk_height, TARGET_LANDSCAPE_PHYS_HEIGHT / pixel_size);
+
+    return osk_height;
+  }
 }
 
 
