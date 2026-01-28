@@ -129,18 +129,18 @@ typedef struct {
  * Renders the keyboard and reacts to keypresses by signal emissions.
  */
 struct _PosOskWidget {
-  GtkDrawingArea       parent;
+  GtkDrawingArea     parent;
 
-  PhoshOskFeatures     features;
-  int                  width, height;
-  PosOskWidgetLayout   layout;
-  guint                key_height;
+  PhoshOskFeatures   features;
+  int width, height;
+  PosOskWidgetLayout layout;
+  guint key_height;
 
-  GtkStyleContext     *key_context;
-  PosOskWidgetLayer    layer;
-  PosOskWidgetMode     mode;
+  GtkStyleContext   *key_context;
+  PosOskWidgetLayer  layer;
+  PosOskWidgetMode   mode;
   /* Contains pointers to key symbols (keys have ownership) */
-  GPtrArray           *symbols;
+  GPtrArray         *symbols;
   gboolean             caps_lock;
 
   char                *name;
