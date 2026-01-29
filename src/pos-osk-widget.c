@@ -1771,7 +1771,6 @@ key_type (void)
 static void
 pos_osk_widget_init (PosOskWidget *self)
 {
-  /* TODO support PIN, number, etc */
   const char *purpose_class = "normal";
   g_autoptr (GtkWidgetPath) path = NULL;
   GtkStyleContext *key_context;
