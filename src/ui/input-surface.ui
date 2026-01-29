@@ -4,10 +4,10 @@
   <template class="PosInputSurface" parent="PhoshLayerSurface">
     <property name="can-focus">0</property>
     <child>
-      <object class="HdyClamp">
+      <object class="HdyClamp" id="clamp">
         <property name="visible">1</property>
         <property name="maximum-size">1024</property>
-        <property name="tightening-threshold">1024</property>
+        <property name="tightening-threshold" bind-source="clamp" bind-property="maximum-size" bind-flags="sync-create"/>
         <property name="margin-bottom" bind-source="PosInputSurface" bind-property="dead-zone" bind-flags="sync-create"/>
         <child>
           <object class="GtkBox">

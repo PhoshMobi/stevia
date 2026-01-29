@@ -183,6 +183,11 @@ config_h.set(
   200,
   description: 'Default height of the input surface',
 )
+config_h.set(
+  'POS_INPUT_SURFACE_DEFAULT_CLAMP_WIDTH',
+  1024,
+  description: 'Maximum minimum clamp width the OSKs can take',
+)
 config_h.set_quoted('POS_DEFAULT_COMPLETER', default_completer)
 config_h.set(
   'PHOSH_HAVE_MEMFD_CREATE',

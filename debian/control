@@ -41,7 +41,6 @@ Depends:
  ${misc:Depends},
  ${shlibs:Depends},
   gsettings-desktop-schemas (>= 47),
-Provides: phosh-osk-stub (= 0.48)
 Replaces: phosh-osk-stub (<< 0.48~)
 Breaks:
  phosh-osk-stub (<< 0.48~),

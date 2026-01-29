@@ -129,18 +129,18 @@ typedef struct {
  * Renders the keyboard and reacts to keypresses by signal emissions.
  */
 struct _PosOskWidget {
-  GtkDrawingArea       parent;
+  GtkDrawingArea     parent;
 
-  PhoshOskFeatures     features;
-  int                  width, height;
-  PosOskWidgetLayout   layout;
-  guint                key_height;
+  PhoshOskFeatures   features;
+  int width, height;
+  PosOskWidgetLayout layout;
+  guint key_height;
 
-  GtkStyleContext     *key_context;
-  PosOskWidgetLayer    layer;
-  PosOskWidgetMode     mode;
+  GtkStyleContext   *key_context;
+  PosOskWidgetLayer  layer;
+  PosOskWidgetMode   mode;
   /* Contains pointers to key symbols (keys have ownership) */
-  GPtrArray           *symbols;
+  GPtrArray         *symbols;
   gboolean             caps_lock;
 
   char                *name;
@@ -163,6 +163,10 @@ struct _PosOskWidget {
   double               last_x, last_y;
   GArray              *event_history;
   cursor_drag_t        drag_type;
+
+  /* Key scaling */
+  GtkCssProvider      *css_provider;
+  int key_scale;
 };
 G_DEFINE_TYPE (PosOskWidget, pos_osk_widget, GTK_TYPE_DRAWING_AREA)
 
@@ -1406,16 +1410,15 @@ render_icon (cairo_t            *cr,
              GtkStyleContext    *context,
              GtkIconTheme       *icon_theme,
              const char         *icon,
+             int                 icon_size,
              const GdkRectangle *box,
              int                 scale)
 {
-  int icon_size;
   cairo_surface_t *surface;
 
   g_autoptr (GtkIconInfo) icon_info = NULL;
   g_autoptr (GdkPixbuf) pixbuf = NULL;
 
-  icon_size = MIN (KEY_ICON_SIZE, box->height / 2);
   icon_info = gtk_icon_theme_lookup_icon_for_scale (icon_theme, icon, icon_size, scale, 0);
 
   pixbuf = gtk_icon_info_load_symbolic_for_context (icon_info, context, NULL, NULL);
@@ -1441,6 +1444,7 @@ draw_key (PosOskWidget *self, PosOskKey *key, cairo_t *cr)
   gboolean pressed;
   double width;
   int scale;
+  int icon_size;
 
   scale = gtk_widget_get_scale_factor (GTK_WIDGET (self));
   state = gtk_style_context_get_state (self->key_context);
@@ -1462,6 +1466,9 @@ draw_key (PosOskWidget *self, PosOskKey *key, cairo_t *cr)
   cairo_rectangle (cr, 0.0, 0.0, box->width, box->height);
   cairo_clip (cr);
 
+  /* Scale icon by key scale */
+  icon_size = MIN (KEY_ICON_SIZE * (self->key_scale / 100.0), box->height / 2.0);
+
   render_outline (cr, self->key_context, box);
 
   if (self->mode == POS_OSK_WIDGET_MODE_KEYBOARD) {
@@ -1469,7 +1476,7 @@ draw_key (PosOskWidget *self, PosOskKey *key, cairo_t *cr)
       GdkScreen *screen = gtk_widget_get_screen (GTK_WIDGET (self));
       GtkIconTheme *icon_theme = gtk_icon_theme_get_for_screen (screen);
 
-      render_icon (cr, self->key_context, icon_theme, icon, box, scale);
+      render_icon (cr, self->key_context, icon_theme, icon, icon_size, box, scale);
     } else {
       GStrv symbols = pos_osk_key_get_symbols (key);
 
@@ -1486,6 +1493,42 @@ draw_key (PosOskWidget *self, PosOskKey *key, cairo_t *cr)
 
   if (pressed)
     gtk_style_context_remove_class (self->key_context, "pressed");
+}
+
+
+static void
+update_key_scale (PosOskWidget *self)
+{
+  g_autofree char *css  = NULL;
+  g_autoptr (GtkCssProvider) provider = gtk_css_provider_new ();
+  GdkScreen *screen;
+  int scale, scale_w, scale_h;
+
+  scale_h = 100 * MAX (1.0, (double)self->height / POS_INPUT_SURFACE_DEFAULT_HEIGHT); /* in % */
+  scale_w = 100 * MAX (1.0, (double)self->width / MINIMUM_WIDTH); /* in % */
+  scale = MIN (scale_w, scale_h);
+
+  /* Avoid pointless style updates */
+  if (self->key_scale == scale)
+    return;
+  self->key_scale = scale;
+
+  g_debug ("Scaling font scale to %d%% (w: %d, h: %d)", scale, scale_w, scale_h);
+
+  screen = gdk_screen_get_default ();
+  if (self->css_provider)
+    gtk_style_context_remove_provider_for_screen (screen,  GTK_STYLE_PROVIDER (self->css_provider));
+
+
+  css = g_strdup_printf ("pos-key {"
+                         "  font-size: %d%%;"
+                         "}",
+                         scale);
+  gtk_css_provider_load_from_data (provider, css, -1, NULL);
+  gtk_style_context_add_provider_for_screen (gdk_screen_get_default (),
+                                             GTK_STYLE_PROVIDER (provider),
+                                             GTK_STYLE_PROVIDER_PRIORITY_APPLICATION + 1);
+  g_set_object (&self->css_provider, provider);
 }
 
 
@@ -1525,6 +1568,9 @@ pos_osk_widget_size_allocate (GtkWidget *widget, GdkRectangle *allocation)
       }
     }
   }
+
+  /* On key size changes we adjust the font and icon size */
+  update_key_scale (self);
 
   GTK_WIDGET_CLASS (pos_osk_widget_parent_class)->size_allocate (widget, allocation);
 }
@@ -1771,12 +1817,12 @@ key_type (void)
 static void
 pos_osk_widget_init (PosOskWidget *self)
 {
-  /* TODO support PIN, number, etc */
   const char *purpose_class = "normal";
   g_autoptr (GtkWidgetPath) path = NULL;
   GtkStyleContext *key_context;
   GtkStyleContext *context;
 
+  self->key_scale = 100; /* percent */
   self->mode = POS_OSK_WIDGET_MODE_KEYBOARD;
   self->layer = POS_OSK_WIDGET_LAYER_NORMAL;
   self->symbols = g_ptr_array_new ();
