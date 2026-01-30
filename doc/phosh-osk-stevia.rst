@@ -233,6 +233,11 @@ For valid values see documentation of `gtk_accelerator_parse()`: https://docs.gt
 One can also add plain ``<ctrl>`` and ``<alt>`` keys. These then act as latched keys
 until the next regular key is pressed.
 
+The usable key names for non-modifier keys can be looked up in `GTK's keysym list`:
+https://gitlab.gnome.org/GNOME/gtk/-/blob/gtk-3-24/gdk/gdkkeysyms.h . So e.g.
+`GDK_KEY_Escape` would become `Escape` in the shortcuts setting.
+
+
 IGNORING ACTIVATION
 ^^^^^^^^^^^^^^^^^^^
 For some applications you might not want to unfold the OSK when the
