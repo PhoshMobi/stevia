@@ -1,3 +1,26 @@
+phosh-osk-stevia (0.53~rc1) experimental; urgency=medium
+
+  * osk-widget: Drop outdated comment. We have a numeric layout and we'd
+    not add other layouts there after all.
+  * packaging: Stop providing osk-stub. This only causes dependency
+    confusion
+  * shortcuts-bar: Propagate width.
+    Allows it to use more space on wide screens like tablets
+  * input-surface: Scale allowed OSK width with window height.
+    This allows us to take some more space on wide screens
+  * size-manager: Allow to scale up larget displays in landscape.
+    We don't have a good implementation for scaling down on portrait phones
+    but lets have at least landscape tablets scale up.
+    We base that on the screen size not the chassis type.
+    Closes: https://gitlab.gnome.org/World/Phosh/stevia/-/issues/52
+  * data: Enable landscape scale-up by default
+  * osk-widget: Scale up key font and icons when scaling up the OSK widget.
+    As keys scale mostly up in portrait (e.g. on phones) but mostly to the
+    side in landscape (on tablets) we use the minimum value to make sure we
+    still fit the space.
+
+ -- Guido Günther <agx@sigxcpu.org>  Thu, 05 Feb 2026 15:24:55 +0100
+
 phosh-osk-stevia (0.52.1) experimental; urgency=medium
 
   [ Paul Black ]
