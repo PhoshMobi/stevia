@@ -339,11 +339,24 @@ ENVIRONMENT VARIABLES
 - ``GTK_DEBUG`` and other environment variables supported by GTK, see
   https://docs.gtk.org/gtk3/running.html
 
+DBUS INTERFACE
+--------------
+
+Folding and unfolding of the keyboard is handled automatically via
+Wayland protocols as described above. On top of that Stevia implements
+Phosh's DBus interface. This allows Phosh to detect the keyboards
+current state and to show or hide the OSK overriding the current
+applications.
+
+See
+https://world.pages.gitlab.gnome.org/Phosh/phosh/phosh-dbus-sm.puri.OSK0.html
+for the protocol definition.
 
 EXAMPLES
 --------
 
-Use ``swipeGuess`` for swipe input:
+Configure the ``Pipe`` completer to use ``swipeGuess`` for swipe
+input:
 
 ::
 
@@ -351,6 +364,11 @@ Use ``swipeGuess`` for swipe input:
    gsettings set sm.puri.phosh.osk.Completers.Pipe command "swipeGuess /usr/local/share/swipeGuess/words/words-qwerty-en"
    gsettings set sm.puri.phosh.osk osk-features "['key-drag']"
 
+Unfold the keyboard using the DBus interface
+
+::
+
+   busctl call --user sm.puri.OSK0 /sm/puri/OSK0 sm.puri.OSK0 SetVisible b true
 
 See also
 --------
