@@ -306,7 +306,10 @@ devices it can be useful to shift the keyboard a bit upwards. The `scaling`
 setting handles this:
 
 * ``auto-portrait``: Automatically adjust the keyboard height in portrait mode based
-  on the resolution.
+  on the display resolution to keep they physical height constant.
+
+* ``auto-landscape``: Automatically adjust the keyboard height in landscape mode based
+  on the display resolution to keep they physical height constant.
 
 * ``bottom-dead-zone``: Add an empty area at the bottom of the keyboard when enough
   vertical space is available.
