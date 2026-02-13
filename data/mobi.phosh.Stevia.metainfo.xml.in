@@ -64,6 +64,16 @@
   </screenshots>
 
   <releases>
+    <release version="0.53.0" date="2026-02-13">
+      <description translate="no">
+        <ul>
+          <li>Allow to scale up in landscape too</li>
+          <li>Scale up key font and icons when scaling up keys</li>
+        </ul>
+      </description>
+    </release>
+
+
     <release version="0.52.1" date="2026-01-16">
       <description translate="no">
         <ul>
