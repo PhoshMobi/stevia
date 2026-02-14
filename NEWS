@@ -1,5 +1,5 @@
-phosh-osk-stevia 0.53~rc1
--------------------------
+phosh-osk-stevia 0.53.0
+-----------------------
 Released February 2026
 * Allow to scale up in landscape too
 * Scale up key font and icons when scaling up keys
