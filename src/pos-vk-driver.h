@@ -22,6 +22,7 @@ typedef enum {
   POS_KEYCODE_MODIFIER_CTRL =  1 << 1,
   POS_KEYCODE_MODIFIER_ALT  =  1 << 2,
   POS_KEYCODE_MODIFIER_ALTGR = 1 << 3,
+  POS_KEYCODE_MODIFIER_SUPER = 1 << 4,
 } PosKeycodeModifier;
 
 PosVkDriver *pos_vk_driver_new (PosVirtualKeyboard *self);
