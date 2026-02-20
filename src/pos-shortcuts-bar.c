@@ -215,7 +215,10 @@ on_shortcuts_changed (PosShortcutsBar *self,
       if (gtk_accelerator_valid (shortcut->key, shortcut->modifiers)) {
         shortcut->name = gtk_accelerator_get_label (shortcut->key, shortcut->modifiers);
       } else {
-        g_warning ("Invalid shortcut '%s'", accelerators[i]);
+        g_warning ("Invalid shortcut '%s': (0x%x/0x%x)",
+                   accelerators[i],
+                   shortcut->key,
+                   shortcut->modifiers);
         continue;
       }
     }
@@ -230,7 +233,7 @@ on_shortcuts_changed (PosShortcutsBar *self,
       g_signal_connect_swapped (btn, "clicked", G_CALLBACK (on_btn_clicked), self);
       gtk_container_add (GTK_CONTAINER (child), btn);
     } else {
-      g_debug ("Adding modifier: '%s'", shortcut->name);
+      g_debug ("Adding modifier: '%s', mod: 0x%x", shortcut->name, shortcut->modifiers);
       btn = gtk_toggle_button_new_with_label (shortcut->name);
       g_object_set_data_full (G_OBJECT (btn), "pos-shortcut",
                               g_steal_pointer (&shortcut),
