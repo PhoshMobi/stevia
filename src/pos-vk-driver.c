@@ -546,7 +546,7 @@ pos_vk_driver_new (PosVirtualKeyboard *virtual_keyboard)
  * @modifiers: Additional modifiers
  *
  * Submits a key via the virtual keyboard protocol. This handles
- * capital letters implicitly by adding the correctmodifier. Same is true for several
+ * capital letters implicitly by adding the correct modifier. Same is true for several
  * special letters on the terminal layout that require AltGr.
  *
  * One can pass additional modifiers to trigger e.g. <ctrl>+<character> compbos.
