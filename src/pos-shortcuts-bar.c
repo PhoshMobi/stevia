@@ -152,6 +152,10 @@ pos_accelerator_get_label (PosShortcut *shortcut)
       label = "Ctrl";
     else if (shortcut->modifiers == GDK_MOD1_MASK)
       label = "Alt";
+    else if (shortcut->modifiers == GDK_SHIFT_MASK)
+      label = "Shift";
+    else if (shortcut->modifiers == GDK_SUPER_MASK)
+      label = "Super";
 
     if (label)
       return g_strdup (label);
