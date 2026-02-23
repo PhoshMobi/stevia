@@ -399,7 +399,7 @@ pos_osk_widget_layout_free (PosOskWidgetLayout *layout)
   g_clear_pointer (&layout->name, g_free);
   g_clear_pointer (&layout->locale, g_free);
 
-  for (int l = 0; l < layout->n_layers; l++) {
+  for (int l = 0; l < POS_OSK_WIDGET_LAST_LAYER + 1; l++) {
     for (int r = 0; r < layout->n_rows; r++) {
       if (layout->layers[l].rows[r].keys) {
         g_ptr_array_free (layout->layers[l].rows[r].keys, TRUE);
