@@ -23,7 +23,7 @@
 static void
 test_size_manager_landscape_display_no_phys_height (void)
 {
-  PosOutput *output = g_object_new (POS_TYPE_OUTPUT, NULL);
+  g_autoptr (PosOutput) output = g_object_new (POS_TYPE_OUTPUT, NULL);
   guint dz;
 
   pos_output_set_logical_width (output, 1000);
@@ -37,7 +37,7 @@ test_size_manager_landscape_display_no_phys_height (void)
 static void
 test_size_manager_landscape_display_too_little_phys_height (void)
 {
-  PosOutput *output = g_object_new (POS_TYPE_OUTPUT, NULL);
+  g_autoptr (PosOutput) output = g_object_new (POS_TYPE_OUTPUT, NULL);
   guint dz;
 
   pos_output_set_logical_width (output, 1000);
@@ -53,7 +53,7 @@ test_size_manager_landscape_display_too_little_phys_height (void)
 static void
 test_size_manager_landscape_osk_too_little_logical_height (void)
 {
-  PosOutput *output = g_object_new (POS_TYPE_OUTPUT, NULL);
+  g_autoptr (PosOutput) output = g_object_new (POS_TYPE_OUTPUT, NULL);
   guint dz;
 
   pos_output_set_logical_width (output, 1000);
@@ -69,7 +69,7 @@ test_size_manager_landscape_osk_too_little_logical_height (void)
 static void
 test_size_manager_landscape_osk_scale_up_l11_add_150 (void)
 {
-  PosOutput *output = g_object_new (POS_TYPE_OUTPUT, NULL);
+  g_autoptr (PosOutput) output = g_object_new (POS_TYPE_OUTPUT, NULL);
   double pixel_size;
   guint dz;
 
@@ -90,7 +90,7 @@ test_size_manager_landscape_osk_scale_up_l11_add_150 (void)
 static void
 test_size_manager_landscape_osk_scale_up_transform (void)
 {
-  PosOutput *output = g_object_new (POS_TYPE_OUTPUT, NULL);
+  g_autoptr (PosOutput) output = g_object_new (POS_TYPE_OUTPUT, NULL);
   double pixel_size;
   guint dz;
 
@@ -112,7 +112,7 @@ test_size_manager_landscape_osk_scale_up_transform (void)
 static void
 test_size_manager_landscape_osk_scale_up_fw13_add_150 (void)
 {
-  PosOutput *output = g_object_new (POS_TYPE_OUTPUT, NULL);
+  g_autoptr (PosOutput) output = g_object_new (POS_TYPE_OUTPUT, NULL);
   double pixel_size;
   guint dz;
 
@@ -132,7 +132,7 @@ test_size_manager_landscape_osk_scale_up_fw13_add_150 (void)
 static void
 test_size_manager_portrait_osk_too_little_logical_height (void)
 {
-  PosOutput *output = g_object_new (POS_TYPE_OUTPUT, NULL);
+  g_autoptr (PosOutput) output = g_object_new (POS_TYPE_OUTPUT, NULL);
   guint dz;
 
   pos_output_set_logical_width (output, 100);
@@ -147,7 +147,7 @@ test_size_manager_portrait_osk_too_little_logical_height (void)
 static void
 test_size_manager_portrait_osk_too_little_physical_height (void)
 {
-  PosOutput *output = g_object_new (POS_TYPE_OUTPUT, NULL);
+  g_autoptr (PosOutput) output = g_object_new (POS_TYPE_OUTPUT, NULL);
   double pixel_size;
   guint dz;
 
@@ -165,7 +165,7 @@ test_size_manager_portrait_osk_too_little_physical_height (void)
 static void
 test_size_manager_portrait_osk_scale_up_op6t_at_250 (void)
 {
-  PosOutput *output = g_object_new (POS_TYPE_OUTPUT, NULL);
+  g_autoptr (PosOutput) output = g_object_new (POS_TYPE_OUTPUT, NULL);
   double pixel_size;
   guint height, dz;
 
@@ -186,7 +186,7 @@ test_size_manager_portrait_osk_scale_up_op6t_at_250 (void)
 static void
 test_size_manager_portrait_osk_scale_up_l5_at_200 (void)
 {
-  PosOutput *output = g_object_new (POS_TYPE_OUTPUT, NULL);
+  g_autoptr (PosOutput) output = g_object_new (POS_TYPE_OUTPUT, NULL);
   double pixel_size;
   guint height, dz;
 
