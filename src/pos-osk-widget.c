@@ -568,8 +568,7 @@ parse_row (PosOskWidget      *self,
   gsize num_keys;
 
   num_keys = json_array_get_length (arow);
-  row->keys = g_ptr_array_sized_new (num_keys + 2);
-  g_ptr_array_set_free_func (row->keys, g_object_unref);
+  row->keys = g_ptr_array_new_full (num_keys + 2, g_object_unref);
 
   row->width = 0.0;
   for (int i = 0; i < num_keys; i++) {
@@ -599,7 +598,6 @@ parse_row (PosOskWidget      *self,
   add_common_keys_pre (self, row, l, r, max_rows);
   add_common_keys_post (row, l, r, max_rows);
 }
-
 
 
 static gboolean
