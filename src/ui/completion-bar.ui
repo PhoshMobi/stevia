@@ -31,5 +31,15 @@
         </child>
       </object>
     </child>
+    <child>
+      <object class="GtkLabel" id="info_label">
+        <property name="visible">1</property>
+        <property name="label" bind-source="PosCompletionBar" bind-property="info" bind-flags="sync-create"/>
+        <property name="margin-end">6</property>
+        <attributes>
+          <attribute name="weight" value="bold"/>
+        </attributes>
+      </object>
+    </child>
   </template>
 </interface>
