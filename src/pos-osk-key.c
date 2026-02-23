@@ -108,7 +108,7 @@ pos_osk_key_get_property (GObject    *object,
 
   switch (property_id) {
   case PROP_USE:
-    g_value_set_boolean (value, self->use);
+    g_value_set_enum (value, self->use);
     break;
   case PROP_WIDTH:
     g_value_set_double (value, self->width);
