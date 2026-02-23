@@ -389,7 +389,7 @@ pos_completer_hunspell_feed_symbol (PosCompleter *iface, const char *symbol)
 
   input = convert_from_utf8 (self, self->preedit->str);
   if (Hunspell_spell (self->handle, input))
-    g_strv_builder_add (builder, g_strdup (self->preedit->str));
+    g_strv_builder_add (builder, self->preedit->str);
 
   ret = Hunspell_suggest (self->handle, &suggestions, input);
   if (ret > 0) {
