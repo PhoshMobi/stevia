@@ -595,6 +595,11 @@ parse_row (PosOskWidget      *self,
     g_ptr_array_add (row->keys, g_steal_pointer (&key));
   }
 
+  if (row->keys->len == 0) {
+    g_warning ("%s: Row in layer %d has no keys", self->name, l);
+    return;
+  }
+
   add_common_keys_pre (self, row, l, r, max_rows);
   add_common_keys_post (row, l, r, max_rows);
 }
