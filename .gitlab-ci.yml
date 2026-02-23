@@ -114,9 +114,6 @@ build:native-debian-forky:
   artifacts:
     paths:
       - _build
-  except:
-    variables:
-      - $PKG_ONLY == "1"
 
 test:native-debian-forky:
   stage: test+docs
@@ -131,9 +128,6 @@ test:native-debian-forky:
     when: always
     reports:
       junit: _build/meson-logs/testlog.junit.xml
-  except:
-    variables:
-      - $PKG_ONLY == "1"
 
 doc:
   stage: test+docs
@@ -150,9 +144,6 @@ doc:
   artifacts:
     paths:
       - _doc/
-  except:
-    variables:
-      - $PKG_ONLY == "1"
 
 test-layouts:
   image: ${DEBIAN_IMAGE}
@@ -202,9 +193,6 @@ build:native-alpinelinux-edge:
     - git submodule update --recursive
     - meson --werror . _build
     - meson compile -C _build
-  except:
-    variables:
-      - $PKG_ONLY == "1"
 
 format-check:
   stage: style-checks
