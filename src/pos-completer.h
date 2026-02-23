@@ -58,6 +58,7 @@ struct _PosCompleterInterface
   void           (*learn_accepted) (PosCompleter *self, const char *word);
   const char *   (*lookup_completion) (PosCompleter *self, const char *completion);
   gboolean       (*set_selected) (PosCompleter *self, const char *selected);
+  void           (*toggle_mode) (PosCompleter *self);
 };
 
 /* Used by completion users */
@@ -82,5 +83,6 @@ GStrv          pos_completer_capitalize_by_template (const char *template,
 
 glong          pos_completer_find_prev_word_break (const char *text);
 gboolean       pos_completer_set_selected (PosCompleter *self, const char *selected);
+void           pos_completer_toggle_mode (PosCompleter *self);
 
 G_END_DECLS

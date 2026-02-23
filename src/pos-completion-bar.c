@@ -24,6 +24,7 @@ static GParamSpec *props[PROP_LAST_PROP];
 
 enum {
   SELECTED,
+  MODE_PRESSED,
   N_SIGNALS
 };
 static guint signals[N_SIGNALS];
@@ -103,6 +104,15 @@ on_completion_selected (PosCompletionBar *self, const char *completion)
 
 
 static void
+on_mode_button_clicked (PosCompletionBar *self)
+{
+  g_assert (POS_IS_COMPLETION_BAR (self));
+
+  g_signal_emit (self, signals[MODE_PRESSED], 0);
+}
+
+
+static void
 pos_completion_bar_finalize (GObject *object)
 {
   PosCompletionBar *self = POS_COMPLETION_BAR (object);
@@ -143,6 +153,13 @@ pos_completion_bar_class_init (PosCompletionBarClass *klass)
                                     1,
                                     G_TYPE_STRING);
 
+  signals[MODE_PRESSED] = g_signal_new ("mode-pressed",
+                                        G_TYPE_FROM_CLASS (klass),
+                                        G_SIGNAL_RUN_LAST,
+                                        0, NULL, NULL, NULL,
+                                        G_TYPE_NONE,
+                                        0);
+
   g_type_ensure (POS_TYPE_COMPLETIONS_BOX);
 
   gtk_widget_class_set_template_from_resource (widget_class,
@@ -151,6 +168,7 @@ pos_completion_bar_class_init (PosCompletionBarClass *klass)
   gtk_widget_class_bind_template_child (widget_class, PosCompletionBar, scrolled_window);
 
   gtk_widget_class_bind_template_callback (widget_class, on_completion_selected);
+  gtk_widget_class_bind_template_callback (widget_class, on_mode_button_clicked);
 
   gtk_widget_class_set_css_name (widget_class, "pos-completion-bar");
 }

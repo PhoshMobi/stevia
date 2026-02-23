@@ -40,6 +40,8 @@
  *
  * @set_selection: Invoked when the user selected a completion item.
  *     Implementation of this method is optional.
+ * @toggle_mode: Toggle completion mode.
+ *     Implementation of this method is optional.
  */
 
 G_DEFINE_INTERFACE (PosCompleter, pos_completer, G_TYPE_OBJECT)
@@ -104,6 +106,14 @@ pos_completer_default_init (PosCompleterInterface *iface)
    */
   g_object_interface_install_property (
     iface, g_param_spec_boxed ("completions", "", "", G_TYPE_STRV, G_PARAM_READABLE));
+
+  /**
+   * PosCompleter:mode-name:
+   *
+   * Mode name shown by the OSK along with the mode toggle.
+   */
+  g_object_interface_install_property (
+    iface, g_param_spec_string ("mode-name", "", "", NULL, G_PARAM_READABLE));
 
   /**
    * PosCompleter::commit-string:
@@ -464,6 +474,27 @@ pos_completer_learn_accepted (PosCompleter *self, const char *word)
     return;
 
   return iface->learn_accepted (self, word);
+}
+
+/**
+ * pos_completer_toggle_mode:
+ * @iface: The completer
+ *
+ * Toggle the completer mode. It's up to the completer to make sense
+ * of mode toggles and to keep track of state.
+ */
+void
+pos_completer_toggle_mode (PosCompleter *self)
+{
+  PosCompleterInterface *iface;
+
+  g_return_if_fail (POS_IS_COMPLETER (self));
+
+  iface = POS_COMPLETER_GET_IFACE (self);
+  if (iface->toggle_mode == NULL)
+    return;
+
+  return iface->toggle_mode (self);
 }
 
 /**
