@@ -2131,6 +2131,7 @@ insert_ibus_layout (PosInputSurface *self, const char *type, const char *layout_
   g_autoptr (GError) err = NULL;
   g_auto (GStrv) parts = NULL;
   PosCompletionInfo *info;
+  const char *base_layout;
 
   /* We don't actually do ibus bus but try to match these to completers */
   if (g_strcmp0 (type, "ibus")) {
@@ -2156,8 +2157,9 @@ insert_ibus_layout (PosInputSurface *self, const char *type, const char *layout_
     return NULL;
   }
 
-  /* TODO: allow for other base layouts than "us" */
-  return insert_osk (self, name, layout_id, info->display_name, "us", NULL, info);
+  base_layout = info->base_layout ?: "us";
+  g_debug ("Adding ibus layout '%s' based on '%s'", name, base_layout);
+  return insert_osk (self, name, layout_id, info->display_name, base_layout, NULL, info);
 }
 
 

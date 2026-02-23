@@ -74,6 +74,7 @@ pos_completion_info_free (PosCompletionInfo *info)
   g_clear_pointer (&info->lang, g_free);
   g_clear_pointer (&info->region, g_free);
   g_clear_pointer (&info->display_name, g_free);
+  g_clear_pointer (&info->base_layout, g_free);
 
   g_free (info);
 }
@@ -341,6 +342,7 @@ pos_completer_manager_get_info (PosCompleterManager *self,
   info->display_name = pos_completer_get_display_name (completer);
   if (!info->display_name)
     info->display_name = g_strdup (lang);
+  info->base_layout = g_strdup (pos_completer_get_base_layout (completer));
 
   return info;
 }

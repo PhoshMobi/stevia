@@ -17,6 +17,7 @@ typedef struct _PosCompletionInfo {
   char         *lang;
   char         *region;
   char         *display_name;
+  char         *base_layout;
 } PosCompletionInfo;
 
 #define POS_TYPE_COMPLETER_MANAGER (pos_completer_manager_get_type ())
