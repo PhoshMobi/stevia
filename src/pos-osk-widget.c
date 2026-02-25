@@ -558,12 +558,12 @@ parse_symbols (JsonArray *array)
 
 
 static void
-parse_row (PosOskWidget      *self,
-           PosOskWidgetRow   *row,
-           JsonArray         *arow,
-           PosOskWidgetLayer  l,
-           guint              r,
-           guint              max_rows)
+parse_row (PosOskWidget     *self,
+           PosOskWidgetRow  *row,
+           JsonArray        *arow,
+           PosOskWidgetLayer l,
+           guint             r,
+           guint             max_rows)
 {
   gsize num_keys;
 
