@@ -1,0 +1,79 @@
+# Georgian translation for phosh-osk-stevia.
+# Copyright (C) 2026 phosh-osk-stevia's authors.
+# This file is distributed under the same license as the phosh-osk-stevia package.
+# Ekaterine Papava <papava.e@gtu.ge>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: phosh-osk-stevia\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-01-29 16:49+0100\n"
+"PO-Revision-Date: 2026-02-26 08:28+0100\n"
+"Last-Translator: Ekaterine Papava <papava.e@gtu.ge>\n"
+"Language-Team: Georgian <(nothing)>\n"
+"Language: ka\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.8\n"
+
+#: data/sm.puri.OSK0.desktop.in.in:3 data/sm.puri.OSK0.desktop.in.in:4
+msgid "On-screen keyboard"
+msgstr "ეკრანის კლავიატურა"
+
+#. Translators: Do not translate the name. It's the name of a library
+#: data/completers/hunspell.desktop.in:5
+msgid "Hunspell"
+msgstr "Hunspell"
+
+#: data/completers/hunspell.desktop.in:6
+msgid "The Hunspell completer provides dictionary based text correction"
+msgstr "Hunspell-ის დამასრულებელი მოგაწვდით ლექსიკონზე დაფუძნებულ ტექსტის კორექციას"
+
+#: data/completers/hunspell.desktop.in:7
+msgid "This completer needs language specific dictionaries installed"
+msgstr "დამასრულებელს სჭირდება, ენის ლექსიკონები იყოს დაყენებული"
+
+#. Translators: Do not translate the name. It's the name of a library
+#: data/completers/presage.desktop.in:5
+msgid "Presage"
+msgstr "Presage"
+
+#: data/completers/presage.desktop.in:6
+msgid "The Presage completer provides intelligent predictive text entry"
+msgstr "დამასრულებელი Presage მოგაწვდით ჭკვიან, წინასწარმჭვრეტ ტექსტის შეყვანას"
+
+#: data/completers/presage.desktop.in:7
+msgid "This completer needs language specific data installed"
+msgstr "დამასრულებელს სჭირდება, ენის მონაცემები იყოს დაყენებული"
+
+#. Translators: Used to auto complete the current date, should be a single word
+#: src/pos-completer-base.c:78
+msgid "today"
+msgstr "დღეს"
+
+#. Translators: Used to auto complete the a date, should be a single word
+#: src/pos-completer-base.c:83
+msgid "tomorrow"
+msgstr "ხვალ"
+
+#. Translators: Used to auto complete the current time, should be a single word
+#: src/pos-completer-base.c:90
+msgid "now"
+msgstr "ახლა"
+
+#: src/pos-input-surface.c:864
+msgid "Emoji"
+msgstr "ემოჯი"
+
+#: src/pos-input-surface.c:2248
+msgid "Terminal"
+msgstr "ტერმინალი"
+
+#: src/ui/input-surface.ui:97
+msgid "Word completion"
+msgstr "სიტყვების ავტომატური დასრულება"
+
+#: src/ui/input-surface.ui:104
+msgid "Keyboard Settings"
+msgstr "კლავიატურის მორგება"
