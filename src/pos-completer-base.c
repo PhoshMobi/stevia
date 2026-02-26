@@ -24,7 +24,8 @@
 /**
  * PosCompleterBase:
  *
- * Base class for completers implementing common functionality
+ * Class to ease implementing completers. Completers aren't required
+ * to use this class.
  */
 
 static const char * const punctuation_symbols[] = {
