@@ -416,7 +416,7 @@ pos_completer_get_display_name (PosCompleter *self)
 }
 
 /**
- * pos_completer_varnam_learn_accepted:
+ * pos_completer_learn_accepted:
  * @iface: The completer iface
  * @word: The word to learn
  *
