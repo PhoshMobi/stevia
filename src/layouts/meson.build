@@ -57,6 +57,7 @@ layouts = [
   'us.json',
   'us+colemak.json',
   'us+dvorak.json',
+  'us+workman.json',
   'vn.json',
   'za.json',
   # custom lauouts
