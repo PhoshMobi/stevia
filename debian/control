@@ -4,25 +4,27 @@ Priority: optional
 Maintainer: Guido Günther <agx@sigxcpu.org>
 Build-Depends:
  debhelper-compat (= 13),
- json-glib-tools,
- libsystemd-dev,
- libfeedback-dev,
+ dbus-x11 <!nocheck>,
  gi-docgen <!nodoc>,
  gobject-introspection <!nodoc>,
  gsettings-desktop-schemas-dev (>= 47),
  hunspell-en-us <!nocheck>,
+ json-glib-tools,
+ libfeedback-dev,
+ libgirepository1.0-dev <!nodoc>,
  libgmobile-dev,
  libgnome-desktop-3-dev,
- libgirepository1.0-dev <!nodoc>,
  libgtk-3-dev,
  libhandy-1-dev (>= 1.1.90),
  libhunspell-dev,
  libjson-glib-dev,
  libpresage-dev,
+ libsystemd-dev,
  libwayland-dev,
  libxml2-utils,
- presage <!nocheck>,
  meson,
+ phoc <!nocheck>,
+ presage <!nocheck>,
  python3-docutils <!nodoc>,
  systemd-dev,
  xauth <!nocheck>,
@@ -38,13 +40,14 @@ Recommends:
  hunspell-en-us,
  phosh-osk-data-eu,
 Depends:
+ gsettings-desktop-schemas (>= 47),
  ${misc:Depends},
  ${shlibs:Depends},
-  gsettings-desktop-schemas (>= 47),
-Replaces: phosh-osk-stub (<< 0.48~)
-Breaks:
+Replaces:
  phosh-osk-stub (<< 0.48~),
- libgtk-3-0 (<< 3.24.35)
+Breaks:
+ libgtk-3-0 (<< 3.24.35),
+ phosh-osk-stub (<< 0.48~),
 Description: An alternative on screen keyboard for Phosh
  Stevia is an on screen keyboard (OSK) for Phosh. It features
  .
@@ -65,8 +68,10 @@ Section: doc
 Build-Profiles: <!nodoc>
 Depends:
  ${misc:Depends},
-Provides: phosh-osk-stub-doc (= 0.47)
-Replaces: phosh-osk-stub-doc (<< 0.48~)
+Provides:
+ phosh-osk-stub-doc (= 0.47),
+Replaces:
+ phosh-osk-stub-doc (<< 0.48~),
 Breaks:
  phosh-osk-stub-doc (<< 0.48~),
 Description: API documentation for Phosh's OSK stub

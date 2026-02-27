@@ -399,7 +399,7 @@ pos_osk_widget_layout_free (PosOskWidgetLayout *layout)
   g_clear_pointer (&layout->name, g_free);
   g_clear_pointer (&layout->locale, g_free);
 
-  for (int l = 0; l < layout->n_layers; l++) {
+  for (int l = 0; l < POS_OSK_WIDGET_LAST_LAYER + 1; l++) {
     for (int r = 0; r < layout->n_rows; r++) {
       if (layout->layers[l].rows[r].keys) {
         g_ptr_array_free (layout->layers[l].rows[r].keys, TRUE);
@@ -558,18 +558,17 @@ parse_symbols (JsonArray *array)
 
 
 static void
-parse_row (PosOskWidget      *self,
-           PosOskWidgetRow   *row,
-           JsonArray         *arow,
-           PosOskWidgetLayer  l,
-           guint              r,
-           guint              max_rows)
+parse_row (PosOskWidget     *self,
+           PosOskWidgetRow  *row,
+           JsonArray        *arow,
+           PosOskWidgetLayer l,
+           guint             r,
+           guint             max_rows)
 {
   gsize num_keys;
 
   num_keys = json_array_get_length (arow);
-  row->keys = g_ptr_array_sized_new (num_keys + 2);
-  g_ptr_array_set_free_func (row->keys, g_object_unref);
+  row->keys = g_ptr_array_new_full (num_keys + 2, g_object_unref);
 
   row->width = 0.0;
   for (int i = 0; i < num_keys; i++) {
@@ -596,10 +595,14 @@ parse_row (PosOskWidget      *self,
     g_ptr_array_add (row->keys, g_steal_pointer (&key));
   }
 
+  if (row->keys->len == 0) {
+    g_warning ("%s: Row in layer %d has no keys", self->name, l);
+    return;
+  }
+
   add_common_keys_pre (self, row, l, r, max_rows);
   add_common_keys_post (row, l, r, max_rows);
 }
-
 
 
 static gboolean

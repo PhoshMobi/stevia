@@ -142,8 +142,10 @@ pos_emoji_db_match_by_name (PosEmojiDb *self, const char *match, guint max_match
       g_strv_builder_add (builder, text);
       matches++;
 
-      if (matches == max_matches)
+      if (matches == max_matches) {
+        g_variant_unref (item);
         break;
+      }
     }
 
     g_variant_unref (item);

@@ -67,19 +67,20 @@ pos_osk_key_set_property (GObject      *object,
     pos_osk_key_set_width (self, g_value_get_double (value));
     break;
   case PROP_SYMBOL:
-    self->symbol = g_value_dup_string (value);
+    g_set_str (&self->symbol, g_value_get_string (value));
     break;
   case PROP_SYMBOLS:
+    g_strfreev (self->symbols);
     self->symbols = g_value_dup_boxed (value);
     break;
   case PROP_LABEL:
-    self->label = g_value_dup_string (value);
+    g_set_str (&self->label, g_value_get_string (value));
     break;
   case PROP_ICON:
-    self->icon = g_value_dup_string (value);
+    g_set_str (&self->icon, g_value_get_string (value));
     break;
   case PROP_STYLE:
-    self->style = g_value_dup_string (value);
+    g_set_str (&self->style, g_value_get_string (value));
     break;
   case PROP_LAYER:
     self->layer = g_value_get_enum (value);
@@ -107,7 +108,7 @@ pos_osk_key_get_property (GObject    *object,
 
   switch (property_id) {
   case PROP_USE:
-    g_value_set_boolean (value, self->use);
+    g_value_set_enum (value, self->use);
     break;
   case PROP_WIDTH:
     g_value_set_double (value, self->width);

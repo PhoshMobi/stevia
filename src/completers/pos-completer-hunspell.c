@@ -363,11 +363,9 @@ pos_completer_hunspell_feed_symbol (PosCompleter *iface, const char *symbol)
     PosCompleterBase *base = POS_COMPLETER_BASE (self);
     int before = 0;
 
-    if (pos_completer_base_wants_punctuation_swap (base, symbol) &&
-        /* Only swap if preedit is symbol + space */
-        self->preedit->len == 2) {
+    /* Only swap if preedit is 2 characters: symbol + space */
+    if (pos_completer_base_wants_punctuation_swap (base, symbol) && self->preedit->len == 2)
       before = 1;
-    }
 
     g_signal_emit_by_name (self, "commit-string", self->preedit->str, before, 0);
     pos_completer_hunspell_set_preedit (POS_COMPLETER (self), NULL);
@@ -389,7 +387,7 @@ pos_completer_hunspell_feed_symbol (PosCompleter *iface, const char *symbol)
 
   input = convert_from_utf8 (self, self->preedit->str);
   if (Hunspell_spell (self->handle, input))
-    g_strv_builder_add (builder, g_strdup (self->preedit->str));
+    g_strv_builder_add (builder, self->preedit->str);
 
   ret = Hunspell_suggest (self->handle, &suggestions, input);
   if (ret > 0) {

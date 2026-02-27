@@ -1,8 +1,8 @@
 usr/bin/phosh-osk-stevia
 usr/lib/systemd/user/*.service usr/share/phosh-osk-stevia/
-usr/share/glib-2.0/schemas/
-usr/share/metainfo/
 usr/share/applications/*.desktop usr/share/phosh-osk-stevia/
+usr/share/glib-2.0/schemas/
 usr/share/locale/*/LC_MESSAGES/phosh-osk-stevia.mo
+usr/share/metainfo/
 usr/share/phosh-osk-stevia/completers/*.completer
 usr/share/phosh-osk-stevia/layouts.json
