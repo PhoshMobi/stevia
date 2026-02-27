@@ -28,7 +28,7 @@ static guint signals[N_SIGNALS];
  * is picked.
  */
 struct _PosCompletionBar {
-  GtkBox             parent;
+  GtkBox parent;
 
   PosCompletionsBox *completions_box;
   GtkScrolledWindow *scrolled_window;
