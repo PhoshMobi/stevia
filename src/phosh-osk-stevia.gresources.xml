@@ -70,6 +70,7 @@
     <file preprocess="json-stripblanks">layouts/us.json</file>
     <file preprocess="json-stripblanks">layouts/us+colemak.json</file>
     <file preprocess="json-stripblanks">layouts/us+dvorak.json</file>
+    <file preprocess="json-stripblanks">layouts/us+workman.json</file>
     <file preprocess="json-stripblanks">layouts/vn.json</file>
     <file preprocess="json-stripblanks">layouts/za.json</file>
 
