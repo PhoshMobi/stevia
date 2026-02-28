@@ -245,8 +245,7 @@ helper_disconnected (void)
 static void
 parse_helper_str (const char *str)
 {
-  /* Invoked on config changes in uim-pref-gtk3 */
-  g_debug ("%s: %s", __func__, str);
+  /* Intentionally left blank */
 }
 
 
