@@ -233,6 +233,11 @@ For valid values see documentation of `gtk_accelerator_parse()`: https://docs.gt
 One can also add plain ``<ctrl>`` and ``<alt>`` keys. These then act as latched keys
 until the next regular key is pressed.
 
+The usable key names for non-modifier keys can be looked up in `GTK's keysym list`:
+https://gitlab.gnome.org/GNOME/gtk/-/blob/gtk-3-24/gdk/gdkkeysyms.h . So e.g.
+`GDK_KEY_Escape` would become `Escape` in the shortcuts setting.
+
+
 IGNORING ACTIVATION
 ^^^^^^^^^^^^^^^^^^^
 For some applications you might not want to unfold the OSK when the
@@ -301,7 +306,10 @@ devices it can be useful to shift the keyboard a bit upwards. The `scaling`
 setting handles this:
 
 * ``auto-portrait``: Automatically adjust the keyboard height in portrait mode based
-  on the resolution.
+  on the display resolution to keep they physical height constant.
+
+* ``auto-landscape``: Automatically adjust the keyboard height in landscape mode based
+  on the display resolution to keep they physical height constant.
 
 * ``bottom-dead-zone``: Add an empty area at the bottom of the keyboard when enough
   vertical space is available.
@@ -331,11 +339,24 @@ ENVIRONMENT VARIABLES
 - ``GTK_DEBUG`` and other environment variables supported by GTK, see
   https://docs.gtk.org/gtk3/running.html
 
+DBUS INTERFACE
+--------------
+
+Folding and unfolding of the keyboard is handled automatically via
+Wayland protocols as described above. On top of that Stevia implements
+Phosh's DBus interface. This allows Phosh to detect the keyboards
+current state and to show or hide the OSK overriding the current
+applications.
+
+See
+https://world.pages.gitlab.gnome.org/Phosh/phosh/phosh-dbus-sm.puri.OSK0.html
+for the protocol definition.
 
 EXAMPLES
 --------
 
-Use ``swipeGuess`` for swipe input:
+Configure the ``Pipe`` completer to use ``swipeGuess`` for swipe
+input:
 
 ::
 
@@ -343,6 +364,11 @@ Use ``swipeGuess`` for swipe input:
    gsettings set sm.puri.phosh.osk.Completers.Pipe command "swipeGuess /usr/local/share/swipeGuess/words/words-qwerty-en"
    gsettings set sm.puri.phosh.osk osk-features "['key-drag']"
 
+Unfold the keyboard using the DBus interface
+
+::
+
+   busctl call --user sm.puri.OSK0 /sm/puri/OSK0 sm.puri.OSK0 SetVisible b true
 
 See also
 --------

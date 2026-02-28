@@ -713,7 +713,7 @@ settings_activated (GSimpleAction *action, GVariant *parameter, gpointer data)
   PosInputSurface *self = POS_INPUT_SURFACE (data);
 
   /* popdown popover right away to avoid flicker when OSK goes away */
-  gtk_popover_popdown (self->menu_popup);
+  gtk_widget_set_visible (GTK_WIDGET  (self->menu_popup), FALSE);
   pos_open_settings_panel ("osk");
 }
 
@@ -917,7 +917,7 @@ select_layout_change_state (GSimpleAction *action,
   GtkWidget *osk_widget;
 
   /* popdown popover right away to avoid flicker when switching layouts */
-  gtk_popover_popdown (self->menu_popup);
+  gtk_widget_set_visible (GTK_WIDGET  (self->menu_popup), FALSE);
 
   /* reset all letched modifiers */
   pos_input_surface_unlatch_modifiers (self);
@@ -1204,7 +1204,7 @@ pos_input_surface_set_completion_enabled (PosInputSurface *self, gboolean enable
     return;
 
   /* popdown popover right away */
-  gtk_popover_popdown (self->menu_popup);
+  gtk_widget_set_visible (GTK_WIDGET  (self->menu_popup), FALSE);
 
   self->completion_enabled = enable;
 
