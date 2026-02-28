@@ -25,6 +25,7 @@ Features:
 - [word completion](https://social.librem.one/@agx/109428599061094716)
   based on the presage library
 - experimental input of Indic languages using [varnam](https://github.com/varnamproject)
+- experimental input of Chinese and Japense using [uim](https://github.com/uim)
 - allow for secondary completers to amend completion results
 - allow to prevent keyboard unfold for certain apps (via app-id)
 - allow to prevent keyboard unfold when a hardware keyboard is present

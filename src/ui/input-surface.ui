@@ -17,6 +17,7 @@
               <object class="PosCompletionBar" id="completion_bar">
                 <property name="visible" bind-source="PosInputSurface" bind-property="completer-active" bind-flags="sync-create"/>
                 <signal name="selected" handler="on_completion_selected" object="PosInputSurface" swapped="yes"/>
+                <signal name="mode-pressed" handler="on_mode_pressed" object="PosInputSurface" swapped="yes"/>
               </object>
             </child>
             <child>

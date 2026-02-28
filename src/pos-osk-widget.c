@@ -463,9 +463,11 @@ add_common_keys_pre (PosOskWidget      *self,
         break;
       case POS_OSK_WIDGET_LAYER_NORMAL:
       case POS_OSK_WIDGET_LAYER_CAPS:
-      default:
         label = NULL;
         icon = "keyboard-shift-filled-symbolic";
+        break;
+      default:
+        g_assert_not_reached ();
       }
       key = g_object_new (POS_TYPE_OSK_KEY,
                           "use", POS_OSK_KEY_USE_TOGGLE,
@@ -499,8 +501,10 @@ add_common_keys_pre (PosOskWidget      *self,
       label = "={<";
       break;
     case POS_OSK_WIDGET_LAYER_NORMAL:
-    default:
       label = "123";
+      break;
+    default:
+      g_assert_not_reached ();
     }
     key = g_object_new (POS_TYPE_OSK_KEY,
                         "label", label,

@@ -31,5 +31,22 @@
         </child>
       </object>
     </child>
+    <child>
+      <object class="GtkButton" id="mode_button">
+        <property name="visible">1</property>
+        <property name="margin-start">6</property>
+        <property name="margin-end">6</property>
+        <signal name="clicked" handler="on_mode_button_clicked" object="PosCompletionBar" swapped="yes"/>
+        <child>
+          <object class="GtkLabel">
+            <property name="label" bind-source="PosCompletionBar" bind-property="mode-name" bind-flags="sync-create"/>
+            <property name="visible">1</property>
+            <attributes>
+              <attribute name="weight" value="bold"/>
+            </attributes>
+          </object>
+        </child>
+      </object>
+    </child>
   </template>
 </interface>

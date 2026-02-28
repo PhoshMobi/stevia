@@ -43,6 +43,8 @@ enum {
   PROP_NAME,
   PROP_PREEDIT,
   PROP_COMPLETIONS,
+  PROP_MODE_NAME,
+  /* presage specific */
   PROP_DICT_DIR,
   PROP_LAST_PROP
 };
@@ -365,6 +367,9 @@ pos_completer_presage_get_property (GObject    *object,
   case PROP_COMPLETIONS:
     g_value_set_boxed (value, self->completions);
     break;
+  case PROP_MODE_NAME:
+    g_value_set_string (value, NULL);
+    break;
   default:
     G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
     break;
@@ -406,6 +411,9 @@ pos_completer_presage_class_init (PosCompleterPresageClass *klass)
 
   g_object_class_override_property (object_class, PROP_COMPLETIONS, "completions");
   props[PROP_COMPLETIONS] = g_object_class_find_property (object_class, "completions");
+
+  g_object_class_override_property (object_class, PROP_MODE_NAME, "mode-name");
+  props[PROP_MODE_NAME] = g_object_class_find_property (object_class, "mode-name");
 
   props[PROP_DICT_DIR] =
     g_param_spec_string ("dict-dir", "", "",

@@ -151,6 +151,7 @@ struct _PosInputSurface {
   GtkWidget               *completion_bar;
   gboolean                 completion_enabled;
   PhoshOskCompletionModeFlags completion_mode;
+  GBinding                *mode_name_binding;
 
   /* Clipboard */
   PosClipboardManager    *clipboard_manager;
@@ -443,13 +444,23 @@ on_completion_selected (PosInputSurface *self, const char *completion)
   else
     send = g_strdup_printf ("%s ", completion);
 
-  pos_input_method_send_string (self->input_method, send, TRUE);
+  /* Some completers like uim need more control than just submitting the selection */
+  if (pos_completer_set_selected (self->completer, completion) == FALSE)
+    pos_input_method_send_string (self->input_method, send, TRUE);
 
   if (pos_input_surface_is_completer_active (self)) {
     pos_completer_learn_accepted (self->completer, send);
     pos_completer_set_preedit (self->completer, NULL);
   }
+}
 
+
+static void
+on_mode_pressed (PosInputSurface *self)
+{
+  g_return_if_fail (POS_IS_INPUT_SURFACE (self));
+
+  pos_completer_toggle_mode (self->completer);
 }
 
 
@@ -1110,6 +1121,7 @@ pos_input_surface_set_completer (PosInputSurface *self, PosCompleter *completer)
   if (self->completer == completer)
     return;
 
+  g_clear_object (&self->mode_name_binding);
   if (self->completer)
     g_signal_handlers_disconnect_by_data (self->completer, self);
 
@@ -1127,6 +1139,10 @@ pos_input_surface_set_completer (PosInputSurface *self, PosCompleter *completer)
                       "swapped-signal::update",
                       G_CALLBACK (on_completer_update), self,
                       NULL);
+    self->mode_name_binding = g_object_bind_property (self->completer, "mode-name",
+                                                      self->completion_bar, "mode-name",
+                                                      G_BINDING_SYNC_CREATE);
+
   } else {
     g_debug ("Removing completer");
   }
@@ -1806,6 +1822,7 @@ pos_input_surface_class_init (PosInputSurfaceClass *klass)
   gtk_widget_class_bind_template_callback (widget_class, on_keypad_done);
 
   gtk_widget_class_bind_template_callback (widget_class, on_latched_modifiers_changed);
+  gtk_widget_class_bind_template_callback (widget_class, on_mode_pressed);
   gtk_widget_class_bind_template_callback (widget_class, on_num_shortcuts_changed);
   gtk_widget_class_bind_template_callback (widget_class, on_osk_key_cancelled);
   gtk_widget_class_bind_template_callback (widget_class, on_osk_key_down);

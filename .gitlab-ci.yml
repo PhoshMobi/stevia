@@ -170,7 +170,7 @@ test-layouts:
     PHOSH_ADDITIONAL_PKGS: >
       phoc swaybg grim imagemagick
       phosh-wallpapers dbus-x11
-      fonts-noto-core
+      fonts-noto-core libuim8
   needs:
     - build:native-debian-forky
   script:
