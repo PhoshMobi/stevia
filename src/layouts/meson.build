@@ -83,6 +83,7 @@ build_info = custom_target(
     '--layouts=@0@'.format(meson.current_source_dir()),
     '--out=@OUTPUT@',
     varnam_dep.found() ? '--varnam' : '--no-varnam',
+    uim_dep.found() ? '--uim' : '--no-uim',
   ],
   depend_files: [layouts, info_builder.full_path()],
   env: {'LC_ALL': 'C'},
