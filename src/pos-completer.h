@@ -57,7 +57,25 @@ struct _PosCompleterInterface
   char *         (*get_display_name) (PosCompleter *self);
   void           (*learn_accepted) (PosCompleter *self, const char *word);
   const char *   (*lookup_completion) (PosCompleter *self, const char *completion);
+  /**
+   * PosCompleterInterface::set_selected:
+   * @self: The completer
+   * @selected: The selected completion
+   *
+   * Invoked when the user selected a completion item.
+   * Implementation of this method is optional.
+   *
+   * Returns: Whether the completer processed the provided `completion`.
+   */
   gboolean       (*set_selected) (PosCompleter *self, const char *selected);
+
+  /**
+   * PosCompleterInterface::toggle_mode:
+   * @self: The completer
+   *
+   * Toggle completion mode.
+   * Implementation of this method is optional.
+   */
   void           (*toggle_mode) (PosCompleter *self);
 };
 

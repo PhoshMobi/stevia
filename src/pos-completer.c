@@ -37,11 +37,6 @@
  * characters to either take the user input as is or force
  * "aggressive" autocorrection (picking a correction on the users
  * behalf).
- *
- * @set_selection: Invoked when the user selected a completion item.
- *     Implementation of this method is optional.
- * @toggle_mode: Toggle completion mode.
- *     Implementation of this method is optional.
  */
 
 G_DEFINE_INTERFACE (PosCompleter, pos_completer, G_TYPE_OBJECT)
