@@ -451,7 +451,7 @@ pos_completer_get_display_name (PosCompleter *self)
 
 /**
  * pos_completer_learn_accepted:
- * @iface: The completer iface
+ * @self: The completer iface
  * @word: The word to learn
  *
  * The completer should learn the given word and offer it for
@@ -473,7 +473,7 @@ pos_completer_learn_accepted (PosCompleter *self, const char *word)
 
 /**
  * pos_completer_toggle_mode:
- * @iface: The completer
+ * @self: The completer
  *
  * Toggle the completer mode. It's up to the completer to make sense
  * of mode toggles and to keep track of state.
