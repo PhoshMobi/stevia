@@ -812,7 +812,7 @@ pos_completer_uim_set_language (PosCompleter *completer,
 
   uim_set_prop_list_update_cb (self->context, prop_list_update);
 
-  /* Trigger propery list update */
+  /* Trigger property list update */
   uim_prop_list_update (self->context);
 
   g_debug ("Selected: %s", uim_get_current_im_name (self->context));
