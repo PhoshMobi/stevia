@@ -123,7 +123,7 @@ struct _PosInputSurface {
   PosInputMethod          *input_method;
 
   /* OSK */
-  GHashTable              *osks;
+  GPtrArray               *osks;
   HdyDeck                 *deck;
   HdyClamp                *clamp;
   GtkWidget               *osk_terminal;
@@ -847,12 +847,10 @@ pos_osk_get_display_name (PosOskWidget *osk_widget)
 
 
 static void
-menu_add_layout (gpointer key, gpointer value, gpointer data)
+menu_add_layout (PosInputSurface *self, PosOskWidget *osk_widget)
 {
   GtkWidget *button;
-  const char *name = key;
-  PosOskWidget *osk_widget = POS_OSK_WIDGET (value);
-  PosInputSurface *self = POS_INPUT_SURFACE (data);
+  const char *name = pos_osk_widget_get_name (osk_widget);
   const char *display_name = pos_osk_get_display_name (osk_widget);
 
   button = g_object_new (GTK_TYPE_MODEL_BUTTON,
@@ -901,10 +899,13 @@ menu_activated (GSimpleAction *action, GVariant *parameter, gpointer data)
                          (GtkCallback) gtk_widget_destroy,
                          NULL);
 
-  g_hash_table_foreach (self->osks, menu_add_layout, self);
-  menu_add_layout ((gpointer)pos_osk_widget_get_name (POS_OSK_WIDGET (self->osk_terminal)),
-                   self->osk_terminal,
-                   self);
+  for (int i = 0; i < self->osks->len; i++) {
+    PosOskWidget *osk = g_ptr_array_index (self->osks, i);
+
+    menu_add_layout (self, osk);
+  }
+
+  menu_add_layout (self, POS_OSK_WIDGET (self->osk_terminal));
   menu_add_emoji_picker (self);
 
   gtk_widget_set_visible (self->word_completion_btn,
@@ -918,6 +919,20 @@ menu_activated (GSimpleAction *action, GVariant *parameter, gpointer data)
 }
 
 
+static PosOskWidget *
+pos_input_surface_get_osk_widget (PosInputSurface *self, const char *name)
+{
+  for (int i = 0; i < self->osks->len; i++) {
+    PosOskWidget *osk_widget = g_ptr_array_index (self->osks, i);
+
+    if (g_strcmp0 (pos_osk_widget_get_name (osk_widget), name) == 0)
+      return osk_widget;
+  }
+
+  return NULL;
+}
+
+
 static void
 select_layout_change_state (GSimpleAction *action,
                             GVariant      *parameter,
@@ -925,7 +940,8 @@ select_layout_change_state (GSimpleAction *action,
 {
   PosInputSurface *self = POS_INPUT_SURFACE (data);
   const char *layout = NULL;
-  GtkWidget *osk_widget;
+  PosOskWidget *osk_widget;
+  GtkWidget *widget;
 
   /* popdown popover right away to avoid flicker when switching layouts */
   gtk_widget_set_visible (GTK_WIDGET  (self->menu_popup), FALSE);
@@ -936,13 +952,15 @@ select_layout_change_state (GSimpleAction *action,
   g_variant_get (parameter, "&s", &layout);
   g_debug ("Layout '%s' selected", layout);
 
-  osk_widget = g_hash_table_lookup (self->osks, layout);
-  if (osk_widget == NULL) {
+  osk_widget = pos_input_surface_get_osk_widget (self, layout);
+  if (osk_widget) {
+    widget = GTK_WIDGET (osk_widget);
+  } else {
     if (g_str_equal (layout, "terminal")) {
-      osk_widget = self->osk_terminal;
+      widget = self->osk_terminal;
       pos_input_surface_submit_current_preedit (self);
     } else if (g_str_equal (layout, "emoji")) {
-      osk_widget = self->emoji_picker;
+      widget = self->emoji_picker;
       pos_input_surface_submit_current_preedit (self);
     } else {
       g_warning ("Failed to find layout '%s'", layout);
@@ -950,7 +968,7 @@ select_layout_change_state (GSimpleAction *action,
     }
   }
 
-  hdy_deck_set_visible_child (self->deck, GTK_WIDGET (osk_widget));
+  hdy_deck_set_visible_child (self->deck, widget);
   g_simple_action_set_state (action, parameter);
 }
 
@@ -1230,23 +1248,17 @@ pos_input_surface_set_completion_enabled (PosInputSurface *self, gboolean enable
 
 
 static void
-update_osk_features (gpointer key, gpointer value, gpointer data)
-{
-  PosOskWidget *osk_widget = POS_OSK_WIDGET (value);
-  PosInputSurface *self = POS_INPUT_SURFACE (data);
-
-  pos_osk_widget_set_features (osk_widget, self->osk_features);
-}
-
-
-static void
 pos_input_surface_set_osk_features (PosInputSurface *self, PhoshOskFeatures osk_features)
 {
   if (self->osk_features == osk_features)
     return;
 
   self->osk_features = osk_features;
-  g_hash_table_foreach (self->osks, update_osk_features, self);
+  for (int i = 0; i < self->osks->len; i++) {
+    PosOskWidget *osk_widget = g_ptr_array_index (self->osks, i);
+    pos_osk_widget_set_features (osk_widget, self->osk_features);
+  }
+
   pos_osk_widget_set_features (POS_OSK_WIDGET (self->osk_terminal), self->osk_features);
 
   g_object_notify_by_pspec (G_OBJECT (self), props[PROP_OSK_FEATURES]);
@@ -1254,10 +1266,8 @@ pos_input_surface_set_osk_features (PosInputSurface *self, PhoshOskFeatures osk_
 
 
 static void
-update_osk_key_height (gpointer key, gpointer value, gpointer data)
+update_osk_key_height (PosInputSurface *self, PosOskWidget *osk_widget)
 {
-  PosOskWidget *osk_widget = POS_OSK_WIDGET (value);
-  PosInputSurface *self = POS_INPUT_SURFACE (data);
   guint n_rows;
 
   n_rows = pos_osk_widget_max_rows (osk_widget);
@@ -1274,8 +1284,12 @@ pos_input_surface_set_min_height (PosInputSurface *self, guint min_height)
   self->min_height = min_height;
   g_debug ("Minimum keyboard height: %d", self->min_height);
 
-  g_hash_table_foreach (self->osks, update_osk_key_height, self);
-  update_osk_key_height (NULL, self->osk_terminal, self);
+  for (int i = 0; i < self->osks->len; i++) {
+    PosOskWidget *osk_widget = g_ptr_array_index (self->osks, i);
+
+    update_osk_key_height (self, osk_widget);
+  }
+  update_osk_key_height (self, POS_OSK_WIDGET (self->osk_terminal));
 
   g_object_notify_by_pspec (G_OBJECT (self), props[PROP_MIN_HEIGHT]);
 }
@@ -1596,8 +1610,8 @@ pos_input_surface_destroy (GtkWidget *widget)
   PosInputSurface *self = POS_INPUT_SURFACE (widget);
 
   g_clear_object (&self->action_map);
-  /* Remove hash table early since this also destroys the osks in the deck */
-  g_clear_pointer (&self->osks, g_hash_table_destroy);
+  /* Clear array early since this also destroys the osks in the deck */
+  g_clear_pointer (&self->osks, g_ptr_array_unref);
 
   GTK_WIDGET_CLASS (pos_input_surface_parent_class)->destroy (widget);
 }
@@ -1626,7 +1640,7 @@ pos_input_surface_finalize (GObject *object)
   pos_input_surface_set_completer_manager (self, NULL);
   g_clear_object (&self->swipe_down);
   g_clear_object (&self->style_manager);
-  g_clear_pointer (&self->osks, g_hash_table_destroy);
+  g_clear_pointer (&self->osks, g_ptr_array_unref);
   g_clear_pointer (&self->surround_before, g_free);
 
   G_OBJECT_CLASS (pos_input_surface_parent_class)->finalize (object);
@@ -1985,7 +1999,7 @@ insert_osk (PosInputSurface   *self,
   g_autoptr (GError) err = NULL;
   PosOskWidget *osk_widget;
 
-  osk_widget = g_hash_table_lookup (self->osks, name);
+  osk_widget = pos_input_surface_get_osk_widget (self, name);
   if (osk_widget)
     return osk_widget;
 
@@ -2021,7 +2035,7 @@ insert_osk (PosInputSurface   *self,
                     NULL);
 
   hdy_deck_insert_child_after (self->deck, GTK_WIDGET (osk_widget), NULL);
-  g_hash_table_insert (self->osks, g_strdup (name), osk_widget);
+  g_ptr_array_add (self->osks, osk_widget);
 
   if (self->last_layout == NULL && POS_INPUT_SURFACE_IS_LANG_LAYOUT (osk_widget))
     self->last_layout = GTK_WIDGET (osk_widget);
@@ -2103,9 +2117,6 @@ static void
 on_input_setting_changed (PosInputSurface *self, const char *key, GSettings *settings)
 {
   g_autoptr (GVariant) sources = NULL;
-  g_autoptr (GHashTable) new = NULL;
-  g_autofree GStrv old = NULL;
-  g_autofree GStrv old_keys = NULL;
   GVariantIter iter;
   const char *id = NULL;
   const char *type = NULL;
@@ -2116,12 +2127,9 @@ on_input_setting_changed (PosInputSurface *self, const char *key, GSettings *set
   sources = g_settings_get_value (settings, "sources");
   g_variant_iter_init (&iter, sources);
 
-  /* Get us a copy of the keys since we remove elements while iterating */
-  old_keys = (GStrv)g_hash_table_get_keys_as_array (self->osks, NULL);
-  old = g_strdupv (old_keys);
-  new = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
-
+  g_ptr_array_remove_range (self->osks, 0, self->osks->len);
   self->last_layout = NULL;
+
   while (g_variant_iter_next (&iter, "(&s&s)", &type, &id)) {
     PosOskWidget *osk_widget;
 
@@ -2132,26 +2140,15 @@ on_input_setting_changed (PosInputSurface *self, const char *key, GSettings *set
     if (osk_widget == NULL)
       continue;
 
-    g_hash_table_add (new, g_strdup (pos_osk_widget_get_name (osk_widget)));
     if (!first_set) {
       first_set = TRUE;
       hdy_deck_set_visible_child (self->deck, GTK_WIDGET (osk_widget));
     }
-    update_osk_key_height (NULL, osk_widget, self);
-  }
-
-  if (old) {
-    /* Drop removed layouts */
-    for (int i = 0; old[i]; i++) {
-      if (!g_hash_table_contains (new, old[i])) {
-        g_debug ("Removing layout %s", old[i]);
-        g_hash_table_remove (self->osks, old[i]);
-      }
-    }
+    update_osk_key_height (self, osk_widget);
   }
 
   /* If nothing is left add a default */
-  if (g_hash_table_size (self->osks) == 0)
+  if (self->osks->len == 0)
     insert_osk (self, "us", "us", "English (USA)", "us", NULL, NULL);
 
   set_keymap (self);
@@ -2248,8 +2245,7 @@ pos_input_surface_init (PosInputSurface *self)
   g_settings_bind (self->a11y_settings, "screen-keyboard-enabled",
                    self, "screen-keyboard-enabled", G_SETTINGS_BIND_GET);
 
-  self->osks = g_hash_table_new_full (g_str_hash, g_str_equal, g_free,
-                                      (GDestroyNotify)gtk_widget_destroy);
+  self->osks = g_ptr_array_new_full (3, (GDestroyNotify)gtk_widget_destroy);
   self->xkbinfo = gnome_xkb_info_new ();
   self->input_settings = g_settings_new ("org.gnome.desktop.input-sources");
   self->osk_settings = g_settings_new ("mobi.phosh.osk");
