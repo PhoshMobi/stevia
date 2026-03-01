@@ -682,7 +682,9 @@ pos_completer_uim_initable_init (GInitable    *initable,
     return FALSE;
   }
 
-  return pos_completer_uim_set_language (POS_COMPLETER (self), "jp", NULL, error);
+  g_assert (G_N_ELEMENTS (ims) > 1);
+
+  return pos_completer_uim_set_language (POS_COMPLETER (self), ims[1].id, NULL, error);
 }
 
 
