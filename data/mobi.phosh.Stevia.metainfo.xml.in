@@ -4,7 +4,7 @@
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>GPL-3.0-or-later</project_license>
   <name>Phosh OSK</name>
-  <summary>An alternative On Screen Keyboard for Phosh</summary>
+  <summary>On Screen Keyboard for Phosh</summary>
   <replaces>
       <id>sm.puri.Phosh.OskStub</id>
   </replaces>
