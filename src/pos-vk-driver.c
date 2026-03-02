@@ -546,7 +546,7 @@ pos_vk_driver_new (PosVirtualKeyboard *virtual_keyboard)
  * @modifiers: Additional modifiers
  *
  * Submits a key via the virtual keyboard protocol. This handles
- * capital letters implicitly by adding the correctmodifier. Same is true for several
+ * capital letters implicitly by adding the correct modifier. Same is true for several
  * special letters on the terminal layout that require AltGr.
  *
  * One can pass additional modifiers to trigger e.g. <ctrl>+<character> compbos.
@@ -571,6 +571,8 @@ pos_vk_driver_key_down (PosVkDriver *self, const char *key, PosKeycodeModifier m
     vk_modifiers |= POS_VIRTUAL_KEYBOARD_MODIFIERS_ALT;
   if (modifiers & POS_KEYCODE_MODIFIER_ALTGR)
     vk_modifiers |= POS_VIRTUAL_KEYBOARD_MODIFIERS_ALTGR;
+  if (modifiers & POS_KEYCODE_MODIFIER_SUPER)
+    vk_modifiers |= POS_VIRTUAL_KEYBOARD_MODIFIERS_SUPER;
 
   /* FIXME: preserve current modifiers */
   pos_virtual_keyboard_set_modifiers (self->virtual_keyboard,
@@ -791,11 +793,17 @@ pos_vk_driver_convert_modifiers (PosVkDriver *self, GdkModifierType gdk_modifier
 {
   PosKeycodeModifier modifier = POS_KEYCODE_MODIFIER_NONE;
 
+  if (gdk_modifier & GDK_SHIFT_MASK)
+    modifier |= POS_KEYCODE_MODIFIER_SHIFT;
+
   if (gdk_modifier & GDK_CONTROL_MASK)
     modifier |= POS_KEYCODE_MODIFIER_CTRL;
 
   if (gdk_modifier & GDK_MOD1_MASK)
     modifier |= POS_KEYCODE_MODIFIER_ALT;
+
+  if (gdk_modifier & GDK_SUPER_MASK)
+    modifier |= POS_KEYCODE_MODIFIER_SUPER;
 
   return modifier;
 }
