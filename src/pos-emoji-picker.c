@@ -550,7 +550,7 @@ pos_emoji_picker_init (PosEmojiPicker *self)
 {
   GtkAdjustment *adj;
 
-  self->settings = g_settings_new ("sm.puri.phosh.osk.EmojiPicker");
+  self->settings = g_settings_new ("mobi.phosh.osk.EmojiPicker");
 
   gtk_widget_init_template (GTK_WIDGET (self));
 

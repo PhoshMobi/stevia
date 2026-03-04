@@ -15,7 +15,7 @@
 
 #include <gtk/gtk.h>
 
-#define SCALING_SCHEMA_ID "sm.puri.phosh.osk"
+#define SCALING_SCHEMA_ID "mobi.phosh.osk"
 #define SCALING_KEY "scaling"
 
 /**

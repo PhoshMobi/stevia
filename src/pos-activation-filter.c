@@ -353,7 +353,7 @@ pos_activation_filter_init (PosActivationFilter *self)
   self->allow_active = TRUE;
   self->toplevels = g_ptr_array_new_with_free_func ((GDestroyNotify) (toplevel_dispose));
 
-  self->settings = g_settings_new ("sm.puri.phosh.osk");
+  self->settings = g_settings_new ("mobi.phosh.osk");
 
   g_signal_connect_swapped (self->settings, "changed::" IGNORE_ACTIVATION_KEY,
                             G_CALLBACK (on_activation_filter_changed),

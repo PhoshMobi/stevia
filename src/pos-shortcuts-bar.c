@@ -11,7 +11,7 @@
 #include "pos-shortcuts-bar.h"
 
 /* TODO: Relocatable schema for different OSKs ? */
-#define SHORTCUTS_SCHEMA_ID "sm.puri.phosh.osk.Terminal"
+#define SHORTCUTS_SCHEMA_ID "mobi.phosh.osk.Terminal"
 #define SHORTCUTS_KEY       "shortcuts"
 
 enum {

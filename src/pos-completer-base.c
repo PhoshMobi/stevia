@@ -180,7 +180,7 @@ static void
 pos_completer_base_init (PosCompleterBase *self)
 {
   PosCompleterBasePrivate *priv = pos_completer_base_get_instance_private (self);
-  g_autoptr (GSettings) settings = g_settings_new ("sm.puri.phosh.osk.Completers");
+  g_autoptr (GSettings) settings = g_settings_new ("mobi.phosh.osk.Completers");
 
   g_settings_bind (settings, "sources", self, "sources",  G_SETTINGS_BIND_DEFAULT);
 

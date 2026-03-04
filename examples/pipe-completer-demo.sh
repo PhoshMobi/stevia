@@ -6,13 +6,13 @@
 # gsettings:
 #
 # set the script as completer:
-# gsettings set sm.puri.phosh.osk.Completers.Pipe command '/path/to/phosh-osk-demo.sh'
+# gsettings set mobi.phosh.osk.Completers.Pipe command '/path/to/phosh-osk-demo.sh'
 #
 # set completer 'pipe':
-# gsettings set sm.puri.phosh.osk.Completers default pipe
+# gsettings set mobi.phosh.osk.Completers default pipe
 #
 # optional - set mode when to enable completion
-# gsettings set sm.puri.phosh.osk completion-mode "['manual','hint']"
+# gsettings set mobi.phosh.osk completion-mode "['manual','hint']"
 #
 # For other auto completion related options see `man 1 phosh-osk-stub`
 
