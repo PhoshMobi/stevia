@@ -51,6 +51,7 @@ Replaces:
  phosh-osk-stub (<< 0.48~),
 Breaks:
  libgtk-3-0 (<< 3.24.35),
+ phosh-mobile-settings (<< 0.54~),
  phosh-osk-stub (<< 0.48~),
 Description: On screen keyboard for Phosh
  Stevia is an on screen keyboard (OSK) for Phosh. It features
