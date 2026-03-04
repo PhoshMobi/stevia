@@ -104,6 +104,7 @@ add_project_arguments(global_c_args, language: 'c')
 gnome = import('gnome')
 i18n = import('i18n')
 
+dconf_dep = dependency('dconf', version: '>= 0.49')
 glib_dep = dependency('glib-2.0', version: glib_ver_cmp)
 gio_dep = dependency('gio-2.0', version: glib_ver_cmp)
 gobject_dep = dependency('gobject-2.0', version: glib_ver_cmp)

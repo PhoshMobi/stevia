@@ -10,6 +10,7 @@ Build-Depends:
  gsettings-desktop-schemas-dev (>= 47),
  hunspell-en-us <!nocheck>,
  json-glib-tools,
+ libdconf-dev,
  libfeedback-dev,
  libgirepository1.0-dev <!nodoc>,
  libgmobile-dev,

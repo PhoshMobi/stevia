@@ -5,6 +5,7 @@ libpos_enum_headers = files('phosh-osk-enums.h', 'pos-enums.h')
 libpos_enum_sources = gnome.mkenums_simple('pos-enum-types', sources: libpos_enum_headers)
 
 libpos_deps = [
+  dconf_dep,
   gio_dep,
   gmobile_dep,
   gnome_desktop_dep,
@@ -130,6 +131,7 @@ libpos_dep = declare_dependency(
 
 executable(
   'phosh-osk-stevia',
+  'dh-dconf-migration.c',
   'phosh-osk-stevia.c',
   'pos-osk-dbus.c',
   include_directories: pos_includes,
