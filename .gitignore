@@ -16,4 +16,5 @@ debian/*.substvars
 debian/*debhelper*
 debian/phosh-osk-stevia/
 debian/phosh-osk-stevia-doc/
+debian/phosh-osk-stevia-uim/
 debian/tmp/

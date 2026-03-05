@@ -245,8 +245,7 @@ helper_disconnected (void)
 static void
 parse_helper_str (const char *str)
 {
-  /* Invoked on config changes in uim-pref-gtk3 */
-  g_debug ("%s: %s", __func__, str);
+  /* Intentionally left blank */
 }
 
 
@@ -683,7 +682,9 @@ pos_completer_uim_initable_init (GInitable    *initable,
     return FALSE;
   }
 
-  return pos_completer_uim_set_language (POS_COMPLETER (self), "jp", NULL, error);
+  g_assert (G_N_ELEMENTS (ims) > 1);
+
+  return pos_completer_uim_set_language (POS_COMPLETER (self), ims[1].id, NULL, error);
 }
 
 
@@ -812,7 +813,7 @@ pos_completer_uim_set_language (PosCompleter *completer,
 
   uim_set_prop_list_update_cb (self->context, prop_list_update);
 
-  /* Trigger propery list update */
+  /* Trigger property list update */
   uim_prop_list_update (self->context);
 
   g_debug ("Selected: %s", uim_get_current_im_name (self->context));

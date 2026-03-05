@@ -37,11 +37,6 @@
  * characters to either take the user input as is or force
  * "aggressive" autocorrection (picking a correction on the users
  * behalf).
- *
- * @set_selection: Invoked when the user selected a completion item.
- *     Implementation of this method is optional.
- * @toggle_mode: Toggle completion mode.
- *     Implementation of this method is optional.
  */
 
 G_DEFINE_INTERFACE (PosCompleter, pos_completer, G_TYPE_OBJECT)
@@ -456,7 +451,7 @@ pos_completer_get_display_name (PosCompleter *self)
 
 /**
  * pos_completer_learn_accepted:
- * @iface: The completer iface
+ * @self: The completer iface
  * @word: The word to learn
  *
  * The completer should learn the given word and offer it for
@@ -478,7 +473,7 @@ pos_completer_learn_accepted (PosCompleter *self, const char *word)
 
 /**
  * pos_completer_toggle_mode:
- * @iface: The completer
+ * @self: The completer
  *
  * Toggle the completer mode. It's up to the completer to make sense
  * of mode toggles and to keep track of state.

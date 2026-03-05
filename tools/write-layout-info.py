@@ -13,7 +13,7 @@ import sys
 import json
 
 
-def get_layouts_info(path, varnam):
+def get_layouts_info(path, varnam, uim):
     layouts = []
 
     for file in sorted(glob.glob(os.path.join(path, "*.json"))):
@@ -41,6 +41,22 @@ def get_layouts_info(path, varnam):
                 "name": "Malayalam (via varnam)",
             }
         )
+    # TODO: need to provide this at runtime based on installed dependencies/fonts
+    if uim:
+        layouts.append(
+            {
+                "type": "ibus",
+                "layout-id": "uim:jp",
+                "name": "Japanese (anthy)",
+            }
+        )
+        layouts.append(
+            {
+                "type": "ibus",
+                "layout-id": "uim:cn",
+                "name": "Chinese (pinyin)",
+            }
+        )
     return {"layouts": layouts}
 
 
@@ -50,10 +66,13 @@ def main(argv):
     parser.add_argument(
         "--varnam", action=argparse.BooleanOptionalAction, default=False
     )
+    parser.add_argument(
+        "--uim", action=argparse.BooleanOptionalAction, default=False
+    )
     parser.add_argument("--out", action="store", default="layouts.json")
     args = parser.parse_args(argv[1:])
 
-    info = get_layouts_info(args.layouts, args.varnam)
+    info = get_layouts_info(args.layouts, args.varnam, args.uim)
     with open(args.out, "w") as f:
         f.write(json.dumps(info, indent=2))
 
