@@ -2252,7 +2252,7 @@ pos_input_surface_init (PosInputSurface *self)
                                       (GDestroyNotify)gtk_widget_destroy);
   self->xkbinfo = gnome_xkb_info_new ();
   self->input_settings = g_settings_new ("org.gnome.desktop.input-sources");
-  self->osk_settings = g_settings_new ("sm.puri.phosh.osk");
+  self->osk_settings = g_settings_new ("mobi.phosh.osk");
   g_signal_connect_swapped (self->osk_settings, "changed::completion-mode",
                             G_CALLBACK (on_completion_mode_changed),
                             self);

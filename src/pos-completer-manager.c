@@ -265,7 +265,7 @@ set_initial_completer (PosCompleterManager *self)
 static void
 pos_completer_manager_init (PosCompleterManager *self)
 {
-  self->settings = g_settings_new ("sm.puri.phosh.osk.Completers");
+  self->settings = g_settings_new ("mobi.phosh.osk.Completers");
   self->completers = g_hash_table_new_full (g_str_hash,
                                             g_str_equal,
                                             g_free,

@@ -1,7 +1,7 @@
 project(
   'phosh-osk-stevia',
   'c',
-  version: '0.53.0',
+  version: '0.54-dev',
   license: 'GPLv3+',
   meson_version: '>= 1.1',
   default_options: ['warning_level=1', 'buildtype=debugoptimized', 'c_std=gnu11'],
@@ -104,6 +104,7 @@ add_project_arguments(global_c_args, language: 'c')
 gnome = import('gnome')
 i18n = import('i18n')
 
+dconf_dep = dependency('dconf', version: '>= 0.49')
 glib_dep = dependency('glib-2.0', version: glib_ver_cmp)
 gio_dep = dependency('gio-2.0', version: glib_ver_cmp)
 gobject_dep = dependency('gobject-2.0', version: glib_ver_cmp)

@@ -370,7 +370,7 @@ pos_completer_pipe_init (PosCompleterPipe *self)
   self->cancel = g_cancellable_new ();
   self->name = "pipe";
 
-  self->settings = g_settings_new ("sm.puri.phosh.osk.Completers.Pipe");
+  self->settings = g_settings_new ("mobi.phosh.osk.Completers.Pipe");
 }
 
 /**

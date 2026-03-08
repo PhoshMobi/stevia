@@ -107,15 +107,15 @@ enabled configured via the `gsettings` command:
 ::
 
   # off
-  gsettings set sm.puri.phosh.osk completion-mode "[]"
+  gsettings set mobi.phosh.osk completion-mode "[]"
   # manual
-  gsettings set sm.puri.phosh.osk completion-mode "['manual']"
+  gsettings set mobi.phosh.osk completion-mode "['manual']"
   # hint
-  gsettings set sm.puri.phosh.osk completion-mode "['hint']"
+  gsettings set mobi.phosh.osk completion-mode "['hint']"
   # manual+hint
-  gsettings set sm.puri.phosh.osk completion-mode "['manual','hint']"
+  gsettings set mobi.phosh.osk completion-mode "['manual','hint']"
   # Reset to default (off)
-  gsettings reset sm.puri.phosh.osk completion-mode
+  gsettings reset mobi.phosh.osk completion-mode
 
 Note that completion is always disabled when
 
@@ -138,11 +138,11 @@ built. Available are currently at most
   - ``varnam``: completer using govarnam for Indic languages
 
 The default word completer is selected via the
-``sm.puri.phosh.osk.Completers`` ``default`` GSetting.
+``mobi.phosh.osk.Completers`` ``default`` GSetting.
 
 ::
 
-  gsettings set sm.puri.phosh.osk.Completers default hunspell
+  gsettings set mobi.phosh.osk.Completers default hunspell
 
 You need to restart ``phosh-osk-stevia`` for the new default completer
 to become active.
@@ -176,13 +176,13 @@ TEXT COMPLETION USING PIPE
 This completer feeds the current input word (preedit) to an executable
 file and expects the executable to output possible completions on
 stdout. The executable to invoke is configured via the
-``sm.puri.phosh.osk.Completers.Pipe`` ``command`` GSetting. It defaults
+``mobi.phosh.osk.Completers.Pipe`` ``command`` GSetting. It defaults
 to ``cat``. This can be used to experiment with different completion
 patterns without having to modify ``phosh-osk-stevia`` itself.
 
 ::
 
-  gsettings set sm.puri.phosh.osk.Completers.Pipe command 'wc -c'
+  gsettings set mobi.phosh.osk.Completers.Pipe command 'wc -c'
 
 You need to restart ``phosh-osk-stevia`` for the new command to become
 active. A commonly used executable is swipeGuess: https://git.sr.ht/~earboxer/swipeGuess
@@ -217,7 +217,7 @@ following ones currently exist:
    - ``emoji``: Add emojis
    - ``keyword``: Complete special keywords (e.g. ``today``)
 
-They can be enabled via the ``sm.puri.phosh.osk`` ``sources`` gsetting.
+They can be enabled via the ``mobi.phosh.osk`` ``sources`` gsetting.
 
 
 TERMINAL SHORTCUTS
@@ -227,7 +227,7 @@ terminal layout. These are configured via the ``shortcuts`` GSetting
 
 ::
 
-  gsettings set sm.puri.phosh.osk.Terminal shortcuts "['<ctrl>a', '<ctrl>e', '<ctrl>r']"
+  gsettings set mobi.phosh.osk.Terminal shortcuts "['<ctrl>a', '<ctrl>e', '<ctrl>r']"
 
 For valid values see documentation of `gtk_accelerator_parse()`: https://docs.gtk.org/gtk3/func.accelerator_parse.html
 One can also add plain ``<ctrl>`` and ``<alt>`` keys. These then act as latched keys
@@ -251,7 +251,7 @@ button in Phosh). To determine an applications app-id you can use the
 
 ::
 
-  gsettings set sm.puri.phosh.osk ignore-activation "['org.gnome.Calculator']"
+  gsettings set mobi.phosh.osk ignore-activation "['org.gnome.Calculator']"
 
 
 HARDWARE KEYBOARDS
@@ -262,7 +262,7 @@ connected hardware keyboard. To make it show nevertheless use
 
 ::
 
-   gsettings set sm.puri.phosh.osk ignore-hw-keyboards false
+   gsettings set mobi.phosh.osk ignore-hw-keyboards false
 
 
 ADDITIONAL FEATURES
@@ -277,14 +277,14 @@ features that apply to all character layouts.
 
 ::
 
-   gsettings set sm.puri.phosh.osk osk-features "['key-drag']"
+   gsettings set mobi.phosh.osk osk-features "['key-drag']"
 
 * ``key-indicator``: Setting this flag enables an additional popover
   indicating the currently pressed key:
 
 ::
 
-   gsettings set sm.puri.phosh.osk osk-features "['key-indicator']"
+   gsettings set mobi.phosh.osk osk-features "['key-indicator']"
 
 
 Note that all of the above use the same gsetting key as it is a ``flag``
@@ -292,7 +292,7 @@ type. If you want to set multiple options separate them with a comma (``,``):
 
 ::
 
-   gsettings set sm.puri.phosh.osk osk-features "['key-drag', 'key-indicator']"
+   gsettings set mobi.phosh.osk osk-features "['key-drag', 'key-indicator']"
 
 
 KEYBOARD SCALING
@@ -318,7 +318,7 @@ To enable both of these features you can uses:
 
 ::
 
-    gsettings set sm.puri.phosh.osk scaling "['auto-portrait', 'bottom-dead-zone']"
+    gsettings set mobi.phosh.osk scaling "['auto-portrait', 'bottom-dead-zone']"
 
 
 ENVIRONMENT VARIABLES
@@ -360,9 +360,9 @@ input:
 
 ::
 
-   gsettings set sm.puri.phosh.osk.Completers default pipe
-   gsettings set sm.puri.phosh.osk.Completers.Pipe command "swipeGuess /usr/local/share/swipeGuess/words/words-qwerty-en"
-   gsettings set sm.puri.phosh.osk osk-features "['key-drag']"
+   gsettings set mobi.phosh.osk.Completers default pipe
+   gsettings set mobi.phosh.osk.Completers.Pipe command "swipeGuess /usr/local/share/swipeGuess/words/words-qwerty-en"
+   gsettings set mobi.phosh.osk osk-features "['key-drag']"
 
 Unfold the keyboard using the DBus interface
 

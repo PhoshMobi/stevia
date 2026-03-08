@@ -1,6 +1,6 @@
 <schemalist>
-  <schema id="sm.puri.phosh.osk"
-          path="/sm/puri/phosh/osk/">
+  <schema id="mobi.phosh.osk"
+          path="/mobi/phosh/osk/">
     <key name="completion-mode" flags="mobi.phosh.osk.PhoshOskCompletionModeFlags">
       <default>['hint']</default>
       <summary>When to enable the on screen keyboard's text completion</summary>
@@ -45,10 +45,18 @@
       </description>
     </key>
 
+    <key name="schema-migration" type='u'>
+      <default>0</default>
+      <summary>The schema migration state</summary>
+      <description>
+        This is an internal value, don't modify it.
+      </description>
+    </key>
+
   </schema>
 
-  <schema id='sm.puri.phosh.osk.EmojiPicker'
-          path='/sm/puri/phosh/osk/emoji-picker/'>
+  <schema id='mobi.phosh.osk.EmojiPicker'
+          path='/mobi/phosh/osk/emoji-picker/'>
     <key name='recent-emoji' type='a((auss)u)'>
       <default>[]</default>
       <summary>Recently used Emoji</summary>
@@ -61,8 +69,8 @@
     </key>
   </schema>
 
-  <schema id='sm.puri.phosh.osk.Terminal'
-          path='/sm/puri/phosh/osk/terminal/'>
+  <schema id='mobi.phosh.osk.Terminal'
+          path='/mobi/phosh/osk/terminal/'>
     <key name='shortcuts' type='as'>
       <default>[
         <!-- modifiers -->
@@ -79,8 +87,8 @@
     </key>
   </schema>
 
-  <schema id='sm.puri.phosh.osk.Completers'
-          path='/sm/puri/phosh/osk/completers/'>
+  <schema id='mobi.phosh.osk.Completers'
+          path='/mobi/phosh/osk/completers/'>
     <key name='default' type='s'>
       <default>''</default>
       <summary>The default completer to use. An empty value let's the osk make a pick.
@@ -95,8 +103,8 @@
     </key>
   </schema>
 
-  <schema id='sm.puri.phosh.osk.Completers.Pipe'
-          path='/sm/puri/phosh/osk/completers/pipe/'>
+  <schema id='mobi.phosh.osk.Completers.Pipe'
+          path='/mobi/phosh/osk/completers/pipe/'>
     <key name='command' type='s'>
       <default>'cat'</default>
       <summary>The command to use for the pipe based completer. The given command should read

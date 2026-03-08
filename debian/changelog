@@ -1,3 +1,102 @@
+phosh-osk-stevia (0.54~dev) UNRELEASED; urgency=medium
+
+  [ Guido Günther ]
+  * layouts/ch+fr: Add overlay keys.
+    Use the same overlay than fr.
+    Closes: https://gitlab.gnome.org/World/Phosh/stevia/-/issues/97
+  * data: Ignore leak inside govarnam
+  * data: Ignore leak when presage creates the DB.
+    Seen in ci.
+  * osk-key: Free strings when setting props.
+    We only set them once atm but let's make it more robust
+  * osk-widget: Use g_ptr_array_new_full
+  * osk-widget: Safe guard against empty rows
+  * widget: Free all layers.
+    Some layouts like `ara` are sparse so just goint
+    to n_layers is not enough. We need to check all slots.
+  * completer/hunspell: Don't strdup into builder.
+    The builder does that already
+  * emoji-db: Don't leak when exiting loop
+  * test-size-manager: Don't leak output
+  * packaging: Sort via wrap-and-sort
+  * ci: Update image
+  * ci: Drop PKG_ONLY
+    not used since ages
+  * ci: Run ASAN
+  * osk-key: Fix use.
+    It's an enum, not a bool
+  * input-surface: Hide popover without animation.
+    In most situations we want it to go right away.
+  * service: Don't restart too quickly.
+    There's no point to restart as fast as possible when e.g. we're
+    waiting for the DBus name to become available
+  * doc: Document how to find valid keysyms better
+  * doc: Mention `auto-landscape` scaling setting.
+    Fixes: 48df39fa2 ("size-manager: Allow to scale up larget displays in landscape")
+  * doc: Mention DBus interface and add example
+  * completer-base: Clarify that it is optional
+  * completer: Fix doc string
+  * osk-widget: Assert on invalid values.
+    Helps to not accidentally add odd keys
+  * input-surface: Allow completer to handle the completion selection.
+    Rather than just submitting the selection from the completion bar
+    some completers like uim need to handle the submission as they
+    don't submit the selected text verbatim. Allow them to override it.
+  * completion-bar: Add mode button.
+    The button allows to show a mode name and emit a signal
+    when pressed. This allows completers to switch their
+    current mode. What a mode is depends on the completer.
+    We put the button at the very end to make it easy to reach.
+  * completers: Add mode toggling to interface
+  * input-surface: Forward mode toggling to completer.
+    We forward the toggle events and bind the information provided
+    by the completer
+  * completers: Add support for Japanese, Chinese and Korean via uim.
+    When then invoked as
+     gsettings set org.gnome.desktop.input-sources sources "[('xkb', 'us'), ('xkb', 'ara'), ('ibus', 'uim:ja')]"
+     G_MESSAGES_DEBUG=pos-completer-uim _build/run --replace
+    To test:
+    - Select `Japanese (anthy)` from popover
+    - Hit top right mode toggle to switch from uim-anthy's `direct` to `hiragana` mode.
+    Preedit and candidate selection then works e.g.:
+        a s <space> <space>
+    and you can type romaji like
+        ocha <space> <return> <space>
+    yields お茶 (tea) and
+        fujisan <space> <return> <space>
+    yields 富士山 (Mount Fuji).
+    For Chinese use `('ibus', 'uim:cn')`:
+        gsettings set org.gnome.desktop.input-sources sources "[('xkb', 'us'), ('xkb', 'ara'), ('ibus', 'uim:jp'), ('ibus', 'uim:cn')]"
+    Chinese example:
+        n i h a o <return> <space>
+    yields 你好(hello)
+    Closes: https://gitlab.gnome.org/World/Phosh/stevia/-/issues/74
+  * packaging: Update dependencies for uim
+  * vk-driver: Map GDK's `shift` and `ctrl` to vk modifiers as well
+  * shortcuts-bar: Print parsed modifiers
+  * shortcuts-bar: Parse <super> and <shift> too.
+    While those keys could be used in key combinations just fine
+    they couldn't be added as stand alone keys.
+    We now also allow to use `<super>` and `<shift>` as standalone keys
+    in the shortcuts bar matching standalone `<ctrl>` and `<alt>`.
+    Closes: https://gitlab.gnome.org/World/Phosh/stevia/-/issues/98
+  * dconf-migration: Add migration helpers from enter-tex.
+    The files are GPL-3.0-or-later by Sébastien Wilmet
+  * treewide: Move schema to mobi.phosh
+  * stevia: Migrate dconf entries to mobi.phosh.osk.
+    This will make it simpler to keep things in sync when e.g. adding
+    OSK layout selection to first-boot.
+  * packaging: Add Breaks on older mobile-settings.
+    This ensures it uses a recent enough schema
+
+  [ Ekaterine Papava ]
+  * po: Add Georgian translation
+
+  [ Paul Black ]
+  * layout: Added us+workman
+
+ -- Guido Günther <agx@sigxcpu.org>  Wed, 04 Mar 2026 14:48:26 +0100
+
 phosh-osk-stevia (0.53.0) experimental; urgency=medium
 
   * No changes over rc1

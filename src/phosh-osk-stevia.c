@@ -13,6 +13,8 @@
 #include "pos-config.h"
 #include "pos.h"
 
+#include "dh-dconf-migration.h"
+
 #include <gio/gio.h>
 #include <glib-unix.h>
 
@@ -538,6 +540,50 @@ pos_app_quit (PosApp *self, int exit_status)
 }
 
 
+static void
+migrate_gsettings (void)
+{
+  g_autoptr (GSettings) settings = g_settings_new ("mobi.phosh.osk");
+  DhDconfMigration *migration = _dh_dconf_migration_new ();
+  const gchar *keys[] = {
+    "osk/completion-mode",
+    "osk/osk-features",
+    "osk/ignore-activation",
+    "osk/ignore-hw-keyboards",
+    "osk/scaling",
+    "osk/emoji-picker/recent-emoji",
+    "osk/terminal/shortcuts",
+    "osk/completers/default",
+    "osk/completers/sources",
+    "osk/completers/pipe/command",
+    NULL,
+  };
+
+  if (g_settings_get_uint (settings, "schema-migration") > 0) {
+    g_debug ("Schema already migrated, doing nothing.");
+    return;
+  }
+
+  g_message ("Migrating schema to /mobi/phosh/osk/");
+  for (int i = 0; keys[i] != NULL; i++) {
+    const char *cur_key = keys[i];
+    g_autofree char *mobi_key = NULL, *puri_key = NULL;
+
+    mobi_key = g_strconcat ("/mobi/phosh/", cur_key, NULL);
+    puri_key = g_strconcat ("/sm/puri/phosh/", cur_key, NULL);
+
+    _dh_dconf_migration_migrate_key (migration,
+                                     mobi_key,
+                                     puri_key,
+                                     NULL);
+  }
+
+  _dh_dconf_migration_sync_and_free (migration);
+
+  g_settings_set_uint (settings, "schema-migration", 1);
+}
+
+
 int
 main (int argc, char *argv[])
 {
@@ -568,6 +614,8 @@ main (int argc, char *argv[])
 
   if (version)
     print_version ();
+
+  migrate_gsettings ();
 
   gdk_set_allowed_backends ("wayland");
   pos_init ();

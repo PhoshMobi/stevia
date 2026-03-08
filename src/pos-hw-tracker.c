@@ -167,7 +167,7 @@ pos_hw_tracker_class_init (PosHwTrackerClass *klass)
 static void
 pos_hw_tracker_init (PosHwTracker *self)
 {
-  self->settings = g_settings_new ("sm.puri.phosh.osk");
+  self->settings = g_settings_new ("mobi.phosh.osk");
 
   g_signal_connect_swapped (self->settings, "changed::" IGNORE_HW_KEYBOARDS_KEY,
                             G_CALLBACK (on_ignore_hw_keyboard_changed),
