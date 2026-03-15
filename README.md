@@ -98,6 +98,15 @@ completers built in and it's easy to add more. See the [manpage][] on
 available completers and how to configure them, see also [this blog
 post](https://phosh.mobi/posts/osk-completion/) for more details.
 
+## Speech Input
+
+``phosh-osk-stevia`` has support for speech input. For that you need
+to run the vosk server:
+
+```sh
+podman run -p 127.0.0.1:2700:2700 bengalos-vosk:en-small
+```
+
 ## Documentation
 
 ### Development Documentation
