@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2022 Purism SPC
  *               2023-2024 The Phosh Developers
- *               2025 Phosh.mobi e.V.
+ *               2025-2026 Phosh.mobi e.V.
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  *
@@ -20,9 +20,13 @@ enum {
   PROP_MODE_SYMBOL,
   PROP_MODE_MENU,
   PROP_MODE_ACTIONS,
+  PROP_SPEECH_INPUT_VISIBLE,
   PROP_LAST_PROP
 };
 static GParamSpec *props[PROP_LAST_PROP];
+
+#define SPEECH_INPUT_ENABLED_ICON "audio-input-microphone-symbolic"
+#define SPEECH_INPUT_DISABLED_ICON "microphone-disabled-symbolic"
 
 enum {
   SELECTED,
@@ -44,6 +48,10 @@ struct _PosCompletionBar {
   GtkScrolledWindow *scrolled_window;
   GtkButton         *mode_button;
   GtkPopover        *mode_popover;
+
+  GtkToggleButton   *speech_input_button;
+  GtkImage          *speech_input_icon;
+  gboolean           speech_input_visible;
 
   GtkGesture        *mode_button_long_press;
 
@@ -90,6 +98,32 @@ set_mode_actions (PosCompletionBar *self, GActionGroup *mode_actions)
 
 
 static void
+set_speech_input_visible (PosCompletionBar *self, gboolean visible)
+{
+  if (self->speech_input_visible == visible)
+    return;
+
+  self->speech_input_visible = visible;
+  g_object_notify_by_pspec (G_OBJECT (self), props[PROP_SPEECH_INPUT_VISIBLE]);
+}
+
+
+static gboolean
+transform_active_to_icon_name (GBinding     *binding,
+                               const GValue *from_value,
+                               GValue       *to_value,
+                               gpointer      user_data)
+{
+  gboolean active = g_value_get_boolean (from_value);
+  const char *icon_name;
+
+  icon_name = active ? SPEECH_INPUT_ENABLED_ICON : SPEECH_INPUT_DISABLED_ICON;
+  g_value_set_string (to_value, icon_name);
+  return TRUE;
+}
+
+
+static void
 pos_completion_bar_set_property (GObject      *object,
                                  guint         property_id,
                                  const GValue *value,
@@ -106,6 +140,9 @@ pos_completion_bar_set_property (GObject      *object,
     break;
   case PROP_MODE_ACTIONS:
     set_mode_actions (self, g_value_get_object (value));
+    break;
+  case PROP_SPEECH_INPUT_VISIBLE:
+    set_speech_input_visible (self, g_value_get_boolean (value));
     break;
   default:
     G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
@@ -131,6 +168,9 @@ pos_completion_bar_get_property (GObject    *object,
     break;
   case PROP_MODE_ACTIONS:
     g_value_set_object (value, self->mode_actions);
+    break;
+  case PROP_SPEECH_INPUT_VISIBLE:
+    g_value_set_boolean (value, self->speech_input_visible);
     break;
   default:
     G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
@@ -213,6 +253,15 @@ pos_completion_bar_class_init (PosCompletionBarClass *klass)
     g_param_spec_object ("mode-actions", "", "",
                          G_TYPE_ACTION_GROUP,
                          G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
+  /**
+   * PosCompletionBar:speech-input-visible:
+   *
+   * Whether the button to toggle speech input should be shown
+   */
+  props[PROP_SPEECH_INPUT_VISIBLE] =
+    g_param_spec_boolean ("speech-input-visible", "", "",
+                          FALSE,
+                          G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
   g_object_class_install_properties (object_class, PROP_LAST_PROP, props);
 
@@ -239,6 +288,8 @@ pos_completion_bar_class_init (PosCompletionBarClass *klass)
   gtk_widget_class_bind_template_child (widget_class, PosCompletionBar, mode_button);
   gtk_widget_class_bind_template_child (widget_class, PosCompletionBar, mode_popover);
   gtk_widget_class_bind_template_child (widget_class, PosCompletionBar, scrolled_window);
+  gtk_widget_class_bind_template_child (widget_class, PosCompletionBar, speech_input_button);
+  gtk_widget_class_bind_template_child (widget_class, PosCompletionBar, speech_input_icon);
 
   gtk_widget_class_bind_template_callback (widget_class, on_completion_selected);
   gtk_widget_class_bind_template_callback (widget_class, on_mode_button_clicked);
@@ -257,6 +308,12 @@ pos_completion_bar_init (PosCompletionBar *self)
                     "pressed",
                     G_CALLBACK (on_mode_button_long_pressed),
                     self);
+
+  g_object_bind_property_full (self->speech_input_button, "active",
+                               self->speech_input_icon, "icon-name",
+                               G_BINDING_SYNC_CREATE,
+                               transform_active_to_icon_name,
+                               NULL, NULL, NULL);
 }
 
 
