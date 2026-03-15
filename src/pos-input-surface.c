@@ -26,6 +26,7 @@
 #include "pos-osk-widget.h"
 #include "pos-settings-panel.h"
 #include "pos-shortcuts-bar.h"
+#include "pos-speech-input.h"
 #include "pos-style-manager.h"
 #include "pos-vk-driver.h"
 #include "pos-vk-driver.h"
@@ -157,6 +158,9 @@ struct _PosInputSurface {
 
   /* Clipboard */
   PosClipboardManager        *clipboard_manager;
+
+  /* Speech Input */
+  PosSpeechInput             *speech_input;
 
   /* Swipe gesture */
   GtkGesture                 *swipe_down;
@@ -1664,6 +1668,7 @@ pos_input_surface_finalize (GObject *object)
   g_clear_handle_id (&self->bs_repeat_id, g_source_remove);
   g_clear_handle_id (&self->keymap_delayed_id, g_source_remove);
 
+  g_clear_object (&self->speech_input);
   g_clear_object (&self->logind_session);
   g_clear_object (&self->keyboard_driver);
   g_clear_object (&self->input_method);
@@ -2262,6 +2267,69 @@ on_completion_mode_changed (PosInputSurface *self, const char *key, GSettings *s
 }
 
 
+static void
+speech_input_change_state (GSimpleAction *action, GVariant *state, gpointer user_data)
+{
+  PosInputSurface *self = POS_INPUT_SURFACE (user_data);
+
+  pos_speech_input_set_enabled (self->speech_input, g_variant_get_boolean (state));
+  g_simple_action_set_state (action, state);
+}
+
+/* Don't keep recording when the user can't access the speech input toggle */
+static void
+on_speech_input_usable_changed (PosInputSurface *self)
+{
+  if (self->surface_visible && pos_input_surface_is_completer_active (self))
+    return;
+
+  g_action_group_change_action_state (G_ACTION_GROUP (self),
+                                      "speech-input",
+                                      g_variant_new_boolean (FALSE));
+}
+
+/* Pick up a speech recognition server that was started after us */
+static void
+on_speech_input_surface_visible_changed (PosInputSurface *self)
+{
+  if (self->surface_visible)
+    pos_speech_input_connect (self->speech_input);
+}
+
+
+static void
+on_speech_input_text (PosInputSurface *self, const char *text)
+{
+  g_assert (POS_IS_INPUT_SURFACE (self));
+
+  /* TODO: fall back to vk-driver */
+  if (pos_input_surface_is_completion_mode (self) == FALSE)
+    return;
+
+  pos_input_method_send_string (self->input_method, text, TRUE);
+  /* TODO: Handle punctuation */
+  pos_input_method_send_string (self->input_method, " ", TRUE);
+}
+
+
+static void
+on_speech_input_partial (PosInputSurface *self, const char *text)
+{
+  int pos;
+
+  g_assert (POS_IS_INPUT_SURFACE (self));
+
+  if (gm_str_is_null_or_empty (text))
+    return;
+
+  if (pos_input_surface_is_completion_mode (self) == FALSE)
+    return;
+
+  pos = strlen (text);
+  pos_input_method_send_preedit (self->input_method, text, pos, pos, TRUE);
+}
+
+
 static gboolean
 surface_height_to_clamp (GBinding     *binding,
                          const GValue *from_value,
@@ -2288,6 +2356,7 @@ static GActionEntry entries[] =
   { .name = "select-layout", .parameter_type = "s", .state = "\"terminal\"",
     .change_state = select_layout_change_state },
   { .name = "menu", .parameter_type = "(ii)", .activate = menu_activated },
+  { .name = "speech-input", .state = "false", .change_state = speech_input_change_state },
 };
 
 
@@ -2370,6 +2439,30 @@ pos_input_surface_init (PosInputSurface *self)
                                NULL,
                                NULL,
                                NULL);
+
+  self->speech_input = pos_speech_input_new ();
+  g_object_connect (self->speech_input,
+                    "swapped-object-signal::text", on_speech_input_text, self,
+                    "swapped-object-signal::partial", on_speech_input_partial, self,
+                    NULL);
+
+  /* Speech input */
+  g_object_bind_property (self->speech_input,
+                          "present",
+                          self->completion_bar,
+                          "speech-input-visible",
+                          G_BINDING_SYNC_CREATE);
+  g_object_connect (self,
+                    "signal::notify::surface-visible",
+                    on_speech_input_surface_visible_changed,
+                    NULL,
+                    "signal::notify::surface-visible",
+                    on_speech_input_usable_changed,
+                    NULL,
+                    "signal::notify::completer-active",
+                    on_speech_input_usable_changed,
+                    NULL,
+                    NULL);
 }
 
 
