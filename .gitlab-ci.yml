@@ -42,10 +42,12 @@ variables:
   DEBIAN_IMAGE: $CI_REGISTRY/world/phosh/stevia/debian:v0.0.2026-08-19
   XVFB_RUN: xvfb-run -a -s -noreset
   COMMON_BUILD_OPTS: --werror -Db_coverage=true -Dprefix=/usr
-  ALPINE_EDGE_DEPS: alpine-sdk dconf-dev elogind-dev feedbackd-dev fzf git glib-dev
+  ALPINE_EDGE_DEPS: alpine-sdk dconf-dev elogind-dev feedbackd-dev fzf git
+                    glib-dev gstreamer-dev gst-plugins-base-dev
                     gmobile-dev gnome-desktop-dev gtk+3.0-dev hunspell-dev
-                    json-glib-dev libhandy1-dev meson musl-dev ninja presage-dev
-                    ttf-dejavu uim-dev wayland-dev wayland-protocols
+                    json-glib-dev libhandy1-dev libsoup3-dev meson musl-dev
+                    ninja presage-dev ttf-dejavu uim-dev wayland-dev
+                    wayland-protocols
 
 .forky_vars: &forky_vars
   variables:
