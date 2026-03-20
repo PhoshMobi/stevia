@@ -1,0 +1,81 @@
+# Japanese translation for phosh-osk-stevia.
+# Copyright (C) 2026 phosh-osk-stevia's authors.
+# This file is distributed under the same license as the phosh-osk-stevia package.
+# Ryo Nakano <ryonakaknock3@gmail.com>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: phosh-osk-stevia\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-03-20 08:50+0000\n"
+"PO-Revision-Date: 2026-03-20 18:15+0900\n"
+"Last-Translator: Ryo Nakano <ryonakaknock3@gmail.com>\n"
+"Language-Team: \n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: data/sm.puri.OSK0.desktop.in.in:3 data/sm.puri.OSK0.desktop.in.in:4
+msgid "On-screen keyboard"
+msgstr "オンスクリーンキーボード"
+
+#. Translators: Do not translate the name. It's the name of a library
+#: data/completers/hunspell.desktop.in:5
+msgid "Hunspell"
+msgstr "Hunspell"
+
+#: data/completers/hunspell.desktop.in:6
+msgid "The Hunspell completer provides dictionary based text correction"
+msgstr "Hunspell 補完エンジンは辞書ベースのテキスト修正機能を提供します"
+
+#: data/completers/hunspell.desktop.in:7
+msgid "This completer needs language specific dictionaries installed"
+msgstr "この補完エンジンには言語固有の辞書が必要です"
+
+#. Translators: Do not translate the name. It's the name of a library
+#: data/completers/presage.desktop.in:5
+msgid "Presage"
+msgstr "Presage"
+
+#: data/completers/presage.desktop.in:6
+msgid "The Presage completer provides intelligent predictive text entry"
+msgstr "Presage 補完エンジンは高度なテキスト入力予測機能を提供します"
+
+#: data/completers/presage.desktop.in:7
+msgid "This completer needs language specific data installed"
+msgstr "この補完エンジンには言語固有のデータが必要です"
+
+# 英語キーボードレイアウトにて自動補完機能が使えるよう、英語のままとします
+#. Translators: Used to auto complete the current date, should be a single word
+#: src/pos-completer-base.c:79
+msgid "today"
+msgstr "today"
+
+# 英語キーボードレイアウトにて自動補完機能が使えるよう、英語のままとします
+#. Translators: Used to auto complete the a date, should be a single word
+#: src/pos-completer-base.c:84
+msgid "tomorrow"
+msgstr "tomorrow"
+
+# 英語キーボードレイアウトにて自動補完機能が使えるよう、英語のままとします
+#. Translators: Used to auto complete the current time, should be a single word
+#: src/pos-completer-base.c:91
+msgid "now"
+msgstr "now"
+
+#: src/pos-input-surface.c:873
+msgid "Emoji"
+msgstr "絵文字"
+
+#: src/pos-input-surface.c:2261
+msgid "Terminal"
+msgstr "ターミナル"
+
+#: src/ui/input-surface.ui:98
+msgid "Word completion"
+msgstr "単語補完"
+
+#: src/ui/input-surface.ui:105
+msgid "Keyboard Settings"
+msgstr "キーボード設定"
