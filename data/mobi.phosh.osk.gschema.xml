@@ -99,7 +99,9 @@
     <key name='sources' flags="mobi.phosh.osk.PhoshOskCompletionSourceFlags">
       <default>['emoji', 'keyword']</default>
       <summary>Extra completion sources to use</summary>
-      <description/>
+      <description>
+        Additional completion sources to use.
+      </description>
     </key>
   </schema>
 
