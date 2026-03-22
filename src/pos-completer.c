@@ -12,6 +12,7 @@
 #include "pos-config.h"
 
 #include "pos-completer.h"
+#include "pos-completer-base.h"
 #include "pos-completer-priv.h"
 #include "util.h"
 
@@ -59,6 +60,17 @@ static const char * const completion_end_symbols[] = {
   "[", "]",
   NULL,
 };
+
+
+static gboolean
+pos_completer_get_auto_space (PosCompleter *self)
+{
+  /* We don't require completers to use this base class */
+  if (!POS_IS_COMPLETER_BASE (self))
+    return FALSE;
+
+  return pos_completer_base_get_auto_space (POS_COMPLETER_BASE (self));
+}
 
 
 GQuark
@@ -419,7 +431,7 @@ pos_completer_add_preedit (PosCompleter *self, GString *preedit, const char *sym
   g_string_append (preedit, symbol);
 
   if (pos_completer_symbol_is_word_separator (symbol, &is_ws)) {
-    if (is_ws == FALSE)
+    if (is_ws == FALSE && pos_completer_get_auto_space (self))
       g_string_append (preedit, " ");
     return TRUE;
   }
