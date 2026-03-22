@@ -41,6 +41,7 @@ static const char * const punctuation_symbols[] = {
 enum {
   PROP_0,
   PROP_SOURCES,
+  PROP_AUTO_SPACE,
   PROP_LAST_PROP
 };
 static GParamSpec *props[PROP_LAST_PROP];
@@ -51,6 +52,7 @@ typedef struct _PosCompleterBasePrivate {
   char       *before_text;
   char       *after_text;
 
+  gboolean    auto_space;
   GHashTable *punctuations;
 } PosCompleterBasePrivate;
 
@@ -111,6 +113,9 @@ pos_completer_base_set_property (GObject      *object,
   case PROP_SOURCES:
     priv->sources = g_value_get_flags (value);
     break;
+  case PROP_AUTO_SPACE:
+    priv->auto_space = g_value_get_boolean (value);
+    break;
   default:
     G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
     break;
@@ -130,6 +135,9 @@ pos_completer_base_get_property (GObject    *object,
   switch (property_id) {
   case PROP_SOURCES:
     g_value_set_flags (value, priv->sources);
+    break;
+  case PROP_AUTO_SPACE:
+    g_value_set_boolean (value, priv->auto_space);
     break;
   default:
     G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
@@ -171,6 +179,15 @@ pos_completer_base_class_init (PosCompleterBaseClass *klass)
                         PHOSH_TYPE_OSK_COMPLETION_SOURCE_FLAGS,
                         PHOSH_OSK_COMPLETION_SOURCE_NONE,
                         G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS | G_PARAM_EXPLICIT_NOTIFY);
+  /**
+   * PosCompleterBase:auto-space:
+   *
+   * Automatically handle inserting space around punctuation
+   */
+  props[PROP_AUTO_SPACE] =
+    g_param_spec_boolean ("auto-space", "", "",
+                          TRUE,
+                          G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
 
   g_object_class_install_properties (object_class, PROP_LAST_PROP, props);
 }
@@ -183,6 +200,7 @@ pos_completer_base_init (PosCompleterBase *self)
   g_autoptr (GSettings) settings = g_settings_new ("mobi.phosh.osk.Completers");
 
   g_settings_bind (settings, "sources", self, "sources",  G_SETTINGS_BIND_DEFAULT);
+  g_settings_bind (settings, "auto-space", self, "auto-space",  G_SETTINGS_BIND_DEFAULT);
 
   priv->punctuations = g_hash_table_new (g_str_hash, g_str_equal);
   for (int i = 0; punctuation_symbols[i]; i++)
@@ -301,6 +319,9 @@ pos_completer_base_wants_punctuation_swap (PosCompleterBase *self, const char *s
   g_assert (POS_IS_COMPLETER_BASE (self));
   g_assert (symbol);
 
+  if (!priv->auto_space)
+    return FALSE;
+
   if (!pos_completer_base_is_punctuation (self, symbol))
     return FALSE;
 
@@ -312,4 +333,15 @@ pos_completer_base_wants_punctuation_swap (PosCompleterBase *self, const char *s
     return FALSE;
 
   return TRUE;
+}
+
+
+gboolean
+pos_completer_base_get_auto_space (PosCompleterBase *self)
+{
+  PosCompleterBasePrivate *priv = pos_completer_base_get_instance_private (self);
+
+  g_return_val_if_fail (POS_IS_COMPLETER_BASE (self), FALSE);
+
+  return priv->auto_space;
 }

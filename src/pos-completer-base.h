@@ -29,5 +29,6 @@ const char *            pos_completer_base_get_before_text (PosCompleterBase *se
 const char *            pos_completer_base_get_after_text (PosCompleterBase *self);
 gboolean                pos_completer_base_wants_punctuation_swap (PosCompleterBase *self,
                                                                    const char       *symbol);
+gboolean                pos_completer_base_get_auto_space (PosCompleterBase *self);
 
 G_END_DECLS

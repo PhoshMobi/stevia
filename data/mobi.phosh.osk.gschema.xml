@@ -103,6 +103,17 @@
         Additional completion sources to use.
       </description>
     </key>
+
+    <key name='auto-space' type='b'>
+      <default>true</default>
+      <summary>Automatic space handling around punctuation</summary>
+      <description>
+        When enabled the completer swaps punctuation and space after a
+        word completion and also adds a space whenever inserting a
+        punctuation character.
+      </description>
+    </key>
+
   </schema>
 
   <schema id='mobi.phosh.osk.Completers.Pipe'
