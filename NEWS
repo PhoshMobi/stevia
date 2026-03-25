@@ -1,3 +1,27 @@
+phosh-osk-stevia 0.54~rc1
+-------------------------
+Released March 2026
+* Initial support for Japanese and Chinese via uim
+* Support more modifiers in shortcuts bar
+* Migrate schema entries to `mobi.phosh`
+* Make layout order in the popover match the input sources
+* Leak fixes
+* Updated layouts
+  - ch+fr
+* New layouts
+  - us+workman
+* Issues fixed:
+    * https://gitlab.gnome.org/World/Phosh/stevia/-/issues/97
+    * https://gitlab.gnome.org/World/Phosh/stevia/-/issues/74
+    * https://gitlab.gnome.org/World/Phosh/stevia/-/issues/98
+* Contributors:
+    * Achill Gilgenast
+    * Guido Günther
+    * Paul Black
+* UI translations:
+    * Ekaterine Papava (ka)
+    * Ryo Nakano (ja)
+
 phosh-osk-stevia 0.53.0
 -----------------------
 Released February 2026

@@ -1,4 +1,4 @@
-phosh-osk-stevia (0.54~dev) UNRELEASED; urgency=medium
+phosh-osk-stevia (0.54~rc1) experimental; urgency=medium
 
   [ Guido Günther ]
   * layouts/ch+fr: Add overlay keys.
@@ -51,7 +51,7 @@ phosh-osk-stevia (0.54~dev) UNRELEASED; urgency=medium
   * input-surface: Forward mode toggling to completer.
     We forward the toggle events and bind the information provided
     by the completer
-  * completers: Add support for Japanese, Chinese and Korean via uim.
+  * completers: Add support for Japanese and Chinese via uim.
     When then invoked as
      gsettings set org.gnome.desktop.input-sources sources "[('xkb', 'us'), ('xkb', 'ara'), ('ibus', 'uim:ja')]"
      G_MESSAGES_DEBUG=pos-completer-uim _build/run --replace
@@ -88,6 +88,12 @@ phosh-osk-stevia (0.54~dev) UNRELEASED; urgency=medium
     OSK layout selection to first-boot.
   * packaging: Add Breaks on older mobile-settings.
     This ensures it uses a recent enough schema
+  * build: Drop unneeded rfkill check
+  * input-surface: Preserve layout ordering.
+    The current layout in the popover doesn't reflect the order of
+    input sources so sorting layouts in e.g. p-m-s helps for hardware
+    keyboard use but not for the OSK.
+    Use a GPtrArray instead of the hashmap to preserve ordering.
 
   [ Ekaterine Papava ]
   * po: Add Georgian translation
@@ -95,7 +101,10 @@ phosh-osk-stevia (0.54~dev) UNRELEASED; urgency=medium
   [ Paul Black ]
   * layout: Added us+workman
 
- -- Guido Günther <agx@sigxcpu.org>  Wed, 04 Mar 2026 14:48:26 +0100
+  [ Ryo Nakano ]
+  * po: Add Japanese translation
+
+ -- Guido Günther <agx@sigxcpu.org>  Wed, 25 Mar 2026 09:23:46 +0100
 
 phosh-osk-stevia (0.53.0) experimental; urgency=medium
 
