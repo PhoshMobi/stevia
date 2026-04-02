@@ -116,6 +116,19 @@ pos_completer_hunspell_set_preedit (PosCompleter *iface, const char *preedit)
 
 
 static void
+pos_completer_hunspell_set_surrounding_text (PosCompleter *iface,
+                                             const char   *before_text,
+                                             const char   *after_text)
+{
+  PosCompleterHunspell *self = POS_COMPLETER_HUNSPELL (iface);
+
+  pos_completer_base_set_surrounding_text (POS_COMPLETER_BASE (self),
+                                           before_text,
+                                           after_text);
+}
+
+
+static void
 pos_completer_hunspell_set_property (GObject      *object,
                                      guint         property_id,
                                      const GValue *value,
@@ -421,6 +434,7 @@ pos_completer_hunspell_interface_init (PosCompleterInterface *iface)
   iface->feed_symbol = pos_completer_hunspell_feed_symbol;
   iface->get_preedit = pos_completer_hunspell_get_preedit;
   iface->set_preedit = pos_completer_hunspell_set_preedit;
+  iface->set_surrounding_text = pos_completer_hunspell_set_surrounding_text;
   iface->set_language = pos_completer_hunspell_set_language;
 }
 
