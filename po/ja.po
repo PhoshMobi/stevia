@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: phosh-osk-stevia\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-03-20 08:50+0000\n"
-"PO-Revision-Date: 2026-03-20 18:15+0900\n"
+"PO-Revision-Date: 2026-04-03 20:55+0900\n"
 "Last-Translator: Ryo Nakano <ryonakaknock3@gmail.com>\n"
 "Language-Team: \n"
 "Language: ja\n"
@@ -70,7 +70,7 @@ msgstr "絵文字"
 
 #: src/pos-input-surface.c:2261
 msgid "Terminal"
-msgstr "ターミナル"
+msgstr "端末"
 
 #: src/ui/input-surface.ui:98
 msgid "Word completion"
