@@ -1,10 +1,12 @@
-phosh-osk-stevia 0.54~rc1
--------------------------
-Released March 2026
+phosh-osk-stevia 0.54.0
+-----------------------
+Released April 2026
 * Initial support for Japanese and Chinese via uim
 * Support more modifiers in shortcuts bar
 * Migrate schema entries to `mobi.phosh`
 * Make layout order in the popover match the input sources
+* Fix automatic space in hunspell
+* Allow to disable automatic space mode
 * Leak fixes
 * Updated layouts
   - ch+fr

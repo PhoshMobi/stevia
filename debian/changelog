@@ -1,3 +1,17 @@
+phosh-osk-stevia (0.54.0) experimental; urgency=medium
+
+  * hunspell: Set surrounding text.
+    This is needed for automatic space ↔ punctuation swap
+    Fixes: Fixes: 78c6ef621 ("completers/hunspell: Try to be clever when inserting punctuation")
+  * completer-base: Add gsetting to disable auto punctuation.
+    Not all users want it.
+  * completer: Don't insert space when auto-space is disabled.
+    When automatic space handling is disabled we should also not
+    insert space after word separators.
+    Closes: https://gitlab.gnome.org/World/Phosh/stevia/-/issues/38
+
+ -- Guido Günther <agx@sigxcpu.org>  Fri, 03 Apr 2026 10:36:04 +0200
+
 phosh-osk-stevia (0.54~rc1) experimental; urgency=medium
 
   [ Guido Günther ]

@@ -64,6 +64,18 @@
   </screenshots>
 
   <releases>
+    <release version="0.54.0" date="2026-04-03">
+      <description translate="no">
+        <ul>
+          <li>Initial support for Japanese and Chinese via uim</li>
+          <li>Support more modifiers in shortcuts bar</li>
+          <li>Make layout order in the popover match the input sources</li>
+          <li>Allow to disable automatic space mode</li>
+          <li>Bug fixes</li>
+          <li>New us+workman layout</li>
+        </ul>
+      </description>
+    </release>
     <release version="0.53.0" date="2026-02-13">
       <description translate="no">
         <ul>
@@ -72,8 +84,6 @@
         </ul>
       </description>
     </release>
-
-
     <release version="0.52.1" date="2026-01-16">
       <description translate="no">
         <ul>
