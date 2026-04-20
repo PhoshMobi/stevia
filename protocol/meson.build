@@ -8,11 +8,11 @@ wayland_scanner = find_program('wayland-scanner')
 
 wl_protos = [
   [wl_protocol_dir, 'stable/xdg-shell/xdg-shell.xml'],
+  [wl_protocol_dir, 'staging/ext-data-control/ext-data-control-v1.xml'],
   [wl_protocol_dir, 'unstable/xdg-output/xdg-output-unstable-v1.xml'],
   ['input-method-unstable-v2.xml'],
   ['phoc-device-state-unstable-v1.xml'],
   ['virtual-keyboard-unstable-v1.xml'],
-  ['wlr-data-control-unstable-v1.xml'],
   ['wlr-foreign-toplevel-management-unstable-v1.xml'],
   ['wlr-layer-shell-unstable-v1.xml'],
 ]

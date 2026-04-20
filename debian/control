@@ -32,6 +32,7 @@ Build-Depends:
  systemd-dev,
  uim <!nocheck>,
  uim-anthy <!nocheck>,
+ wayland-protocols (>= 1.39),
  xauth <!nocheck>,
  xvfb <!nocheck>,
 Standards-Version: 4.7.2
@@ -52,6 +53,7 @@ Replaces:
  phosh-osk-stub (<< 0.48~),
 Breaks:
  libgtk-3-0 (<< 3.24.35),
+ phoc (<< 0.55~),
  phosh-mobile-settings (<< 0.54~),
  phosh-osk-stub (<< 0.48~),
 Description: On screen keyboard for Phosh

@@ -10,10 +10,10 @@
 #include "pos-config.h"
 #include "pos.h"
 
+#include "ext-data-control-v1-client-protocol.h"
 #include "input-method-unstable-v2-client-protocol.h"
 #include "phoc-device-state-unstable-v1-client-protocol.h"
 #include "virtual-keyboard-unstable-v1-client-protocol.h"
-#include "wlr-data-control-unstable-v1-client-protocol.h"
 #include "wlr-foreign-toplevel-management-unstable-v1-client-protocol.h"
 #include "xdg-output-unstable-v1-client-protocol.h"
 
@@ -38,6 +38,6 @@ struct zwlr_foreign_toplevel_manager_v1* pos_wayland_get_zwlr_foreign_toplevel_m
 struct zwlr_layer_shell_v1 *             pos_wayland_get_zwlr_layer_shell_v1 (PosWayland *self);
 struct zxdg_output_manager_v1 *          pos_wayland_get_zxdg_output_manager_v1 (PosWayland *self);
 struct zphoc_device_state_v1 *           pos_wayland_get_zphoc_device_state_v1 (PosWayland *self);
-struct zwlr_data_control_manager_v1 *    pos_wayland_get_zwlr_data_control_manager_v1 (PosWayland *self);
+struct ext_data_control_manager_v1 *     pos_wayland_get_ext_data_control_manager_v1 (PosWayland *self);
 
 G_END_DECLS

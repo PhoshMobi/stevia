@@ -278,7 +278,7 @@ create_input_surface (PosApp *self)
   vk_driver = pos_vk_driver_new (virtual_keyboard);
   completer_manager = pos_completer_manager_new ();
   clipboard_manager =
-    pos_clipboard_manager_new (pos_wayland_get_zwlr_data_control_manager_v1 (wayland),
+    pos_clipboard_manager_new (pos_wayland_get_ext_data_control_manager_v1 (wayland),
                                pos_wayland_get_wl_seat (wayland));
 
   im =

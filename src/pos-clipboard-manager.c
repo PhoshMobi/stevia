@@ -44,16 +44,16 @@ enum {
 static GParamSpec *props[PROP_LAST_PROP];
 
 struct _PosClipboardManager {
-  GObject  parent;
+  GObject parent;
 
-  struct wl_seat                         *wl_seat;
-  struct zwlr_data_control_manager_v1    *data_control_manager;
-  struct zwlr_data_control_device_v1     *data_control_device;
+  struct wl_seat *wl_seat;
+  struct ext_data_control_manager_v1 *data_control_manager;
+  struct ext_data_control_device_v1  *data_control_device;
 
-  char                                   *mime_type;
-  PosClipboardDataType                    data_type;
-  GPtrArray                              *texts;
-  GCancellable                           *cancel[2];
+  char                *mime_type;
+  PosClipboardDataType data_type;
+  GPtrArray           *texts;
+  GCancellable        *cancel[2];
 };
 G_DEFINE_TYPE (PosClipboardManager, pos_clipboard_manager, G_TYPE_OBJECT)
 
@@ -101,12 +101,12 @@ pos_clipboard_manager_get_property (GObject    *object,
 
 #define BUFFER_SIZE 1023
 typedef struct  {
-  char                               buffer[BUFFER_SIZE+1];
-  char                              *text;
-  struct zwlr_data_control_offer_v1 *offer;
-  PosClipboardType                   clipboard_type;
-  PosClipboardDataType               data_type;
-  PosClipboardManager               *manager;
+  char  buffer[BUFFER_SIZE + 1];
+  char *text;
+  struct ext_data_control_offer_v1 *offer;
+  PosClipboardType clipboard_type;
+  PosClipboardDataType data_type;
+  PosClipboardManager *manager;
 } RequestData;
 
 
@@ -114,7 +114,7 @@ static void
 pos_clipboard_manager_destroy_request_data (RequestData *request_data)
 {
   g_free (request_data->text);
-  zwlr_data_control_offer_v1_destroy (request_data->offer);
+  ext_data_control_offer_v1_destroy (request_data->offer);
   g_free (request_data);
 }
 
@@ -172,9 +172,9 @@ pos_clipboard_manager_offer_request_text (GObject      *source_object,
 
 
 static gboolean
-pos_clipboard_manager_offer_request_data (PosClipboardManager               *self,
-                                          struct zwlr_data_control_offer_v1 *offer,
-                                          PosClipboardType                   clipboard_type)
+pos_clipboard_manager_offer_request_data (PosClipboardManager              *self,
+                                          struct ext_data_control_offer_v1 *offer,
+                                          PosClipboardType                  clipboard_type)
 {
   RequestData *request_data;
   g_autoptr (GInputStream) stream = NULL;
@@ -185,7 +185,7 @@ pos_clipboard_manager_offer_request_data (PosClipboardManager               *sel
     g_warning ("Failed to open pipe: %s", error->message);
     return FALSE;
   }
-  zwlr_data_control_offer_v1_receive (offer, self->mime_type, fds[G_UNIX_PIPE_END_WRITE]);
+  ext_data_control_offer_v1_receive (offer, self->mime_type, fds[G_UNIX_PIPE_END_WRITE]);
   close (fds[G_UNIX_PIPE_END_WRITE]);
 
   stream = g_unix_input_stream_new (fds[G_UNIX_PIPE_END_READ], TRUE);
@@ -212,9 +212,9 @@ pos_clipboard_manager_offer_request_data (PosClipboardManager               *sel
 
 
 static void
-handle_zwlr_data_control_offer_offer (void                              *data,
-                                      struct zwlr_data_control_offer_v1 *offer,
-                                      const char                        *mime_type)
+handle_ext_data_control_offer_offer (void                             *data,
+                                     struct ext_data_control_offer_v1 *offer,
+                                     const char                       *mime_type)
 {
   PosClipboardManager *self = POS_CLIPBOARD_MANAGER (data);
 
@@ -232,31 +232,31 @@ handle_zwlr_data_control_offer_offer (void                              *data,
 }
 
 
-static const struct zwlr_data_control_offer_v1_listener zwlr_data_control_offer_v1_listener = {
-  handle_zwlr_data_control_offer_offer,
+static const struct ext_data_control_offer_v1_listener ext_data_control_offer_v1_listener = {
+  handle_ext_data_control_offer_offer,
 };
 
 
 static void
-handle_zwlr_data_control_device_data_offer (void                               *data,
-                                            struct zwlr_data_control_device_v1 *device,
-                                            struct zwlr_data_control_offer_v1  *offer)
+handle_ext_data_control_device_data_offer (void                              *data,
+                                           struct ext_data_control_device_v1 *device,
+                                           struct ext_data_control_offer_v1  *offer)
 {
   PosClipboardManager *self = POS_CLIPBOARD_MANAGER (data);
 
   g_assert (POS_IS_CLIPBOARD_MANAGER (self));
 
   self->data_type = POS_CLIPBOARD_DATA_NONE;
-  zwlr_data_control_offer_v1_add_listener (offer,
-                                           &zwlr_data_control_offer_v1_listener,
-                                           self);
+  ext_data_control_offer_v1_add_listener (offer,
+                                          &ext_data_control_offer_v1_listener,
+                                          self);
 }
 
 
 static void
-handle_zwlr_data_control_device_selection (void                               *data,
-                                           struct zwlr_data_control_device_v1 *device,
-                                           struct zwlr_data_control_offer_v1  *offer)
+handle_ext_data_control_device_selection (void                              *data,
+                                          struct ext_data_control_device_v1 *device,
+                                          struct ext_data_control_offer_v1  *offer)
 {
   PosClipboardManager *self = POS_CLIPBOARD_MANAGER (data);
 
@@ -267,19 +267,19 @@ handle_zwlr_data_control_device_selection (void                               *d
     return;
 
   if (self->data_type == POS_CLIPBOARD_DATA_NONE) {
-    zwlr_data_control_offer_v1_destroy (offer);
+    ext_data_control_offer_v1_destroy (offer);
     return;
   }
 
   if (!pos_clipboard_manager_offer_request_data (self, offer, POS_CLIPBOARD_DEFAULT))
-    zwlr_data_control_offer_v1_destroy (offer);
+    ext_data_control_offer_v1_destroy (offer);
 }
 
 
 static void
-handle_zwlr_data_control_device_primary_selection (void                               *data,
-                                                   struct zwlr_data_control_device_v1 *device,
-                                                   struct zwlr_data_control_offer_v1  *offer)
+handle_ext_data_control_device_primary_selection (void                              *data,
+                                                  struct ext_data_control_device_v1 *device,
+                                                  struct ext_data_control_offer_v1  *offer)
 {
   PosClipboardManager *self = POS_CLIPBOARD_MANAGER (data);
 
@@ -290,30 +290,30 @@ handle_zwlr_data_control_device_primary_selection (void                         
     return;
 
   if (self->data_type == POS_CLIPBOARD_DATA_NONE) {
-    zwlr_data_control_offer_v1_destroy (offer);
+    ext_data_control_offer_v1_destroy (offer);
     return;
   }
 
   if (!pos_clipboard_manager_offer_request_data (self, offer, POS_CLIPBOARD_PRIMARY))
-    zwlr_data_control_offer_v1_destroy (offer);
+    ext_data_control_offer_v1_destroy (offer);
 }
 
 
 static void
-handle_zwlr_data_control_device_finished (void                               *data,
-                                          struct zwlr_data_control_device_v1 *device)
+handle_ext_data_control_device_finished (void                              *data,
+                                         struct ext_data_control_device_v1 *device)
 {
   PosClipboardManager *self = POS_CLIPBOARD_MANAGER (data);
 
-  g_clear_pointer (&self->data_control_device, zwlr_data_control_device_v1_destroy);
+  g_clear_pointer (&self->data_control_device, ext_data_control_device_v1_destroy);
 }
 
 
-static const struct zwlr_data_control_device_v1_listener zwlr_data_control_device_v1_listener  = {
-  handle_zwlr_data_control_device_data_offer,
-  handle_zwlr_data_control_device_selection,
-  handle_zwlr_data_control_device_finished,
-  handle_zwlr_data_control_device_primary_selection,
+static const struct ext_data_control_device_v1_listener ext_data_control_device_v1_listener  = {
+  handle_ext_data_control_device_data_offer,
+  handle_ext_data_control_device_selection,
+  handle_ext_data_control_device_finished,
+  handle_ext_data_control_device_primary_selection,
 };
 
 
@@ -325,11 +325,11 @@ pos_clipboard_manager_constructed (GObject *object)
   G_OBJECT_CLASS (pos_clipboard_manager_parent_class)->constructed (object);
 
   self->data_control_device =
-    zwlr_data_control_manager_v1_get_data_device (self->data_control_manager,
-                                                  self->wl_seat);
-  zwlr_data_control_device_v1_add_listener (self->data_control_device,
-                                            &zwlr_data_control_device_v1_listener,
-                                            self);
+    ext_data_control_manager_v1_get_data_device (self->data_control_manager,
+                                                 self->wl_seat);
+  ext_data_control_device_v1_add_listener (self->data_control_device,
+                                           &ext_data_control_device_v1_listener,
+                                           self);
 }
 
 
@@ -346,7 +346,7 @@ pos_clipboard_manager_finalize (GObject *object)
 
   g_clear_pointer (&self->texts, g_ptr_array_unref);
   g_clear_pointer (&self->mime_type, g_free);
-  g_clear_pointer (&self->data_control_device, zwlr_data_control_device_v1_destroy);
+  g_clear_pointer (&self->data_control_device, ext_data_control_device_v1_destroy);
 
   G_OBJECT_CLASS (pos_clipboard_manager_parent_class)->finalize (object);
 }
@@ -387,8 +387,8 @@ pos_clipboard_manager_init (PosClipboardManager *self)
 
 
 PosClipboardManager *
-pos_clipboard_manager_new (struct zwlr_data_control_manager_v1 *manager,
-                           struct wl_seat                      *seat)
+pos_clipboard_manager_new (struct ext_data_control_manager_v1 *manager,
+                           struct wl_seat                     *seat)
 {
   return POS_CLIPBOARD_MANAGER (g_object_new (POS_TYPE_CLIPBOARD_MANAGER,
                                               "wlr-data-control-manager", manager,
