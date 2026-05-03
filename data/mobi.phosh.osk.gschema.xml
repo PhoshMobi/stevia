@@ -127,4 +127,15 @@
     </key>
   </schema>
 
+  <schema id="mobi.phosh.osk.application">
+    <key name="override-layout" type="(ss)">
+      <default>('','')</default>
+      <summary>Default layout for the application</summary>
+      <description>
+        What layout should stevia pick by default for this application.
+        Empty string input purpose decides.
+      </description>
+    </key>
+  </schema>
+
 </schemalist>

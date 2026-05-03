@@ -166,6 +166,8 @@ struct _PosInputSurface {
   guint                    bs_repeat_id;
   PosBackspaceMode         bs_mode;
   char                    *surround_before;
+  /* layout-override */
+  gboolean                 layout_overriden;
 };
 
 
@@ -1398,6 +1400,7 @@ select_layout_by_im_purpose (PosInputSurface *self)
   g_object_notify_by_pspec (G_OBJECT (self), props[PROP_COMPLETER_ACTIVE]);
 
   purpose = pos_input_method_get_purpose (self->input_method);
+
   switch (purpose) {
   case POS_INPUT_METHOD_PURPOSE_ALPHA:
   case POS_INPUT_METHOD_PURPOSE_EMAIL:
@@ -1437,13 +1440,19 @@ select_layout_by_im_purpose (PosInputSurface *self)
     widget = self->keypad;
     break;
   case POS_INPUT_METHOD_PURPOSE_TERMINAL:
-    widget = self->osk_terminal;
+    /* Layout override takes precedence of terminal im purpose */
+    if (!self->layout_overriden)
+      widget = self->osk_terminal;
     break;
   default:
     g_return_if_reached ();
   }
 
   if (widget == NULL) {
+    /* We only respect non special purpose when layout it not overriden */
+    if (self->layout_overriden)
+      return;
+
     widget = hdy_deck_get_visible_child (self->deck);
     /* If no "special" layout, Switch back to the last language layer */
     if (!POS_INPUT_SURFACE_IS_LANG_LAYOUT (widget))
@@ -2463,4 +2472,47 @@ pos_input_surface_get_layout_swipe (PosInputSurface *self)
   g_return_val_if_fail (POS_IS_INPUT_SURFACE (self), FALSE);
 
   return hdy_deck_get_can_swipe_forward (self->deck);
+}
+
+static char*
+pos_input_surface_get_layout_name (PosInputSurface *self, const char* type, const char* id)
+{
+  if (g_str_equal (type, "terminal"))
+    return g_strdup ("terminal");
+
+  if (g_str_equal (type, "xkb"))
+    return build_xkb_layout_name (self, id);
+
+  if (g_str_equal (type, "ibus"))
+    return build_ibus_layout_name (self, id);
+
+  return NULL;
+}
+
+
+void
+pos_input_surface_set_layout_override (PosInputSurface *self, const char* type, const char* id)
+{
+  GAction *action;
+  g_autofree char *name = NULL;
+
+  if (g_str_equal (type, "")) {
+    self->layout_overriden = FALSE;
+    return;
+  }
+
+  name = pos_input_surface_get_layout_name (self, type, id);
+
+  if (!name) {
+    g_debug ("failed to build layout name for (%s,%s)", type, id);
+    return;
+  }
+
+  g_debug ("for (%s,%s) built name : %s", type, id, name);
+
+  action = g_action_map_lookup_action (G_ACTION_MAP (self->action_map), "select-layout");
+
+  g_action_change_state (action,g_variant_new_string (name));
+
+  self->layout_overriden = TRUE;
 }

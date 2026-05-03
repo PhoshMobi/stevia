@@ -233,6 +233,14 @@ on_screen_keyboard_enabled_changed (PosInputSurface *input_surface)
   pos_input_surface_set_visible (input_surface, enabled);
 }
 
+static void
+on_layout_override (PosInputSurface *self, char *type, char *id)
+{
+  g_assert (POS_IS_INPUT_SURFACE (self));
+
+  pos_input_surface_set_layout_override (self, type, id);
+}
+
 
 static void
 on_hw_tracker_allow_active_changed (PosHwTracker *hw_tracker, GParamSpec *pspec, PosInputMethod *im)
@@ -334,6 +342,11 @@ create_input_surface (PosApp *self)
                            G_CALLBACK (on_hw_tracker_allow_active_changed),
                            im,
                            G_CONNECT_DEFAULT);
+
+  g_signal_connect_object (self->activation_filter, "layout-override",
+                           G_CALLBACK (on_layout_override),
+                           self->input_surface,
+                           G_CONNECT_SWAPPED);
 
   if (_debug_flags & POS_DEBUG_FLAG_FORCE_SHOW) {
     pos_input_surface_set_visible (self->input_surface, TRUE);
