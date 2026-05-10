@@ -1,3 +1,14 @@
+phosh-osk-stevia (0.55.0) experimental; urgency=medium
+
+  [ Ryo Nakano ]
+  * po: Update Japanese translation.
+
+  [ nicole mikołajczyk ]
+  * po: Add Polish translation
+  * po: Update LINGUAS
+
+ -- Guido Günther <agx@sigxcpu.org>  Sun, 10 May 2026 10:08:53 +0200
+
 phosh-osk-stevia (0.54.0) experimental; urgency=medium
 
   * hunspell: Set surrounding text.
