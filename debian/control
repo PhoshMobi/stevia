@@ -3,6 +3,7 @@ Section: x11
 Priority: optional
 Maintainer: Guido Günther <agx@sigxcpu.org>
 Build-Depends:
+ appstream,
  debhelper-compat (= 13),
  dbus-x11 <!nocheck>,
  gi-docgen <!nodoc>,
