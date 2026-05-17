@@ -64,6 +64,11 @@
   </screenshots>
 
   <releases>
+    <release version="0.55.0" date="2026-05-17">
+      <description translate="no">
+        <description translate="no"><p>Translation updates</p></description>
+      </description>
+    </release>
     <release version="0.54.0" date="2026-04-03">
       <description translate="no">
         <ul>
