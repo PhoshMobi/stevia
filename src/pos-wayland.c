@@ -48,7 +48,7 @@ struct _PosWayland {
   struct zwlr_layer_shell_v1              *layer_shell;
   struct zxdg_output_manager_v1           *zxdg_output_manager_v1;
   struct zphoc_device_state_v1            *zphoc_device_state_v1;
-  struct zwlr_data_control_manager_v1     *wlr_data_control_manager;
+  struct ext_data_control_manager_v1      *ext_data_control_manager;
   GPtrArray                               *outputs;
 
   gboolean                                 ready;
@@ -87,9 +87,9 @@ registry_handle_global (void               *data,
     self->zphoc_device_state_v1 = wl_registry_bind (registry, name,
                                                     &zphoc_device_state_v1_interface,
                                                     MIN (2, version));
-  } else if (!strcmp (interface, zwlr_data_control_manager_v1_interface.name)) {
-    self->wlr_data_control_manager = wl_registry_bind (registry, name,
-                                                       &zwlr_data_control_manager_v1_interface, 1);
+  } else if (!strcmp (interface, ext_data_control_manager_v1_interface.name)) {
+    self->ext_data_control_manager = wl_registry_bind (registry, name,
+                                                       &ext_data_control_manager_v1_interface, 1);
   } else if (!strcmp (interface, "wl_output")) {
     struct wl_output *wl_output = wl_registry_bind (registry, name, &wl_output_interface, 4);
     PosOutput *output = pos_output_new (g_steal_pointer (&wl_output));
@@ -209,7 +209,7 @@ pos_wayland_dispose (GObject *object)
   g_clear_pointer (&self->layer_shell, &zwlr_layer_shell_v1_destroy);
   g_clear_pointer (&self->zxdg_output_manager_v1, zxdg_output_manager_v1_destroy);
   g_clear_pointer (&self->zphoc_device_state_v1, zphoc_device_state_v1_destroy);
-  g_clear_pointer (&self->wlr_data_control_manager, zwlr_data_control_manager_v1_destroy);
+  g_clear_pointer (&self->ext_data_control_manager, ext_data_control_manager_v1_destroy);
 
   g_clear_pointer (&self->outputs, g_ptr_array_unref);
 
@@ -335,12 +335,12 @@ pos_wayland_get_zphoc_device_state_v1 (PosWayland *self)
 }
 
 
-struct zwlr_data_control_manager_v1 *
-pos_wayland_get_zwlr_data_control_manager_v1 (PosWayland *self)
+struct ext_data_control_manager_v1 *
+pos_wayland_get_ext_data_control_manager_v1 (PosWayland *self)
 {
   g_assert (POS_IS_WAYLAND (self));
 
-  return self->wlr_data_control_manager;
+  return self->ext_data_control_manager;
 }
 
 /**
@@ -388,5 +388,5 @@ pos_wayland_has_wl_protcols (PosWayland *self)
           self->layer_shell &&
           self->zxdg_output_manager_v1 &&
           self->zphoc_device_state_v1 &&
-          self->wlr_data_control_manager);
+          self->ext_data_control_manager);
 }
