@@ -28,6 +28,8 @@ def get_layouts_info(path, varnam, uim):
             {
                 "type": "xkb",
                 "layout-id": name,
+                # BCP 47 language code
+                "language": j["locale"],
                 "name": j["name"],
             }
         )
@@ -38,6 +40,7 @@ def get_layouts_info(path, varnam, uim):
             {
                 "type": "ibus",
                 "layout-id": "varnam:ml",
+                "language": "ml",
                 "name": "Malayalam (via varnam)",
             }
         )
@@ -47,6 +50,7 @@ def get_layouts_info(path, varnam, uim):
             {
                 "type": "ibus",
                 "layout-id": "uim:jp",
+                "language": "ja",
                 "name": "Japanese (anthy)",
             }
         )
@@ -54,6 +58,7 @@ def get_layouts_info(path, varnam, uim):
             {
                 "type": "ibus",
                 "layout-id": "uim:cn",
+                "language": "zh-CN",
                 "name": "Chinese (pinyin)",
             }
         )
