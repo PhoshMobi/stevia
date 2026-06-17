@@ -66,9 +66,7 @@ def main(argv):
     parser.add_argument(
         "--varnam", action=argparse.BooleanOptionalAction, default=False
     )
-    parser.add_argument(
-        "--uim", action=argparse.BooleanOptionalAction, default=False
-    )
+    parser.add_argument("--uim", action=argparse.BooleanOptionalAction, default=False)
     parser.add_argument("--out", action="store", default="layouts.json")
     args = parser.parse_args(argv[1:])
 
