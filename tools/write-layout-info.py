@@ -24,15 +24,17 @@ def get_layouts_info(path, varnam, uim):
             continue
 
         j = json.load(open(file))
-        layouts.append(
-            {
-                "type": "xkb",
-                "layout-id": name,
-                # BCP 47 language code
-                "language": j["locale"],
-                "name": j["name"],
-            }
-        )
+        layout = {
+            "type": "xkb",
+            "layout-id": name,
+            # BCP 47 language code
+            "language": j["locale"],
+            "name": j["name"],
+        }
+        flavor = j.get("flavor")
+        if flavor:
+            layout["flavor"] = flavor
+        layouts.append(layout)
 
     # TODO: need to provide this at runtime based on installed schemes:
     if varnam:
