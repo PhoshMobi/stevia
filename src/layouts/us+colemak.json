@@ -578,5 +578,6 @@
     }
   ],
   "locale": "en",
+  "flavor": "colemak",
   "name": "English United States (Colemak)"
 }
