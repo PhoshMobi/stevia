@@ -562,6 +562,7 @@
     }
   ],
   "locale": "en",
+  "flavor": "dvorak",
   "name": "English United States (Dvorak)"
 }
 
