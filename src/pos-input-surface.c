@@ -2044,6 +2044,26 @@ insert_osk (PosInputSurface   *self,
 }
 
 
+static char *
+build_xkb_layout_name (PosInputSurface *self, const char *layout_id)
+{
+  const char *layout = NULL;
+  const char *variant = NULL;
+
+  if (!gnome_xkb_info_get_layout_info (self->xkbinfo,
+                                       layout_id,
+                                       NULL,
+                                       NULL,
+                                       &layout,
+                                       &variant)) {
+    g_warning ("Failed to get layout info for %s", layout_id);
+    return NULL;
+  }
+
+  return build_layout_name ("xkb", layout, variant);
+}
+
+
 static PosOskWidget *
 insert_xkb_layout (PosInputSurface *self, const char *type, const char *layout_id)
 {
@@ -2057,32 +2077,29 @@ insert_xkb_layout (PosInputSurface *self, const char *type, const char *layout_i
     return NULL;
   }
 
-  if (!gnome_xkb_info_get_layout_info (self->xkbinfo, layout_id, &display_name, NULL,
-                                       &layout, &variant)) {
+  name = build_xkb_layout_name (self, layout_id);
+  if (name == NULL)
+    return NULL;
+
+  if (!gnome_xkb_info_get_layout_info (self->xkbinfo,
+                                       layout_id,
+                                       &display_name,
+                                       NULL,
+                                       &layout,
+                                       &variant)) {
     g_warning ("Failed to get layout info for %s", layout_id);
     return NULL;
   }
-  name = build_layout_name ("xkb", layout, variant);
 
   return insert_osk (self, name, layout_id, display_name, layout, variant, NULL);
 }
 
-static PosOskWidget *
-insert_ibus_layout (PosInputSurface *self, const char *type, const char *id)
+
+static char *
+build_ibus_layout_name (PosInputSurface *self, const char *id)
 {
-  const char *engine_name, *lang;
-  g_autofree char *name = NULL;
-  g_autoptr (GError) err = NULL;
-  g_auto (GStrv) parts = NULL;
-  PosCompletionInfo *info;
+  g_auto (GStrv) parts = g_strsplit (id, ":", -1);
 
-  /* We don't actually do ibus bus but try to match these to completers */
-  if (g_strcmp0 (type, "ibus")) {
-    g_debug ("Not an ibus layout: '%s' - ignoring", id);
-    return NULL;
-  }
-
-  parts = g_strsplit (id, ":", -1);
   if (g_strv_length (parts) > 3) {
     g_warning ("ibus layout '%s' not parsable - ignoring", id);
     return NULL;
@@ -2093,23 +2110,45 @@ insert_ibus_layout (PosInputSurface *self, const char *type, const char *id)
     return NULL;
   }
 
+  return build_layout_name ("ibus", parts[1], NULL);
+}
+
+
+static PosOskWidget *
+insert_ibus_layout (PosInputSurface *self, const char *type, const char *layout_id)
+{
+  const char *engine_name, *lang;
+  g_autofree char *name = NULL;
+  g_autoptr (GError) err = NULL;
+  g_auto (GStrv) parts = NULL;
+  PosCompletionInfo *info;
+
+  /* We don't actually do ibus bus but try to match these to completers */
+  if (g_strcmp0 (type, "ibus")) {
+    g_debug ("Not a ibus layout: '%s' - ignoring", layout_id);
+    return NULL;
+  }
+
+  name = build_ibus_layout_name (self, layout_id);
+  if (name == NULL)
+    return NULL;
+
+  parts = g_strsplit (layout_id, ":", -1);
   engine_name = parts[0];
   lang = parts[1];
 
   info = pos_completer_manager_get_info (self->completer_manager, engine_name, lang, NULL, &err);
   if (!info) {
     g_warning ("ibus layout '%s': engine '%s' not usable for '%s': %s - ignoring",
-               id,
+               layout_id,
                engine_name,
                lang,
                err->message);
     return NULL;
   }
 
-  name = build_layout_name ("ibus", lang, NULL);
-
   /* TODO: allow for other base layouts than "us" */
-  return insert_osk (self, name, id, info->display_name, "us", NULL, info);
+  return insert_osk (self, name, layout_id, info->display_name, "us", NULL, info);
 }
 
 
