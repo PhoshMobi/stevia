@@ -1,3 +1,29 @@
+phosh-osk-stevia (0.56~alpha1) experimental; urgency=medium
+
+  [ Guido Günther ]
+  * metainfo: Fix XML.
+    Fixes: e40133faf ("treewide: Document changes and release 0.55.0")
+  * packaging: Depend on appstream.
+    That way we run the appstream validation in CI
+  * ci: Update shared scripts to 4a59c2b
+  * tree: Switch to ext-data-control-v1 protocol.
+    Let's use the non-wlr one.
+  * layout-info: Add language codes.
+    This will allow configuration widgets to match by language
+  * layouts: Mark flavors
+    colemak, dvorak and workman are always variants
+    of a default layout. Mark them as such. Don't
+    use the term `variant` as that has meaning in xkb.
+  * layout-info: Provide flavor.
+    This will help UI to pick a good default.
+
+  [ skysphr ]
+  * layouts: Fix Georgian keyboard.
+    Added missing characters from the Georgian layout,
+    using shift for ease of use and consistency with other keyboards.
+
+ -- Guido Günther <agx@sigxcpu.org>  Tue, 23 Jun 2026 08:43:02 +0200
+
 phosh-osk-stevia (0.55.0) experimental; urgency=medium
 
   [ Ryo Nakano ]

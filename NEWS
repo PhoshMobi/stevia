@@ -1,3 +1,15 @@
+phosh-osk-stevia 0.56~alpha1
+----------------------------
+Released June 2026
+* Add locale and flavor to layout information so Mobile
+  Settings can make use of it.
+* Switch to ext-data-control-v1 for paste handling
+* Updated layouts
+  - ge: Add missing keys
+* Contributors:
+    * Guido Günther
+    * skysphr
+
 phosh-osk-stevia 0.55.0
 -----------------------
 Released May 2026
