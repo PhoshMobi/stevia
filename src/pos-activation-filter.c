@@ -8,6 +8,7 @@
 
 #define G_LOG_DOMAIN "pos-activation-filter"
 
+#include "contrib/util.h"
 #include "pos-activation-filter.h"
 #include "wlr-foreign-toplevel-management-unstable-v1-client-protocol.h"
 
@@ -29,6 +30,12 @@ enum {
   PROP_LAST_PROP,
 };
 static GParamSpec *props[PROP_LAST_PROP];
+enum {
+  LAYOUT_OVERRIDE,
+  N_SIGNALS
+};
+static guint signals[N_SIGNALS];
+
 
 typedef struct _PosToplevel PosToplevel;
 
@@ -55,8 +62,23 @@ struct _PosToplevel {
   gboolean                                activated;
   gboolean                                configured;
 
+  GSettings                              *settings;
   PosActivationFilter                    *filter; /* (unowned) */
 };
+
+static void
+pos_activation_filter_send_layout_override (PosActivationFilter *self, PosToplevel* toplevel)
+{
+  g_autoptr (GVariant) layout_override = NULL;
+  const char * type;
+  const char * id;
+
+  layout_override = g_settings_get_value (toplevel->settings, "override-layout");
+  g_variant_get (layout_override, "(&s&s)", &type, &id);
+
+  g_debug ("Layout override for %s: (%s,%s)", toplevel->app_id, type, id);
+  g_signal_emit (self, signals[LAYOUT_OVERRIDE], 0, type, id);
+}
 
 
 static void
@@ -65,8 +87,13 @@ pos_activation_filter_update_active (PosActivationFilter *self, PosToplevel *act
   self->allow_active = TRUE;
   self->active = active;
 
-  if (!self->active || !self->active->app_id)
+  if (!self->active || !self->active->app_id) {
+    g_debug ("Clearing layout override");
+    g_signal_emit (self, signals[LAYOUT_OVERRIDE], 0, "", "");
     return;
+  }
+
+  pos_activation_filter_send_layout_override (self, self->active);
 
   if (!self->filtered_app_ids ||
       g_strv_contains ((const char *const *)self->filtered_app_ids, self->active->app_id) == FALSE)
@@ -109,6 +136,18 @@ handle_zwlr_foreign_toplevel_handle_app_id (
 
   g_free (toplevel->app_id);
   toplevel->app_id = g_strdup (app_id);
+
+  g_clear_object (&toplevel->settings);
+
+  if (app_id) {
+    g_autofree char *munged_app_id = phosh_munge_app_id (app_id);
+    g_autofree char *path = NULL;
+
+    path = g_strconcat ("/mobi/phosh/osk/application/", munged_app_id, "/", NULL);
+
+    g_debug ("%p: Munged app_id %s at %s", zwlr_foreign_toplevel_handle_v1, munged_app_id, path);
+    toplevel->settings = g_settings_new_with_path ("mobi.phosh.osk.application", path);
+  }
 
   g_debug ("%p: Got app_id %s", zwlr_foreign_toplevel_handle_v1, app_id);
 }
@@ -176,6 +215,8 @@ handle_zwlr_foreign_toplevel_handle_closed (
   struct zwlr_foreign_toplevel_handle_v1 *zwlr_foreign_toplevel_handle_v1)
 {
   PosToplevel *toplevel = data;
+
+  g_clear_object (&toplevel->settings);
 
   pos_activation_filter_remove_toplevel (toplevel->filter, toplevel);
 }
@@ -344,6 +385,15 @@ pos_activation_filter_class_init (PosActivationFilterClass *klass)
                           G_PARAM_STATIC_STRINGS);
 
   g_object_class_install_properties (object_class, PROP_LAST_PROP, props);
+
+  signals[LAYOUT_OVERRIDE] = g_signal_new ("layout-override",
+                                           G_TYPE_FROM_CLASS (klass),
+                                           G_SIGNAL_RUN_LAST,
+                                           0, NULL, NULL, NULL,
+                                           G_TYPE_NONE,
+                                           2,
+                                           G_TYPE_STRING,
+                                           G_TYPE_STRING);
 }
 
 

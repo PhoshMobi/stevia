@@ -166,6 +166,8 @@ struct _PosInputSurface {
   guint                    bs_repeat_id;
   PosBackspaceMode         bs_mode;
   char                    *surround_before;
+  /* layout-override */
+  gboolean                 layout_overriden;
 };
 
 
@@ -1398,6 +1400,7 @@ select_layout_by_im_purpose (PosInputSurface *self)
   g_object_notify_by_pspec (G_OBJECT (self), props[PROP_COMPLETER_ACTIVE]);
 
   purpose = pos_input_method_get_purpose (self->input_method);
+
   switch (purpose) {
   case POS_INPUT_METHOD_PURPOSE_ALPHA:
   case POS_INPUT_METHOD_PURPOSE_EMAIL:
@@ -1437,13 +1440,19 @@ select_layout_by_im_purpose (PosInputSurface *self)
     widget = self->keypad;
     break;
   case POS_INPUT_METHOD_PURPOSE_TERMINAL:
-    widget = self->osk_terminal;
+    /* Layout override takes precedence of terminal im purpose */
+    if (!self->layout_overriden)
+      widget = self->osk_terminal;
     break;
   default:
     g_return_if_reached ();
   }
 
   if (widget == NULL) {
+    /* We only respect non special purpose when layout it not overriden */
+    if (self->layout_overriden)
+      return;
+
     widget = hdy_deck_get_visible_child (self->deck);
     /* If no "special" layout, Switch back to the last language layer */
     if (!POS_INPUT_SURFACE_IS_LANG_LAYOUT (widget))
@@ -2044,6 +2053,26 @@ insert_osk (PosInputSurface   *self,
 }
 
 
+static char *
+build_xkb_layout_name (PosInputSurface *self, const char *layout_id)
+{
+  const char *layout = NULL;
+  const char *variant = NULL;
+
+  if (!gnome_xkb_info_get_layout_info (self->xkbinfo,
+                                       layout_id,
+                                       NULL,
+                                       NULL,
+                                       &layout,
+                                       &variant)) {
+    g_warning ("Failed to get layout info for %s", layout_id);
+    return NULL;
+  }
+
+  return build_layout_name ("xkb", layout, variant);
+}
+
+
 static PosOskWidget *
 insert_xkb_layout (PosInputSurface *self, const char *type, const char *layout_id)
 {
@@ -2057,32 +2086,29 @@ insert_xkb_layout (PosInputSurface *self, const char *type, const char *layout_i
     return NULL;
   }
 
-  if (!gnome_xkb_info_get_layout_info (self->xkbinfo, layout_id, &display_name, NULL,
-                                       &layout, &variant)) {
+  name = build_xkb_layout_name (self, layout_id);
+  if (name == NULL)
+    return NULL;
+
+  if (!gnome_xkb_info_get_layout_info (self->xkbinfo,
+                                       layout_id,
+                                       &display_name,
+                                       NULL,
+                                       &layout,
+                                       &variant)) {
     g_warning ("Failed to get layout info for %s", layout_id);
     return NULL;
   }
-  name = build_layout_name ("xkb", layout, variant);
 
   return insert_osk (self, name, layout_id, display_name, layout, variant, NULL);
 }
 
-static PosOskWidget *
-insert_ibus_layout (PosInputSurface *self, const char *type, const char *id)
+
+static char *
+build_ibus_layout_name (PosInputSurface *self, const char *id)
 {
-  const char *engine_name, *lang;
-  g_autofree char *name = NULL;
-  g_autoptr (GError) err = NULL;
-  g_auto (GStrv) parts = NULL;
-  PosCompletionInfo *info;
+  g_auto (GStrv) parts = g_strsplit (id, ":", -1);
 
-  /* We don't actually do ibus bus but try to match these to completers */
-  if (g_strcmp0 (type, "ibus")) {
-    g_debug ("Not an ibus layout: '%s' - ignoring", id);
-    return NULL;
-  }
-
-  parts = g_strsplit (id, ":", -1);
   if (g_strv_length (parts) > 3) {
     g_warning ("ibus layout '%s' not parsable - ignoring", id);
     return NULL;
@@ -2093,23 +2119,45 @@ insert_ibus_layout (PosInputSurface *self, const char *type, const char *id)
     return NULL;
   }
 
+  return build_layout_name ("ibus", parts[1], NULL);
+}
+
+
+static PosOskWidget *
+insert_ibus_layout (PosInputSurface *self, const char *type, const char *layout_id)
+{
+  const char *engine_name, *lang;
+  g_autofree char *name = NULL;
+  g_autoptr (GError) err = NULL;
+  g_auto (GStrv) parts = NULL;
+  PosCompletionInfo *info;
+
+  /* We don't actually do ibus bus but try to match these to completers */
+  if (g_strcmp0 (type, "ibus")) {
+    g_debug ("Not a ibus layout: '%s' - ignoring", layout_id);
+    return NULL;
+  }
+
+  name = build_ibus_layout_name (self, layout_id);
+  if (name == NULL)
+    return NULL;
+
+  parts = g_strsplit (layout_id, ":", -1);
   engine_name = parts[0];
   lang = parts[1];
 
   info = pos_completer_manager_get_info (self->completer_manager, engine_name, lang, NULL, &err);
   if (!info) {
     g_warning ("ibus layout '%s': engine '%s' not usable for '%s': %s - ignoring",
-               id,
+               layout_id,
                engine_name,
                lang,
                err->message);
     return NULL;
   }
 
-  name = build_layout_name ("ibus", lang, NULL);
-
   /* TODO: allow for other base layouts than "us" */
-  return insert_osk (self, name, id, info->display_name, "us", NULL, info);
+  return insert_osk (self, name, layout_id, info->display_name, "us", NULL, info);
 }
 
 
@@ -2424,4 +2472,47 @@ pos_input_surface_get_layout_swipe (PosInputSurface *self)
   g_return_val_if_fail (POS_IS_INPUT_SURFACE (self), FALSE);
 
   return hdy_deck_get_can_swipe_forward (self->deck);
+}
+
+static char*
+pos_input_surface_get_layout_name (PosInputSurface *self, const char* type, const char* id)
+{
+  if (g_str_equal (type, "terminal"))
+    return g_strdup ("terminal");
+
+  if (g_str_equal (type, "xkb"))
+    return build_xkb_layout_name (self, id);
+
+  if (g_str_equal (type, "ibus"))
+    return build_ibus_layout_name (self, id);
+
+  return NULL;
+}
+
+
+void
+pos_input_surface_set_layout_override (PosInputSurface *self, const char* type, const char* id)
+{
+  GAction *action;
+  g_autofree char *name = NULL;
+
+  if (g_str_equal (type, "")) {
+    self->layout_overriden = FALSE;
+    return;
+  }
+
+  name = pos_input_surface_get_layout_name (self, type, id);
+
+  if (!name) {
+    g_debug ("failed to build layout name for (%s,%s)", type, id);
+    return;
+  }
+
+  g_debug ("for (%s,%s) built name : %s", type, id, name);
+
+  action = g_action_map_lookup_action (G_ACTION_MAP (self->action_map), "select-layout");
+
+  g_action_change_state (action,g_variant_new_string (name));
+
+  self->layout_overriden = TRUE;
 }
