@@ -1,3 +1,14 @@
+phosh-osk-stevia (0.56~rc1) experimental; urgency=medium
+
+  [ Guido Günther ]
+  * input-surface: Split out layout name building.
+    This will be used in a follow up commit
+
+  [ Łukasz Osadnik ]
+  * treewide: Add layout override signal to toplevel
+
+ -- Guido Günther <agx@sigxcpu.org>  Sat, 27 Jun 2026 16:27:38 +0200
+
 phosh-osk-stevia (0.56~alpha1) experimental; urgency=medium
 
   [ Guido Günther ]
