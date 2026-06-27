@@ -1,6 +1,8 @@
-phosh-osk-stevia 0.56~alpha1
-----------------------------
+phosh-osk-stevia 0.56~rc1
+-------------------------
 Released June 2026
+* Allow to specify default layout per app. This allows to e.g.
+  always use the terminal layout with Emacs.
 * Add locale and flavor to layout information so Mobile
   Settings can make use of it.
 * Switch to ext-data-control-v1 for paste handling
@@ -8,6 +10,7 @@ Released June 2026
   - ge: Add missing keys
 * Contributors:
     * Guido Günther
+    * Łukasz Osadnik
     * skysphr
 
 phosh-osk-stevia 0.55.0
