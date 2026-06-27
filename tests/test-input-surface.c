@@ -14,9 +14,9 @@
 static void
 test_build_layout_name (void)
 {
-  g_assert_cmpstr (build_ibus_layout_name (NULL, "ibus:ml:govarnam"),
-                   ==,
-                   "ibus:ml");
+  g_autofree char *layout_name = build_ibus_layout_name (NULL, "ibus:ml:govarnam");
+
+  g_assert_cmpstr (layout_name, ==, "ibus:ml");
 }
 
 
