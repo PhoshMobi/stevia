@@ -16,9 +16,14 @@ function print_current()
 }
 
 if [ -z "$1" ]; then
-  echo "Usage: $0 APP-ID [\"LAYOUT\"]"
-  echo "Possible layouts : "
-  echo "$(gsettings get org.gnome.desktop.input-sources sources | sed "s/\]//g"), ('terminal','')]"
+  LAYOUTS="$(gsettings get org.gnome.desktop.input-sources sources | sed "s/\]//g"), ('terminal','')]"
+  cat <<EOF
+Usage: $0 APP-ID ["LAYOUT"]
+
+Possible layouts : $LAYOUTS
+
+Example: $0 Emacs "('terminal','')"
+EOF
   exit 0
 fi
 
