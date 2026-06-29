@@ -1,4 +1,6 @@
 #!/bin/bash
+#
+# Display and configure a layout override
 
 set -e
 
@@ -14,10 +16,14 @@ function print_current()
 }
 
 if [ -z "$1" ]; then
-  LAYOUTS="$(gsettings get org.gnome.desktop.input-sources sources | sed "s/\]//g")"
-  echo "Usage: $0 APP-ID [\"LAYOUT\"]"
-  echo "Possible layouts : "
-  echo "$(gsettings get org.gnome.desktop.input-sources sources | sed "s/\]//g"), ('terminal','')]"
+  LAYOUTS="$(gsettings get org.gnome.desktop.input-sources sources | sed "s/\]//g"), ('terminal','')]"
+  cat <<EOF
+Usage: $0 APP-ID ["LAYOUT"]
+
+Possible layouts : $LAYOUTS
+
+Example: $0 Emacs "('terminal','')"
+EOF
   exit 0
 fi
 
@@ -29,6 +35,6 @@ if [ -z "$2" ]; then
   exit 0
 fi
 
-G_MESSAGES_DEBUG='' gsettings set mobi.phosh.osk.application:/mobi/phosh/osk/application/"$MUNGED_ID"/ override-layot "$val"
+gsettings set mobi.phosh.osk.application:/mobi/phosh/osk/application/"$MUNGED_ID"/ override-layout "$2"
 
 print_current "$APP_ID" "$MUNGED_ID"
