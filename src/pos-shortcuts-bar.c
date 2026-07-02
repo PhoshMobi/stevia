@@ -14,6 +14,9 @@
 #define SHORTCUTS_SCHEMA_ID "mobi.phosh.osk.Terminal"
 #define SHORTCUTS_KEY       "shortcuts"
 
+#define LONG_PRESS_DELAY_MS  400
+#define LONG_PRESS_REPEAT_MS 80
+
 enum {
   PROP_0,
   PROP_LATCHED_MODIFIERS,
@@ -51,6 +54,9 @@ typedef struct _PosShortcutsBar {
   GtkFlowBox     *shortcuts_box;
   guint           n_shortcuts;
   GdkModifierType latched;
+
+  PosShortcut    *long_pressed;
+  guint           long_press_id;
 
   GSettings      *settings;
 } PosShortcutsBar;
@@ -103,19 +109,6 @@ static PosShortcut *
 pos_shortcut_new (void)
 {
   return g_atomic_rc_box_new0 (PosShortcut);
-}
-
-
-static void
-on_btn_clicked (PosShortcutsBar *self, GtkButton *btn)
-{
-  PosShortcut *shortcut;
-
-  g_assert (POS_IS_SHORTCUTS_BAR (self));
-
-  shortcut = g_object_get_data (G_OBJECT (btn), "pos-shortcut");
-  g_assert (shortcut);
-  g_signal_emit (self, signals[SHORTCUT_ACTIVATED], 0, shortcut);
 }
 
 
@@ -190,6 +183,78 @@ pos_accelerator_get_label (PosShortcut *shortcut)
 
 
 static void
+emit_shortcut (PosShortcutsBar *self, PosShortcut *shortcut)
+{
+  g_return_if_fail (POS_IS_SHORTCUTS_BAR (self));
+  g_return_if_fail (shortcut);
+
+  g_signal_emit (self, signals[SHORTCUT_ACTIVATED], 0, shortcut);
+}
+
+
+static gboolean
+on_long_press_repeat_timeout (gpointer user_data)
+{
+  PosShortcutsBar *self = POS_SHORTCUTS_BAR (user_data);
+
+  g_return_val_if_fail (self->long_press_id, G_SOURCE_REMOVE);
+
+  emit_shortcut (self, self->long_pressed);
+
+  g_debug ("Long press repeat for shortcut %s", self->long_pressed->name);
+  return G_SOURCE_CONTINUE;
+}
+
+
+static void
+on_long_press_timeout (gpointer user_data)
+{
+  PosShortcutsBar *self = POS_SHORTCUTS_BAR (user_data);
+
+  g_return_if_fail (self->long_press_id);
+
+  g_debug ("Starting long press for shortcut %s", self->long_pressed->name);
+  emit_shortcut (self, self->long_pressed);
+  self->long_press_id = g_timeout_add (LONG_PRESS_REPEAT_MS, on_long_press_repeat_timeout, self);
+}
+
+
+static gboolean
+on_button_pressed (PosShortcutsBar *self, GdkEvent *event, GtkButton *btn)
+{
+  PosShortcut *shortcut;
+
+  g_assert (POS_IS_SHORTCUTS_BAR (self));
+
+  g_clear_handle_id (&self->long_press_id, g_source_remove);
+
+  shortcut = g_object_get_data (G_OBJECT (btn), "pos-shortcut");
+  g_assert (shortcut);
+  emit_shortcut (self, shortcut);
+
+  self->long_pressed = pos_shortcut_ref (shortcut);
+  self->long_press_id = g_timeout_add_once (LONG_PRESS_DELAY_MS, on_long_press_timeout, self);
+
+  return FALSE;
+}
+
+
+static gboolean
+on_button_released (PosShortcutsBar *self, GdkEvent *event, GtkButton *btn)
+{
+  g_return_val_if_fail (self->long_press_id, FALSE);
+  g_return_val_if_fail (self->long_pressed, FALSE);
+
+  g_debug ("Long press released for shortcut %s", self->long_pressed->name);
+
+  g_clear_handle_id (&self->long_press_id, g_source_remove);
+  g_clear_pointer (&self->long_pressed, pos_shortcut_unref);
+
+  return FALSE;
+}
+
+
+static void
 on_shortcuts_changed (PosShortcutsBar *self,
                       const char      *key,
                       GSettings       *settings)
@@ -232,7 +297,12 @@ on_shortcuts_changed (PosShortcutsBar *self,
       g_object_set_data_full (G_OBJECT (btn), "pos-shortcut",
                               g_steal_pointer (&shortcut),
                               (GDestroyNotify)pos_shortcut_unref);
-      g_signal_connect_swapped (btn, "clicked", G_CALLBACK (on_btn_clicked), self);
+
+      g_object_connect (btn,
+                        "swapped-object-signal::button-press-event", on_button_pressed, self,
+                        "swapped-object-signal::button-release-event", on_button_released, self,
+                        NULL);
+
       gtk_container_add (GTK_CONTAINER (child), btn);
     } else {
       g_debug ("Adding modifier: '%s', mod: 0x%x", shortcut->name, shortcut->modifiers);
@@ -286,6 +356,9 @@ pos_shortcuts_bar_finalize (GObject *object)
   PosShortcutsBar *self = POS_SHORTCUTS_BAR (object);
 
   g_clear_object (&self->settings);
+
+  g_clear_pointer (&self->long_pressed, pos_shortcut_unref);
+  g_clear_handle_id (&self->long_press_id, g_source_remove);
 
   G_OBJECT_CLASS (pos_shortcuts_bar_parent_class)->finalize (object);
 }
