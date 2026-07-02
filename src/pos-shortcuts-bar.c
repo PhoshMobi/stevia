@@ -28,10 +28,9 @@ enum {
 };
 static guint signals[N_SIGNALS];
 
-typedef struct _PosShortcut
-{
-  char           *name;
-  guint           key;
+typedef struct _PosShortcut {
+  char *name;
+  guint key;
   GdkModifierType modifiers;
 } PosShortcut;
 G_DEFINE_BOXED_TYPE (PosShortcut, pos_shortcut, pos_shortcut_ref, pos_shortcut_unref);
@@ -46,15 +45,14 @@ G_DEFINE_BOXED_TYPE (PosShortcut, pos_shortcut, pos_shortcut_ref, pos_shortcut_u
  * used to allow for latched modifiers.
  */
 
-typedef struct _PosShortcutsBar
-{
-  GtkBox           parent;
+typedef struct _PosShortcutsBar {
+  GtkBox          parent;
 
-  GtkFlowBox      *shortcuts_box;
-  guint            n_shortcuts;
-  GdkModifierType  latched;
+  GtkFlowBox     *shortcuts_box;
+  guint           n_shortcuts;
+  GdkModifierType latched;
 
-  GSettings       *settings;
+  GSettings      *settings;
 } PosShortcutsBar;
 
 G_DEFINE_TYPE (PosShortcutsBar, pos_shortcuts_bar, GTK_TYPE_BOX);
