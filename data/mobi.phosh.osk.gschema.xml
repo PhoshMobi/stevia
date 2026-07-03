@@ -75,6 +75,8 @@
       <default>[
         <!-- modifiers -->
         '&lt;ctrl&gt;', '&lt;alt&gt;',
+        <!-- cursor keys -->
+        'Left', 'Up', 'Down', 'Right',
         <!-- shell navigation and search -->
         '&lt;ctrl&gt;r', 'Home', 'End', '&lt;ctrl&gt;w', '&lt;alt&gt;b', '&lt;alt&gt;f',
         <!-- copy / paste -->
