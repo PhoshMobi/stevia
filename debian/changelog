@@ -1,3 +1,19 @@
+phosh-osk-stevia (0.56.0) experimental; urgency=medium
+
+  * layout-override: Fix typo in key name.
+    Also make shellcheck happy
+  * layout-override: Add example.
+    Switch to `cat <<EOF` for easier quoting
+  * input-surface: Don't leak in test
+  * schema: Add cursor keys to terminal layout by default.
+    Coming from other OSes lots of ppl don't seem to assume that these things
+    are possible and thus never get them.
+  * shortcuts-bar: Add key repeat to non-modifier keys.
+    This allows to use key repeat with e.g. cursor keys.
+    Closes: https://gitlab.gnome.org/World/Phosh/stevia/-/work_items/105
+
+ -- Guido Günther <agx@sigxcpu.org>  Sat, 04 Jul 2026 09:48:41 +0200
+
 phosh-osk-stevia (0.56~rc1) experimental; urgency=medium
 
   [ Guido Günther ]

@@ -64,6 +64,22 @@
   </screenshots>
 
   <releases>
+    <release version="0.56.0" date="2026-07-04">
+      <description translate="no">
+        <ul>
+          <li>
+            Allow to specify default layout per app. This allows to e.g.
+            always use the terminal layout with Emacs.
+          </li>
+          <li>Enable key repeat to non-modifier keys in the shortcuts bar</li>
+          <li>Add cursor keys to shortcuts bar by default</li>
+          <li>
+            Add locale and flavor to layout information so Mobile
+            Settings can make use of it.
+          </li>
+        </ul>
+      </description>
+    </release>
     <release version="0.55.0" date="2026-05-17">
         <description translate="no"><p>Translation updates</p></description>
     </release>
