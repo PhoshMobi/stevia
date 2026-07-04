@@ -11,7 +11,7 @@
 G_BEGIN_DECLS
 
 #define POS_TYPE_SHORTCUT (pos_shortcut_get_type ())
-GType   pos_shortcut_get_type      (void) G_GNUC_CONST;
+GType   pos_shortcut_get_type      (void);
 
 typedef struct     _PosShortcut PosShortcut;
 PosShortcut        *pos_shortcut_ref (PosShortcut *shortcut);
