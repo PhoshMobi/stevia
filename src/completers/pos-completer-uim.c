@@ -61,6 +61,7 @@ static PosUimInputMethod ims[] = {
     .id = "jp",
     .name = "Anthy",
     .uim = "anthy-utf8",
+    .base_layout = "uim/anthy/jp",
     .used_actions = {
       "action_anthy_utf8_direct",
       "action_anthy_utf8_hiragana",

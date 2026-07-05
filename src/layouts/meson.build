@@ -62,6 +62,8 @@ layouts = [
   'za.json',
   # custom lauouts
   'terminal.json',
+  # Completer specific
+  'uim/anthy/jp.json',
 ]
 
 if json_glib_utils.found()
