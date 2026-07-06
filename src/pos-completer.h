@@ -77,6 +77,14 @@ struct _PosCompleterInterface
    * Implementation of this method is optional.
    */
   void           (*toggle_mode) (PosCompleter *self);
+
+  /**
+   * PosCompleterInterface::get_base_layout:
+   * @self: The completer
+   *
+   * Get the base keyboard layout to be used with this completer. Defaults to "us".
+   */
+  const char *   (*get_base_layout) (PosCompleter *self);
 };
 
 /* Used by completion users */
@@ -102,5 +110,6 @@ GStrv          pos_completer_capitalize_by_template (const char *template,
 glong          pos_completer_find_prev_word_break (const char *text);
 gboolean       pos_completer_set_selected (PosCompleter *self, const char *selected);
 void           pos_completer_toggle_mode (PosCompleter *self);
+const char *   pos_completer_get_base_layout (PosCompleter *self);
 
 G_END_DECLS

@@ -45,6 +45,9 @@ test_load_layouts (void)
     g_autofree char *layout_id = NULL;
     const char *layout, *variant;
 
+    if (g_str_has_suffix (names[i], "/"))
+      continue;
+
     osk_widget = g_object_ref_sink (pos_osk_widget_new (PHOSH_OSK_FEATURE_DEFAULT));
     g_assert (g_str_has_suffix (names[i], ".json"));
     layout_id = g_strndup (names[i], strlen (names[i]) - strlen (".json"));

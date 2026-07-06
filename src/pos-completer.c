@@ -294,7 +294,6 @@ pos_completer_set_preedit (PosCompleter *self, const char *preedit)
   return iface->set_preedit (self, preedit);
 }
 
-
 /**
  * pos_completer_set_surrounding_text:
  * @self: the completer
@@ -381,6 +380,29 @@ pos_completer_set_selected (PosCompleter *self, const char *selected)
   return iface->set_selected (self, selected);
 }
 
+/**
+ * pos_completer_get_base_layout:
+ * @self: the completer
+ *
+ * The base keyboard layout to use. E.g. for some Asian languages
+ * the keyboard needs special input keys. The completer can provide
+ * the layout's name this way.
+ */
+const char *
+pos_completer_get_base_layout (PosCompleter *self)
+
+{
+  PosCompleterInterface *iface;
+
+  g_return_val_if_fail (POS_IS_COMPLETER (self), NULL);
+
+  iface = POS_COMPLETER_GET_IFACE (self);
+  /* optional */
+  if (iface->get_base_layout == NULL)
+    return NULL;
+
+  return iface->get_base_layout (self);
+}
 
 /* Used by completers to simplify implementations */
 
