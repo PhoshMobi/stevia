@@ -722,7 +722,7 @@ symbol_to_key (const char *symbol, int *uim_state)
     uim_ascii = g_ascii_tolower (symbol[0]);
   }
 
-  if (g_ascii_isalnum (uim_ascii) || g_ascii_isspace (uim_ascii))
+  if (g_ascii_isprint (uim_ascii))
     return uim_ascii;
 
   g_warning ("Unhandled symbol '%s'", symbol);
