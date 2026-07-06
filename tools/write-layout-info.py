@@ -20,7 +20,7 @@ def get_layouts_info(path, varnam, uim):
 
         name = os.path.basename(file).split(".")[0]
         # Not handles in p-o-s
-        if name == "terminal":
+        if name == "terminal" or '/' in name:
             continue
 
         j = json.load(open(file))
