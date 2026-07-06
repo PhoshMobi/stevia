@@ -39,6 +39,7 @@ typedef struct {
   const char *name;
   const char *locale;
   const char *uim;
+  const char *base_layout;
   const char *used_actions[MAX_LEAFS];
   char       *names[MAX_LEAFS];
   char       *symbols[MAX_LEAFS];
@@ -881,6 +882,15 @@ pos_completer_uim_toggle_mode (PosCompleter *completer)
 }
 
 
+static const char *
+pos_completer_uim_get_base_layout (PosCompleter *completer)
+{
+  PosCompleterUim *self = POS_COMPLETER_UIM (completer);
+
+  return self->uim->base_layout;
+}
+
+
 static void
 pos_completer_uim_interface_init (PosCompleterInterface *iface)
 {
@@ -892,6 +902,7 @@ pos_completer_uim_interface_init (PosCompleterInterface *iface)
   iface->get_display_name = pos_completer_uim_get_display_name;
   iface->set_selected = pos_completer_uim_set_selected;
   iface->toggle_mode = pos_completer_uim_toggle_mode;
+  iface->get_base_layout = pos_completer_uim_get_base_layout;
 }
 
 
