@@ -76,6 +76,8 @@ enum {
   PROP_PREEDIT,
   PROP_COMPLETIONS,
   PROP_MODE_NAME,
+  PROP_MODE_MENU,
+  PROP_MODE_ACTIONS,
   PROP_LAST_PROP
 };
 static GParamSpec *props[PROP_LAST_PROP];
@@ -227,6 +229,12 @@ pos_completer_uim_get_property (GObject    *object,
   case PROP_MODE_NAME:
     g_value_set_string (value, pos_completer_uim_get_mode_name (self));
     break;
+  case PROP_MODE_MENU:
+    g_value_set_object (value, NULL);
+    break;
+  case PROP_MODE_ACTIONS:
+    g_value_set_object (value, NULL);
+    break;
   default:
     G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
     break;
@@ -342,6 +350,12 @@ pos_completer_uim_class_init (PosCompleterUimClass *klass)
 
   g_object_class_override_property (object_class, PROP_MODE_NAME, "mode-name");
   props[PROP_MODE_NAME] = g_object_class_find_property (object_class, "mode-name");
+
+  g_object_class_override_property (object_class, PROP_MODE_MENU, "mode-menu");
+  props[PROP_MODE_MENU] = g_object_class_find_property (object_class, "mode-menu");
+
+  g_object_class_override_property (object_class, PROP_MODE_ACTIONS, "mode-actions");
+  props[PROP_MODE_ACTIONS] = g_object_class_find_property (object_class, "mode-actions");
 }
 
 
