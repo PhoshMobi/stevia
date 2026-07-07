@@ -94,18 +94,20 @@ static int uim_helper_fd_id;
  * Uses [uim](https://uim.sourceforge.io/) for completions
  */
 struct _PosCompleterUim {
-  GObject            parent;
+  GObject             parent;
 
-  char              *name;
-  GString           *preedit;
-  GStrv              completions;
-  guint              max_completions;
+  char               *name;
+  GString            *preedit;
+  GStrv               completions;
+  guint               max_completions;
 
-  uim_context        context;
+  uim_context         context;
 
-  char              *lang;
-  char              *mode_name;
-  PosUimInputMethod *uim;
+  char               *lang;
+  char               *mode_name;
+  GMenu              *mode_menu;
+  GSimpleActionGroup *mode_actions;
+  PosUimInputMethod  *uim;
 };
 
 
@@ -230,10 +232,10 @@ pos_completer_uim_get_property (GObject    *object,
     g_value_set_string (value, pos_completer_uim_get_mode_name (self));
     break;
   case PROP_MODE_MENU:
-    g_value_set_object (value, NULL);
+    g_value_set_object (value, self->mode_menu);
     break;
   case PROP_MODE_ACTIONS:
-    g_value_set_object (value, NULL);
+    g_value_set_object (value, self->mode_actions);
     break;
   default:
     G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
@@ -321,6 +323,7 @@ pos_completer_uim_finalize (GObject *object)
   g_string_free (self->preedit, TRUE);
   g_clear_pointer (&self->lang, g_free);
   g_clear_pointer (&self->mode_name, g_free);
+  g_clear_object (&self->mode_menu);
 
   pos_completer_uim_context_destroy (self);
 
@@ -927,6 +930,7 @@ pos_completer_uim_init (PosCompleterUim *self)
   self->max_completions = MAX_COMPLETIONS;
   self->preedit = g_string_new (NULL);
   self->name = "uim";
+  self->mode_menu = g_menu_new ();
 }
 
 /**
