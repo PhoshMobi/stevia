@@ -49,4 +49,7 @@
       </object>
     </child>
   </template>
+  <object class="GtkPopover" id="mode_popover">
+    <property name="relative-to">mode_button</property>
+  </object>
 </interface>
