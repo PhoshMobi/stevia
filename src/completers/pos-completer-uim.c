@@ -32,7 +32,7 @@
 
 // #define POS_UIM_TRACE_PROPS 1
 #define MAX_COMPLETIONS 3
-#define MAX_LEAFS 4
+#define MAX_LEAFS 6
 
 typedef struct {
   const char *id;
@@ -40,6 +40,7 @@ typedef struct {
   const char *locale;
   const char *uim;
   const char *base_layout;
+  const int   max_rotate_action;
   const char *used_actions[MAX_LEAFS];
   char       *names[MAX_LEAFS];
   char       *symbols[MAX_LEAFS];
@@ -62,10 +63,13 @@ static PosUimInputMethod ims[] = {
     .name = "Anthy",
     .uim = "anthy-utf8",
     .base_layout = "uim/anthy/jp",
+    .max_rotate_action = 2,
     .used_actions = {
       "action_anthy_utf8_direct",
       "action_anthy_utf8_hiragana",
       "action_anthy_utf8_katakana",
+      "action_anthy_utf8_halfkana",
+      "action_anthy_utf8_fullwidth_alnum",
     },
   },
 };
@@ -319,13 +323,14 @@ pos_completer_uim_finalize (GObject *object)
   g_autoptr (GError) err = NULL;
 
   pos_uim_input_method_free_all ();
+  pos_completer_uim_context_destroy (self);
+
   g_clear_pointer (&self->completions, g_strfreev);
   g_string_free (self->preedit, TRUE);
   g_clear_pointer (&self->lang, g_free);
   g_clear_pointer (&self->mode_name, g_free);
   g_clear_object (&self->mode_menu);
-
-  pos_completer_uim_context_destroy (self);
+  g_clear_object (&self->mode_actions);
 
   uim_quit ();
 
@@ -677,6 +682,13 @@ prop_list_update (void *ptr, const char *str)
   pos_completer_uim_set_mode_name (self, self->uim->names[self->uim->active]);
   /* TODO: Force a valid mode */
 
+  g_menu_remove_all (self->mode_menu);
+  for (int i = 0; self->uim->used_actions[i]; i++) {
+    g_autoptr (GMenuItem) item = g_menu_item_new (self->uim->names[i], NULL);
+    g_menu_item_set_action_and_target (item, "uim.selectmode", "s", self->uim->used_actions[i]);
+    g_menu_append_item (self->mode_menu, item);
+  }
+
  done:
   prop_list = g_string_new ("");
   g_string_printf (prop_list, "prop_list_update\ncharset=UTF-8\n%s", str);
@@ -890,7 +902,8 @@ pos_completer_uim_toggle_mode (PosCompleter *completer)
   const char *action;
 
   action = self->uim->used_actions[self->uim->active + 1];
-  if (action == NULL)
+  if (action == NULL ||
+      (self->uim->max_rotate_action != 0 && self->uim->active + 1 >= self->uim->max_rotate_action))
     action = self->uim->used_actions[0];
 
   /* Convert and submit anything pending content so it doesn't get lost */
@@ -925,12 +938,36 @@ pos_completer_uim_interface_init (PosCompleterInterface *iface)
 
 
 static void
+on_uim_mode_select_activated (GSimpleAction* action, GVariant* parameter, gpointer user_data)
+{
+  PosCompleterUim *self = POS_COMPLETER_UIM (user_data);
+  const char *mode = g_variant_get_string (parameter, NULL);
+
+  /* Convert and submit anything pending content so it doesn't get lost */
+  feed_symbol (self, UKey_Return);
+
+  uim_prop_activate (self->context, mode);
+}
+
+
+static GActionEntry mode_entries[] =
+{
+  { "uim.selectmode", on_uim_mode_select_activated, "s", "\"action_generic_off\"", NULL},
+};
+
+
+static void
 pos_completer_uim_init (PosCompleterUim *self)
 {
   self->max_completions = MAX_COMPLETIONS;
   self->preedit = g_string_new (NULL);
   self->name = "uim";
   self->mode_menu = g_menu_new ();
+
+  self->mode_actions = g_simple_action_group_new ();
+  g_action_map_add_action_entries (G_ACTION_MAP (self->mode_actions),
+                                   mode_entries, G_N_ELEMENTS (mode_entries),
+                                   self);
 }
 
 /**
