@@ -117,10 +117,18 @@ pos_completer_default_init (PosCompleterInterface *iface)
   /**
    * PosCompleter:mode-name:
    *
-   * Mode name shown by the OSK along with the mode toggle.
+   * Mode name shown in mode menu.
    */
   g_object_interface_install_property (
     iface, g_param_spec_string ("mode-name", "", "", NULL, G_PARAM_READABLE));
+
+  /**
+   * PosCompleter:mode-symbol:
+   *
+   * Mode symbol shown by the OSK along with the mode toggle.
+   */
+  g_object_interface_install_property (
+    iface, g_param_spec_string ("mode-symbol", "", "", NULL, G_PARAM_READABLE));
 
   /**
    * PosCompleter:mode-menu:

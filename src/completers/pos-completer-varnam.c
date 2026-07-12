@@ -28,6 +28,7 @@ enum {
   PROP_PREEDIT,
   PROP_COMPLETIONS,
   PROP_MODE_NAME,
+  PROP_MODE_SYMBOL,
   PROP_MODE_MENU,
   PROP_MODE_ACTIONS,
   PROP_LAST_PROP
@@ -151,6 +152,9 @@ pos_completer_varnam_get_property (GObject    *object,
   case PROP_MODE_NAME:
     g_value_set_string (value, NULL);
     break;
+  case PROP_MODE_SYMBOL:
+    g_value_set_string (value, NULL);
+    break;
   case PROP_MODE_MENU:
     g_value_set_object (value, NULL);
     break;
@@ -203,6 +207,9 @@ pos_completer_varnam_class_init (PosCompleterVarnamClass *klass)
 
   g_object_class_override_property (object_class, PROP_MODE_NAME, "mode-name");
   props[PROP_MODE_NAME] = g_object_class_find_property (object_class, "mode-name");
+
+  g_object_class_override_property (object_class, PROP_MODE_SYMBOL, "mode-symbol");
+  props[PROP_MODE_SYMBOL] = g_object_class_find_property (object_class, "mode-symbol");
 
   g_object_class_override_property (object_class, PROP_MODE_MENU, "mode-menu");
   props[PROP_MODE_MENU] = g_object_class_find_property (object_class, "mode-menu");

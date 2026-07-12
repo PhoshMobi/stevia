@@ -151,7 +151,7 @@ struct _PosInputSurface {
   GtkWidget               *completion_bar;
   gboolean                 completion_enabled;
   PhoshOskCompletionModeFlags completion_mode;
-  GBinding                *mode_name_binding;
+  GBinding                *mode_symbol_binding;
   GBinding                *mode_menu_binding;
   GBinding                *mode_actions_binding;
 
@@ -1143,7 +1143,7 @@ pos_input_surface_set_completer (PosInputSurface *self, PosCompleter *completer)
   if (self->completer == completer)
     return;
 
-  g_clear_object (&self->mode_name_binding);
+  g_clear_object (&self->mode_symbol_binding);
   g_clear_object (&self->mode_menu_binding);
   g_clear_object (&self->mode_actions_binding);
 
@@ -1164,9 +1164,9 @@ pos_input_surface_set_completer (PosInputSurface *self, PosCompleter *completer)
                       "swapped-signal::update",
                       G_CALLBACK (on_completer_update), self,
                       NULL);
-    self->mode_name_binding = g_object_bind_property (self->completer, "mode-name",
-                                                      self->completion_bar, "mode-name",
-                                                      G_BINDING_SYNC_CREATE);
+    self->mode_symbol_binding = g_object_bind_property (self->completer, "mode-symbol",
+                                                        self->completion_bar, "mode-symbol",
+                                                        G_BINDING_SYNC_CREATE);
     self->mode_menu_binding = g_object_bind_property (self->completer, "mode-menu",
                                                       self->completion_bar, "mode-menu",
                                                       G_BINDING_SYNC_CREATE);

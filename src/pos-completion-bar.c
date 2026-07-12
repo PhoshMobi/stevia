@@ -17,7 +17,7 @@
 
 enum {
   PROP_0,
-  PROP_MODE_NAME,
+  PROP_MODE_SYMBOL,
   PROP_MODE_MENU,
   PROP_MODE_ACTIONS,
   PROP_LAST_PROP
@@ -47,7 +47,7 @@ struct _PosCompletionBar {
 
   GtkGesture        *mode_button_long_press;
 
-  char *mode_name;
+  char              *mode_symbol;
   GMenuModel        *mode_menu;
   GActionGroup      *mode_actions;
 };
@@ -55,12 +55,12 @@ G_DEFINE_TYPE (PosCompletionBar, pos_completion_bar, GTK_TYPE_BOX)
 
 
 static void
-set_mode_name (PosCompletionBar *self, const char *mode_name)
+set_mode_symbol (PosCompletionBar *self, const char *mode_symbol)
 {
-  if (!g_set_str (&self->mode_name, mode_name))
+  if (!g_set_str (&self->mode_symbol, mode_symbol))
     return;
 
-  g_object_notify_by_pspec (G_OBJECT (self), props[PROP_MODE_NAME]);
+  g_object_notify_by_pspec (G_OBJECT (self), props[PROP_MODE_SYMBOL]);
 }
 
 
@@ -98,8 +98,8 @@ pos_completion_bar_set_property (GObject      *object,
   PosCompletionBar *self = POS_COMPLETION_BAR (object);
 
   switch (property_id) {
-  case PROP_MODE_NAME:
-    set_mode_name (self, g_value_get_string (value));
+  case PROP_MODE_SYMBOL:
+    set_mode_symbol (self, g_value_get_string (value));
     break;
   case PROP_MODE_MENU:
     set_mode_menu (self, g_value_get_object (value));
@@ -123,8 +123,8 @@ pos_completion_bar_get_property (GObject    *object,
   PosCompletionBar *self = POS_COMPLETION_BAR (object);
 
   switch (property_id) {
-  case PROP_MODE_NAME:
-    g_value_set_string (value, self->mode_name);
+  case PROP_MODE_SYMBOL:
+    g_value_set_string (value, self->mode_symbol);
     break;
   case PROP_MODE_MENU:
     g_value_set_object (value, self->mode_menu);
@@ -178,7 +178,7 @@ pos_completion_bar_finalize (GObject *object)
 
   g_clear_object (&self->mode_popover);
   g_clear_object (&self->mode_menu);
-  g_clear_pointer (&self->mode_name, g_free);
+  g_clear_pointer (&self->mode_symbol, g_free);
 
   G_OBJECT_CLASS (pos_completion_bar_parent_class)->finalize (object);
 }
@@ -195,12 +195,12 @@ pos_completion_bar_class_init (PosCompletionBarClass *klass)
   object_class->finalize = pos_completion_bar_finalize;
 
   /**
-   * PosCompletionBar:mode-name
+   * PosCompletionBar:mode-symbol
    *
-   * Name of the mode displayed on the mode toggle.
+   * Symbol of the mode displayed on the mode toggle.
    */
-  props[PROP_MODE_NAME] =
-    g_param_spec_string ("mode-name", "", "",
+  props[PROP_MODE_SYMBOL] =
+    g_param_spec_string ("mode-symbol", "", "",
                          NULL,
                          G_PARAM_READWRITE | G_PARAM_EXPLICIT_NOTIFY | G_PARAM_STATIC_STRINGS);
 
