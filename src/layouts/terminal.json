@@ -62,11 +62,6 @@
           ]
         ],
         [
-          {
-            "symbol": "KEY_TAB",
-            "label": "⭾",
-            "style": "sys"
-          },
           [
             "a",
             "à",
@@ -102,12 +97,7 @@
           ],
           [
             "l"
-          ],
-          {
-            "symbol": "KEY_ESC",
-            "label": "ESC",
-            "style": "sys"
-          }
+          ]
         ],
         [
           [
@@ -223,11 +213,6 @@
           ]
         ],
         [
-          {
-            "symbol": "KEY_TAB",
-            "label": "⭾",
-            "style": "sys"
-          },
           [
             "A",
             "À",
@@ -264,12 +249,7 @@
           ],
           [
             "L"
-          ],
-          {
-            "symbol": "KEY_ESC",
-            "label": "ESC",
-            "style": "sys"
-          }
+          ]
         ],
         [
           [
