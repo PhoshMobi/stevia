@@ -40,16 +40,16 @@ static guint signals[N_SIGNALS];
 typedef struct _PosToplevel PosToplevel;
 
 struct _PosActivationFilter {
-  GObject                                     parent;
+  GObject      parent;
 
-  GSettings                                  *settings;
-  GStrv                                       filtered_app_ids;
+  GSettings   *settings;
+  GStrv        filtered_app_ids;
 
   struct zwlr_foreign_toplevel_management_v1 *foreign_toplevel_manager;
-  GPtrArray                                  *toplevels;
-  PosToplevel                                *active;
+  GPtrArray   *toplevels;
+  PosToplevel *active;
 
-  gboolean                                    allow_active;
+  gboolean     allow_active;
 };
 
 G_DEFINE_TYPE (PosActivationFilter, pos_activation_filter, G_TYPE_OBJECT);
@@ -57,13 +57,13 @@ G_DEFINE_TYPE (PosActivationFilter, pos_activation_filter, G_TYPE_OBJECT);
 
 struct _PosToplevel {
   struct zwlr_foreign_toplevel_handle_v1 *handle;
-  char                                   *app_id;
-  char                                   *title;
-  gboolean                                activated;
-  gboolean                                configured;
+  char      *app_id;
+  char      *title;
+  gboolean   activated;
+  gboolean   configured;
 
-  GSettings                              *settings;
-  PosActivationFilter                    *filter; /* (unowned) */
+  GSettings *settings;
+  PosActivationFilter *filter;                    /* (unowned) */
 };
 
 static void

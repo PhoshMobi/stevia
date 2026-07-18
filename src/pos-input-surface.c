@@ -107,69 +107,69 @@ struct _PosInputSurface {
 
   gboolean                 surface_visible;
   PosInputSurfaceAnimation animation;
-  guint                    min_height;
-  guint                    dead_zone;
+  guint                       min_height;
+  guint                       dead_zone;
 
   /* GNOME settings */
-  gboolean                 screen_keyboard_enabled;
-  GSettings               *a11y_settings;
-  GSettings               *input_settings;
-  GSettings               *osk_settings;
-  GnomeXkbInfo            *xkbinfo;
+  gboolean                    screen_keyboard_enabled;
+  GSettings                  *a11y_settings;
+  GSettings                  *input_settings;
+  GSettings                  *osk_settings;
+  GnomeXkbInfo               *xkbinfo;
 
-  PosLogindSession        *logind_session;
+  PosLogindSession           *logind_session;
 
   /* Wayland input-method */
-  PosInputMethod          *input_method;
+  PosInputMethod             *input_method;
 
   /* OSK */
-  GPtrArray               *osks;
-  HdyDeck                 *deck;
-  HdyClamp                *clamp;
-  GtkWidget               *osk_terminal;
-  GtkWidget               *emoji_picker;
-  GtkWidget               *last_layout;
-  GtkWidget               *keypad;
-  PosShortcutsBar         *shortcuts_bar;
-  PhoshOskFeatures         osk_features;
-  GdkModifierType          latched_modifiers;
+  GPtrArray                  *osks;
+  HdyDeck                    *deck;
+  HdyClamp                   *clamp;
+  GtkWidget                  *osk_terminal;
+  GtkWidget                  *emoji_picker;
+  GtkWidget                  *last_layout;
+  GtkWidget                  *keypad;
+  PosShortcutsBar            *shortcuts_bar;
+  PhoshOskFeatures            osk_features;
+  GdkModifierType             latched_modifiers;
 
   /* TODO: this should be an interface for different keyboard drivers */
-  PosVkDriver             *keyboard_driver;
+  PosVkDriver                *keyboard_driver;
 
-  PosStyleManager         *style_manager;
+  PosStyleManager            *style_manager;
 
   /* menu popover */
-  GtkBox                  *menu_box_layouts;
-  GtkPopover              *menu_popup;
-  GSimpleActionGroup      *action_map;
+  GtkBox                     *menu_box_layouts;
+  GtkPopover                 *menu_popup;
+  GSimpleActionGroup         *action_map;
 
   /* word completion */
-  GtkWidget               *word_completion_btn;
-  PosCompleter            *completer;
-  PosCompleterManager     *completer_manager;
-  GtkWidget               *completion_bar;
-  gboolean                 completion_enabled;
+  GtkWidget                  *word_completion_btn;
+  PosCompleter               *completer;
+  PosCompleterManager        *completer_manager;
+  GtkWidget                  *completion_bar;
+  gboolean                    completion_enabled;
   PhoshOskCompletionModeFlags completion_mode;
-  GBinding                *mode_symbol_binding;
-  GBinding                *mode_menu_binding;
-  GBinding                *mode_actions_binding;
+  GBinding                   *mode_symbol_binding;
+  GBinding                   *mode_menu_binding;
+  GBinding                   *mode_actions_binding;
 
   /* Clipboard */
-  PosClipboardManager    *clipboard_manager;
+  PosClipboardManager        *clipboard_manager;
 
   /* Swipe gesture */
-  GtkGesture              *swipe_down;
+  GtkGesture                 *swipe_down;
 
   /* emission hook for clicks */
-  gulong                   clicked_id;
+  gulong                      clicked_id;
 
   /* Backspace handling */
-  guint                    bs_repeat_id;
-  PosBackspaceMode         bs_mode;
-  char                    *surround_before;
+  guint                       bs_repeat_id;
+  PosBackspaceMode            bs_mode;
+  char                       *surround_before;
   /* layout-override */
-  gboolean                 layout_overriden;
+  gboolean                    layout_overriden;
 };
 
 

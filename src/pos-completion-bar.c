@@ -47,7 +47,7 @@ struct _PosCompletionBar {
 
   GtkGesture        *mode_button_long_press;
 
-  char              *mode_symbol;
+  char *mode_symbol;
   GMenuModel        *mode_menu;
   GActionGroup      *mode_actions;
 };
