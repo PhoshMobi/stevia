@@ -32,7 +32,7 @@
 
 // #define POS_UIM_TRACE_PROPS 1
 #define MAX_COMPLETIONS 3
-#define MAX_LEAFS 4
+#define MAX_LEAFS 6
 
 typedef struct {
   const char *id;
@@ -40,7 +40,10 @@ typedef struct {
   const char *locale;
   const char *uim;
   const char *base_layout;
+  /* Maximum number of actions to rotate through on toggle events */
+  const int   max_rotate_action;
   const char *used_actions[MAX_LEAFS];
+  const char *icons[MAX_LEAFS];
   char       *names[MAX_LEAFS];
   char       *symbols[MAX_LEAFS];
   int         active;
@@ -56,16 +59,30 @@ static PosUimInputMethod ims[] = {
       "action_generic_off",
       "action_generic_on",
     },
+    .icons = {
+      "英",
+      "中",
+    },
   },
   {
     .id = "jp",
     .name = "Anthy",
     .uim = "anthy-utf8",
     .base_layout = "uim/anthy/jp",
+    .max_rotate_action = 2,
     .used_actions = {
       "action_anthy_utf8_direct",
       "action_anthy_utf8_hiragana",
       "action_anthy_utf8_katakana",
+      "action_anthy_utf8_halfkana",
+      "action_anthy_utf8_fullwidth_alnum",
+    },
+    .icons = {
+      "a",
+      NULL,
+      NULL,
+      NULL,
+      NULL,
     },
   },
 };
@@ -76,6 +93,9 @@ enum {
   PROP_PREEDIT,
   PROP_COMPLETIONS,
   PROP_MODE_NAME,
+  PROP_MODE_SYMBOL,
+  PROP_MODE_MENU,
+  PROP_MODE_ACTIONS,
   PROP_LAST_PROP
 };
 static GParamSpec *props[PROP_LAST_PROP];
@@ -92,18 +112,21 @@ static int uim_helper_fd_id;
  * Uses [uim](https://uim.sourceforge.io/) for completions
  */
 struct _PosCompleterUim {
-  GObject            parent;
+  GObject             parent;
 
-  char              *name;
-  GString           *preedit;
-  GStrv              completions;
-  guint              max_completions;
+  char               *name;
+  GString            *preedit;
+  GStrv               completions;
+  guint               max_completions;
 
-  uim_context        context;
+  uim_context         context;
 
-  char              *lang;
-  char              *mode_name;
-  PosUimInputMethod *uim;
+  char               *lang;
+  char               *mode_name;
+  char               *mode_symbol;
+  GMenu              *mode_menu;
+  GSimpleActionGroup *mode_actions;
+  PosUimInputMethod  *uim;
 };
 
 
@@ -187,6 +210,29 @@ pos_completer_uim_get_mode_name (PosCompleterUim *self)
 }
 
 
+static const char *
+pos_completer_uim_get_mode_symbol (PosCompleterUim *self)
+{
+  /* Use current mode symbol as info */
+  return self->mode_symbol;
+}
+
+
+/*
+ * The glyph shown on the mode button
+ */
+static const char *
+uim_mode_icon (PosUimInputMethod *uim, int pos)
+{
+  if (uim->icons[pos])
+    return uim->icons[pos];
+  if (uim->symbols[pos])
+    return uim->symbols[pos];
+
+  return uim->names[pos];
+}
+
+
 static void
 pos_completer_uim_set_property (GObject      *object,
                                 guint         property_id,
@@ -226,6 +272,15 @@ pos_completer_uim_get_property (GObject    *object,
     break;
   case PROP_MODE_NAME:
     g_value_set_string (value, pos_completer_uim_get_mode_name (self));
+    break;
+  case PROP_MODE_SYMBOL:
+    g_value_set_string (value, pos_completer_uim_get_mode_symbol (self));
+    break;
+  case PROP_MODE_MENU:
+    g_value_set_object (value, self->mode_menu);
+    break;
+  case PROP_MODE_ACTIONS:
+    g_value_set_object (value, self->mode_actions);
     break;
   default:
     G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
@@ -309,12 +364,15 @@ pos_completer_uim_finalize (GObject *object)
   g_autoptr (GError) err = NULL;
 
   pos_uim_input_method_free_all ();
+  pos_completer_uim_context_destroy (self);
+
   g_clear_pointer (&self->completions, g_strfreev);
   g_string_free (self->preedit, TRUE);
   g_clear_pointer (&self->lang, g_free);
   g_clear_pointer (&self->mode_name, g_free);
-
-  pos_completer_uim_context_destroy (self);
+  g_clear_pointer (&self->mode_symbol, g_free);
+  g_clear_object (&self->mode_menu);
+  g_clear_object (&self->mode_actions);
 
   uim_quit ();
 
@@ -342,6 +400,15 @@ pos_completer_uim_class_init (PosCompleterUimClass *klass)
 
   g_object_class_override_property (object_class, PROP_MODE_NAME, "mode-name");
   props[PROP_MODE_NAME] = g_object_class_find_property (object_class, "mode-name");
+
+  g_object_class_override_property (object_class, PROP_MODE_SYMBOL, "mode-symbol");
+  props[PROP_MODE_SYMBOL] = g_object_class_find_property (object_class, "mode-symbol");
+
+  g_object_class_override_property (object_class, PROP_MODE_MENU, "mode-menu");
+  props[PROP_MODE_MENU] = g_object_class_find_property (object_class, "mode-menu");
+
+  g_object_class_override_property (object_class, PROP_MODE_ACTIONS, "mode-actions");
+  props[PROP_MODE_ACTIONS] = g_object_class_find_property (object_class, "mode-actions");
 }
 
 
@@ -466,6 +533,16 @@ pos_completer_uim_set_mode_name (PosCompleterUim *self, const char *mode_name)
 
   g_debug ("mode: %s", self->mode_name);
   g_object_notify_by_pspec (G_OBJECT (self), props[PROP_MODE_NAME]);
+}
+
+
+static void
+pos_completer_uim_set_mode_symbol (PosCompleterUim *self, const char *mode_symbol)
+{
+  if (!g_set_str (&self->mode_symbol, mode_symbol))
+    return;
+
+  g_object_notify_by_pspec (G_OBJECT (self), props[PROP_MODE_SYMBOL]);
 }
 
 
@@ -658,7 +735,20 @@ prop_list_update (void *ptr, const char *str)
   }
 
   pos_completer_uim_set_mode_name (self, self->uim->names[self->uim->active]);
+  pos_completer_uim_set_mode_symbol (self, uim_mode_icon (self->uim, self->uim->active));
   /* TODO: Force a valid mode */
+
+  g_menu_remove_all (self->mode_menu);
+  for (int i = 0; self->uim->used_actions[i]; i++) {
+    g_autoptr (GMenuItem) item = g_menu_item_new (self->uim->names[i], NULL);
+    g_menu_item_set_action_and_target (item, "uim.selectmode", "s", self->uim->used_actions[i]);
+    g_menu_append_item (self->mode_menu, item);
+  }
+
+  g_action_group_change_action_state (G_ACTION_GROUP (self->mode_actions),
+                                      "uim.selectmode",
+                                      g_variant_new_string (
+                                        self->uim->used_actions[self->uim->active]));
 
  done:
   prop_list = g_string_new ("");
@@ -873,7 +963,8 @@ pos_completer_uim_toggle_mode (PosCompleter *completer)
   const char *action;
 
   action = self->uim->used_actions[self->uim->active + 1];
-  if (action == NULL)
+  if (action == NULL ||
+      (self->uim->max_rotate_action != 0 && self->uim->active + 1 >= self->uim->max_rotate_action))
     action = self->uim->used_actions[0];
 
   /* Convert and submit anything pending content so it doesn't get lost */
@@ -908,11 +999,36 @@ pos_completer_uim_interface_init (PosCompleterInterface *iface)
 
 
 static void
+on_uim_mode_select_activated (GSimpleAction* action, GVariant* parameter, gpointer user_data)
+{
+  PosCompleterUim *self = POS_COMPLETER_UIM (user_data);
+  const char *mode = g_variant_get_string (parameter, NULL);
+
+  /* Convert and submit anything pending content so it doesn't get lost */
+  feed_symbol (self, UKey_Return);
+
+  uim_prop_activate (self->context, mode);
+}
+
+
+static GActionEntry mode_entries[] =
+{
+  { "uim.selectmode", on_uim_mode_select_activated, "s", "\"action_generic_off\"", NULL},
+};
+
+
+static void
 pos_completer_uim_init (PosCompleterUim *self)
 {
   self->max_completions = MAX_COMPLETIONS;
   self->preedit = g_string_new (NULL);
   self->name = "uim";
+  self->mode_menu = g_menu_new ();
+
+  self->mode_actions = g_simple_action_group_new ();
+  g_action_map_add_action_entries (G_ACTION_MAP (self->mode_actions),
+                                   mode_entries, G_N_ELEMENTS (mode_entries),
+                                   self);
 }
 
 /**
