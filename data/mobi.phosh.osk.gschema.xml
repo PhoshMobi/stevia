@@ -73,6 +73,7 @@
           path='/mobi/phosh/osk/terminal/'>
     <key name='shortcuts' type='as'>
       <default>[
+        'Tab', 'Escape',
         <!-- modifiers -->
         '&lt;ctrl&gt;', '&lt;alt&gt;',
         <!-- cursor keys -->

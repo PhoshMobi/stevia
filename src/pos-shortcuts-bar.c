@@ -174,6 +174,12 @@ pos_accelerator_get_label (PosShortcut *shortcut)
   case GDK_KEY_Page_Down:
     label = "PgDn";
     break;
+  case GDK_KEY_Escape:
+    label = "ESC";
+    break;
+  case GDK_KEY_Tab:
+    label = "⭾";
+    break;
   default:
     return NULL;
   }
