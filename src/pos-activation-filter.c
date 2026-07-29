@@ -133,9 +133,7 @@ handle_zwlr_foreign_toplevel_handle_app_id (
 {
   PosToplevel *toplevel = data;
 
-  g_free (toplevel->app_id);
-  toplevel->app_id = g_strdup (app_id);
-
+  g_set_str (&toplevel->app_id, app_id);
   g_clear_object (&toplevel->settings);
 
   if (app_id) {
