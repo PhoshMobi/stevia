@@ -14,6 +14,8 @@
 
 #include <gdk/gdkwayland.h>
 
+#include "gmobile.h"
+
 #define IGNORE_ACTIVATION_KEY "ignore-activation"
 
 /**
@@ -86,7 +88,7 @@ pos_activation_filter_update_active (PosActivationFilter *self, PosToplevel *act
   self->allow_active = TRUE;
   self->active = active;
 
-  if (self->active == NULL || self->active->app_id == NULL) {
+  if (self->active == NULL || gm_str_is_null_or_empty (self->active->app_id)) {
     g_debug ("Clearing layout override");
     g_signal_emit (self, signals[LAYOUT_OVERRIDE], 0, "", "");
     return;
@@ -136,7 +138,7 @@ handle_zwlr_foreign_toplevel_handle_app_id (
   g_set_str (&toplevel->app_id, app_id);
   g_clear_object (&toplevel->settings);
 
-  if (app_id) {
+  if (!gm_str_is_null_or_empty (app_id)) {
     g_autofree char *munged_app_id = phosh_munge_app_id (app_id);
     g_autofree char *path = NULL;
 
