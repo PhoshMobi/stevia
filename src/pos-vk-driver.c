@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2022 Purism SPC
- *               2023-2024 The Phosh Developers
+ *               2023-2026 Phosh.mobi e.V.
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  *
@@ -413,38 +413,21 @@ pos_vk_driver_build_keymap (PosVkDriver *self, PosKeysym extra_keysms[])
   /* Put everything into the the keymap */
   keymap = g_string_new (  "xkb_keymap {\n"
                            "  xkb_keycodes \"pos\" {\n"
+                           "    include \"evdev+aliases(qwerty)\"\n"
                            "    minimum = 8;\n"
                            "    maximum = 255;\n");
   g_string_append (keymap, keycodes->str);
-  g_string_append (keymap, "    indicator 1 = \"Caps Lock\";\n");
   g_string_append (keymap, "  };\n"
                            "  xkb_types \"pos\" {\n"
-                           "    virtual_modifiers Pos;\n"
-                           "    type \"ONE_LEVEL\" {\n"
-                           "      modifiers= none;\n"
-                           "      level_name[Level1]= \"Any\";\n"
-                           "    };\n"
-                           "    type \"TWO_LEVEL\" {\n"
-                           "      level_name[Level1]= \"Base\";\n"
-                           "    };\n"
-                           "      type \"ALPHABETIC\" {\n"
-                           "      level_name[Level1]= \"Base\";\n"
-                           "    };\n"
-                           "      type \"KEYPAD\" {\n"
-                           "      level_name[Level1]= \"Base\";\n"
-                           "    };\n"
-                           "      type \"SHIFT+ALT\" {\n"
-                           "      level_name[Level1]= \"Base\";\n"
-                           "    };\n"
+                           "    include \"complete\"\n"
                            "  };\n"
                            "\n"
                            "  xkb_compatibility \"pos\" {\n"
-                           "    interpret Any+AnyOf(all) {\n"
-                           "       action= SetMods(modifiers=modMapMods,clearLocks);\n"
-                           "     };\n"
+                           "    include \"complete\""
                            "  };\n"
                            "\n"
                            "  xkb_symbols \"pos\" {\n"
+                           "    include \"pc+us\""
                            "    name[group1]=\"English (US)\";\n");
   g_string_append (keymap, symbols->str);
   g_string_append (keymap, "  };\n"
