@@ -66,3 +66,40 @@ stevia against different apps by passing other values for `-E` like
 
 [resource overlays]: https://docs.gtk.org/gio/struct.Resource.html#overlays
 [phoc]: https://gitlab.gnome.org/World/Phosh/phoc
+
+## Testing input types
+
+X11 applications handle input different from Wayland applications and
+even the later behave differently depending on whether an input method
+is in use or not. Some things to test when making layout or keymap
+changes. You can pass these as `-E` to phoc:
+
+* Chromium with Wayland and input method
+
+```sh
+chromium --ozone-platform=wayland --enable-features=WaylandTextInputV3
+```
+
+* Chromium with Wayland and no input method
+
+```sh
+chromium --ozone-platform=wayland --disable-features=WaylandTextInputV3
+```
+
+* Chromium X11 backend
+
+```sh
+chromium --ozone-platform=x11
+```
+
+* Classic xterm
+
+```sh
+xterm
+```
+
+* GTK4 app using input method
+
+```sh
+kgx
+```
