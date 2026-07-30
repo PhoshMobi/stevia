@@ -1557,6 +1557,7 @@ on_im_active_changed (PosInputSurface *self, GParamSpec *pspec, PosInputMethod *
   g_assert (POS_IS_INPUT_METHOD (im));
 
   active = pos_input_method_get_active (im);
+  g_debug ("IM active: %d", active);
 
   if (active) {
     /* TODO: Reset buffered commit_string, delete_surrounding_text */
