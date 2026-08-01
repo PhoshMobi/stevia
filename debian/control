@@ -43,6 +43,7 @@ Package: phosh-osk-stevia
 Architecture: any
 Recommends:
  fonts-noto-core,
+ fonts-noto-color-emoji,
  hunspell-en-us,
  phosh-osk-data-eu,
 Depends:
