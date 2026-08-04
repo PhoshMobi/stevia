@@ -14,6 +14,8 @@
 
 #include <gdk/gdkwayland.h>
 
+#include "gmobile.h"
+
 #define IGNORE_ACTIVATION_KEY "ignore-activation"
 
 /**
@@ -70,8 +72,7 @@ static void
 pos_activation_filter_send_layout_override (PosActivationFilter *self, PosToplevel* toplevel)
 {
   g_autoptr (GVariant) layout_override = NULL;
-  const char * type;
-  const char * id;
+  const char *type, *id;
 
   layout_override = g_settings_get_value (toplevel->settings, "override-layout");
   g_variant_get (layout_override, "(&s&s)", &type, &id);
@@ -87,7 +88,7 @@ pos_activation_filter_update_active (PosActivationFilter *self, PosToplevel *act
   self->allow_active = TRUE;
   self->active = active;
 
-  if (!self->active || !self->active->app_id) {
+  if (self->active == NULL || gm_str_is_null_or_empty (self->active->app_id)) {
     g_debug ("Clearing layout override");
     g_signal_emit (self, signals[LAYOUT_OVERRIDE], 0, "", "");
     return;
@@ -95,7 +96,7 @@ pos_activation_filter_update_active (PosActivationFilter *self, PosToplevel *act
 
   pos_activation_filter_send_layout_override (self, self->active);
 
-  if (!self->filtered_app_ids ||
+  if (self->filtered_app_ids == NULL ||
       g_strv_contains ((const char *const *)self->filtered_app_ids, self->active->app_id) == FALSE)
     return;
 
@@ -130,16 +131,14 @@ static void
 handle_zwlr_foreign_toplevel_handle_app_id (
   void                                   *data,
   struct zwlr_foreign_toplevel_handle_v1 *zwlr_foreign_toplevel_handle_v1,
-  const char                            * app_id)
+  const char                             *app_id)
 {
   PosToplevel *toplevel = data;
 
-  g_free (toplevel->app_id);
-  toplevel->app_id = g_strdup (app_id);
-
+  g_set_str (&toplevel->app_id, app_id);
   g_clear_object (&toplevel->settings);
 
-  if (app_id) {
+  if (!gm_str_is_null_or_empty (app_id)) {
     g_autofree char *munged_app_id = phosh_munge_app_id (app_id);
     g_autofree char *path = NULL;
 
