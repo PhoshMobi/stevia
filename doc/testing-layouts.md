@@ -3,20 +3,21 @@ Slug: testinglayouts
 
 Testing layout changes or experimenting with new layouts is simple due
 to GLib's [resource overlays][]. This mechanism allows you to replace
-or add files to stevia's build in resource bundle without rebuilding
+or add files to Stevia's built-in resource bundle without rebuilding
 stevia.
 
-Let's assume you you have the layout's JSON in the current directory
+Let's assume you have the layout's JSON in the current directory
 in a file named `de.json`. You can then use that layout by running:
 
 ```sh
 G_RESOURCE_OVERLAYS=/mobi/phosh/stevia/layouts=$PWD phosh-osk-stevia --replace
 ```
 
-This puts all files in the current directory at the resource path
-`/mobi/phosh/stevia/layouts` so the layout would appear at
-`/mobi/phosh/stevia/layouts/de.json` and thus replace the existing
-layout there. Adding new layouts for testing works the same way.
+This maps the current directory as an overlay for the resource path
+`/mobi/phosh/stevia/layouts`, so de.json is made available as
+`/mobi/phosh/stevia/layouts/de.json`. This replaces the existing
+`de` layout, adding new layouts for other languages for testing works
+the same way.
 
 If everything works you should see this on the console:
 
@@ -25,12 +26,80 @@ GLib-GIO-Message: Adding GResources overlay '/mobi/phosh/stevia/layouts=/path/to
 GLib-GIO-Message: Mapped file '/path/to/current/dir/de.json' as a resource overlay
 ```
 
-This informs you that stevia picked up your modified layout (note that
+This informs you that Stevia picked up your modified layout (note that
 `/path/to/current/dir/` depends on your current working directory so
 the output might be slightly different).
 
-If you need to make further changes just stop stevia and run the above
+If you need to make further changes just stop Stevia and run the above
 command again. This allows for quick test cycles without risking to
 break your system.
 
+# Testing in a nested session
+
+You can test these layouts in a nested session using Phoc. First start
+phoc nested in the Wayland session:
+
+```sh
+WLR_BACKENDS=wayland /usr/bin/phoc GSETTINGS_BACKEND=memory -E kgx
+```
+
+Then in another terminal start Stevia against that nested Phoc:
+
+```sh
+gsettings set org.gnome.desktop.a11y.applications screen-keyboard-enabled true
+WAYLAND_DISPLAY=wayland-1 POS_DEBUG=force-show phosh-osk-stevia --replace
+```
+
+You should now see Stevia in the nested Phoc window. The `force-show`
+ensures that Stevia is shown even though no app requests it. `wayland-1`
+is the socket created by Phoc, the socket name is printed by Phoc on
+startup:
+
+```console
+Running compositor on wayland display 'wayland-1'
+```
+
+You can terminate Stevia at any time using `Ctrl-C` and pass options
+like `G_RESOURCE_OVERLAYS` as shown above. You can also easily test
+stevia against different apps by passing other values for `-E` like
+`-E xterm` to test X11 interaction.
+
 [resource overlays]: https://docs.gtk.org/gio/struct.Resource.html#overlays
+[phoc]: https://gitlab.gnome.org/World/Phosh/phoc
+
+## Testing input types
+
+X11 applications handle input different from Wayland applications and
+even the later behave differently depending on whether an input method
+is in use or not. Some things to test when making layout or keymap
+changes. You can pass these as `-E` to phoc:
+
+* Chromium with Wayland and input method
+
+```sh
+chromium --ozone-platform=wayland --enable-features=WaylandTextInputV3
+```
+
+* Chromium with Wayland and no input method
+
+```sh
+chromium --ozone-platform=wayland --disable-features=WaylandTextInputV3
+```
+
+* Chromium X11 backend
+
+```sh
+chromium --ozone-platform=x11
+```
+
+* Classic xterm
+
+```sh
+xterm
+```
+
+* GTK4 app using input method
+
+```sh
+kgx
+```

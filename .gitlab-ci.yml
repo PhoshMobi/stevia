@@ -78,10 +78,10 @@ check-po:
 
 check-markdown:
   stage: style-checks
-  variables:
-    PHOSH_MARKDOWN_PATHS: "*.md"
   extends:
     - .phosh-check-markdown
+  variables:
+    PHOSH_MARKDOWN_PATHS: "-s .mdl.rb *.md doc/*.md"
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
       changes:
