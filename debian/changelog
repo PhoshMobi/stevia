@@ -1,3 +1,84 @@
+phosh-osk-stevia (0.57~rc1) experimental; urgency=medium
+
+  [ Guido Günther ]
+  * write-layout-info: Skip layouts with '/'
+    This allows us to namespace special completer layouts.
+  * input-surface: Allow to specify a base layout.
+    The US layout is not always the best base for a completer. E.g.
+    JP wants some additional keys.
+  * completers/uim: Allow to specify a base layout.
+    We allow to specify it per language as different scripts have
+    different requirements.
+  * ci: Update shared scripts to bb29803
+  * tree: Drop G_GNUC_CONST from get_type()
+    First call has side effects, see
+    https://gitlab.gnome.org/GNOME/glib/-/merge_requests/5223
+    for details.
+  * completer: Add a menu model for the completers mode button.
+    This allows more complex selections.
+  * completers/uim: Add empty mode menu
+  * completion-bar: Show mode menu and trigger it's actions.
+    If the completer set a mode menu show it on long press.
+  * input-surface: Let the completion bar use the completers menu and actions
+  * shortcuts-bar: Better handle Escape and Tab.
+    Use a short name or symbol respectively.
+  * shortcuts-bar: Add escape and tab by default.
+    They're no longer in the regular layouts
+  * terminal: Move ~ and ` into the popover of q and Q.
+    This brings us to the same amount of keys than the regular US layout.
+  * terminal: Drop tab and esc keys.
+    They're available in the completion bar
+  * packaging: Depend on color emoji font.
+    Otherwise the emojis look rather odd
+  * activation-filter: Handle empty app-id gracefully.
+    Otherwise we crash on empty app-ids
+  * build: Allow long markdown lines in code blocks.
+    We'll use PHOSH_MARKDOWN_OPTS once we updated the shared scripts.
+  * doc: Clarify resource overlay use
+  * doc: Document testing in a nested session
+  * doc: Add some suggestions for layout testing
+  * input-surface: Log im active changes.
+    This eases debugging
+  * vk-driver: Base layout on xkb defaults.
+    Otherwise we don't get a proper keymap in XWayland apps as
+    the keysymbols are all off.
+    Closes: https://gitlab.gnome.org/World/Phosh/stevia/-/work_items/104
+    Closes: https://gitlab.gnome.org/World/Phosh/stevia/-/work_items/79
+
+  [ v34 ]
+  * layouts: Add Japanese layout.
+    Add a jp layout tailored for anthy input and register it in the layout
+    list and the resource bundle.
+  * completers/uim: Pass printable symbols to the engine
+    symbol_to_key() only forwarded alphanumeric and whitespace characters.
+    Any other printable ASCII (',', '.', '-', …) fell through to the
+    fallback and was turned into a space, so punctuation could not be typed
+    via anthy or pinyin.
+    Forward printable symbols as-is so they reach the input method.
+    Closes: https://gitlab.gnome.org/World/Phosh/stevia/-/issues/113
+  * completers/uim: Populate the mode menu from the input method's modes.
+    Build the mode menu from the current input
+    method's actions so the popover lists the localized mode names, and add
+    a 'selectmode' action that activates the picked mode.
+    Add max_rotate_action so the mode button only cycles through the main
+    modes (direct/hiragana for Anthy) while the remaining modes stay
+    menu-only.
+  * completers/uim: Show a concise glyph on the mode button.
+    The mode button showed the completer's long mode name. Add a mode-symbol
+    property so completers can expose a short glyph for the button while
+    keeping the full name for the popover / accessibility.
+    uim prefers a curated icon per mode ("英" for direct input, "中" for
+    Pinyin) and falls back to uim's iconic label ("あ", "ア", …) and finally
+    the mode name, since uim's generic on/off labels ("O"/"-") are
+    meaningless on their own.
+
+  [ Gregor Düster ]
+  * layouts: Add „ and ‚ to ch, cz, de and sk layout.
+    See https://unicode.org/versions/Unicode17.0.0/core-spec/chapter-6/#G4963
+    Closes: https://gitlab.gnome.org/World/Phosh/stevia/-/work_items/114
+
+ -- Guido Günther <agx@sigxcpu.org>  Thu, 06 Aug 2026 15:20:21 +0200
+
 phosh-osk-stevia (0.56.0) experimental; urgency=medium
 
   * layout-override: Fix typo in key name.
