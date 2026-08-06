@@ -1,3 +1,25 @@
+phosh-osk-stevia 0.57~rc1
+-------------------------
+Released August 2026
+* Improved Japanese input
+  * Add tailored layout for anthy input
+  * Add a mode popover to provide more modes
+  * Fix untypeable punctuation characters
+* terminal-layout: Don't use smaller keys in the lower case layout.
+  Move `tab` and `esc` to the completion bar for that.
+* Add `„` and `‚` to ch, cz, de and sk layout.
+* Fix text input for X11 apps
+* Robustness fixes
+* Issues fixed:
+    * https://gitlab.gnome.org/World/Phosh/stevia/-/issues/113
+    * https://gitlab.gnome.org/World/Phosh/stevia/-/work_items/104
+    * https://gitlab.gnome.org/World/Phosh/stevia/-/work_items/114
+    * https://gitlab.gnome.org/World/Phosh/stevia/-/work_items/79
+* Contributors:
+    * Gregor Düster
+    * Guido Günther
+    * v34
+
 phosh-osk-stevia 0.56.0
 -----------------------
 Released July 2026
