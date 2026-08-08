@@ -11,7 +11,7 @@ The purpose of Stevia is:
 
 Features:
 
-- easy to swap out with other keyboards (implements phosh's [sm.puri.OSK0]() DBus
+- easy to swap out with other keyboards (implements phosh's [sm.puri.OSK0][] DBus
   interface)
 - easy to temporarily replace running instance (`--replace` option)
 - no language boundaries within the codebase to lower the entrance barrier
