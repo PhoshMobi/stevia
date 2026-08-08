@@ -1,6 +1,6 @@
 # Stevia
 
-Stevia is a on screen keyboard for Phosh.
+Stevia is the default on-screen keyboard for Phosh.
 
 The purpose of Stevia is:
 
@@ -19,16 +19,18 @@ Features:
 - use GNOME libs and technologies wherever possible (GSettings, json-glib, …)
 - [character popover](https://gitlab.gnome.org/World/Phosh/stevia/-/raw/main/screenshots/pos-popover.png)
 - [emoji layout](https://gitlab.gnome.org/World/Phosh/stevia/-/raw/main/screenshots/pos-emoji.png)
-- cursor navigation via space-bar long-press
+- cursor navigation via spacebar long-press
 - word correction via hunspell
-- use any program as completer via a `pipe` completer ([Example](https://social.librem.one/@agx/110260534404795348))
+- use any program as a completer via a `pipe` completer ([Example](https://social.librem.one/@agx/110260534404795348))
 - [word completion](https://social.librem.one/@agx/109428599061094716)
   based on the presage library
 - experimental input of Indic languages using [varnam](https://github.com/varnamproject)
-- experimental input of Chinese and Japense using [uim](https://github.com/uim)
+- experimental input of Chinese and Japanese using [uim](https://github.com/uim)
 - allow for secondary completers to amend completion results
-- allow to prevent keyboard unfold for certain apps (via app-id)
-- allow to prevent keyboard unfold when a hardware keyboard is present
+- allow preventing keyboard unfold for certain apps (via app-id)
+- allow preventing keyboard unfold when a hardware keyboard is present
+
+It's called Stevia because it should make typing sweet.
 
 ## License
 
