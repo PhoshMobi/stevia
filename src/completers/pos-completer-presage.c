@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2022 Purism SPC
  *               2023-2024 The Phosh Developers
- *               2025 Phosh.mobi e.V.
+ *               2025-2026 Phosh.mobi e.V.
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  *
@@ -241,6 +241,24 @@ maybe_migrate_data (const char *newdir, const char *olddir)
 }
 
 
+static char *
+check_xdgdata_for_ngram_files (const char *dbfile)
+{
+  g_autofree char *dbpath;
+
+  dbpath = g_build_path (G_DIR_SEPARATOR_S,
+                         g_get_user_data_dir (),
+                         "phosh", "osk", "presage", dbfile,
+                         NULL);
+
+  if (g_file_test (dbpath, G_FILE_TEST_EXISTS))
+    return g_steal_pointer (&dbpath);
+
+  g_debug ("No presage data found at '%s'", dbpath);
+  return NULL;
+}
+
+
 static gboolean
 pos_completer_presage_set_language (PosCompleter *completer,
                                     const char   *lang,
@@ -268,13 +286,21 @@ pos_completer_presage_set_language (PosCompleter *completer,
 #else
   dbfile = g_strdup_printf ("database_%s.db", lang);
 #endif
-  dbpath = g_build_path (G_DIR_SEPARATOR_S, self->dict_dir, dbfile, NULL);
 
-  if (g_file_test (dbpath, G_FILE_TEST_EXISTS) == FALSE) {
-    g_set_error (error,
-                 POS_COMPLETER_ERROR, POS_COMPLETER_ERROR_LANG_INIT,
-                 "No db %s for %s - please fix", dbpath, lang);
-    return FALSE;
+  /* The tests set dict-dir for precise results, so skip XDG_DATA_HOME */
+  if (g_strcmp0 (self->dict_dir, PRESAGE_DICT_DIR) == 0)
+    dbpath = check_xdgdata_for_ngram_files (dbfile);
+
+  /* Fallback to system data otherwise */
+  if (dbpath == NULL) {
+    dbpath = g_build_path (G_DIR_SEPARATOR_S, self->dict_dir, dbfile, NULL);
+
+    if (g_file_test (dbpath, G_FILE_TEST_EXISTS) == FALSE) {
+      g_set_error (error,
+                   POS_COMPLETER_ERROR, POS_COMPLETER_ERROR_LANG_INIT,
+                   "No db %s for %s - please fix", dbpath, lang);
+      return FALSE;
+    }
   }
 
   result = presage_config_set (self->presage, CONFIG_NGRM_PREDICTOR_DBFILE, dbpath);
@@ -284,7 +310,7 @@ pos_completer_presage_set_language (PosCompleter *completer,
                  "Failed to set db %s", dbpath);
     return FALSE;
   }
-  g_debug ("System dbpath is %s", dbpath);
+  g_debug ("Default ngram dbpath is %s", dbpath);
 
   g_clear_pointer (&dbfile, g_free);
   g_clear_pointer (&dbpath, g_free);
