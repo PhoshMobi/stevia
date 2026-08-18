@@ -1,0 +1,84 @@
+# Ukrainian translation for stevia.
+# Copyright (C) 2026 stevia's COPYRIGHT HOLDER
+# This file is distributed under the same license as the stevia package.
+# SPDX-FileCopyrightText: 2026 Yuri Chornoivan <yurchor@ukr.net>
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: stevia main\n"
+"Report-Msgid-Bugs-To: https://gitlab.gnome.org/World/Phosh/stevia/-/work_item"
+"s\n"
+"POT-Creation-Date: 2026-08-06 13:16+0000\n"
+"PO-Revision-Date: 2026-08-18 19:49+0300\n"
+"Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
+"Language-Team: Ukrainian <trans-uk@lists.fedoraproject.org>\n"
+"Language: uk\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=n==1 ? 3 : n%10==1 && n%100!=11 ? 0 : n%10>="
+"2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"X-Generator: Lokalize 25.12.1\n"
+
+#: data/sm.puri.OSK0.desktop.in.in:3 data/sm.puri.OSK0.desktop.in.in:4
+msgid "On-screen keyboard"
+msgstr "Екранна клавіатура"
+
+#. Translators: Do not translate the name. It's the name of a library
+#: data/completers/hunspell.desktop.in:5
+msgid "Hunspell"
+msgstr "Hunspell"
+
+#: data/completers/hunspell.desktop.in:6
+msgid "The Hunspell completer provides dictionary based text correction"
+msgstr "Засіб доповнення Hunspell надає виправлення тексту на основі словника"
+
+#: data/completers/hunspell.desktop.in:7
+msgid "This completer needs language specific dictionaries installed"
+msgstr ""
+"Цей засіб доповнення потребує встановлення специфічних для мови словників"
+
+#. Translators: Do not translate the name. It's the name of a library
+#: data/completers/presage.desktop.in:5
+msgid "Presage"
+msgstr "Presage"
+
+#: data/completers/presage.desktop.in:6
+msgid "The Presage completer provides intelligent predictive text entry"
+msgstr ""
+"Засіб доповнення Presage надає продумані передбачення щодо введеного тексту"
+
+#: data/completers/presage.desktop.in:7
+msgid "This completer needs language specific data installed"
+msgstr "Цей засіб доповнення потребує встановлення специфічних для мови даних"
+
+#. Translators: Used to auto complete the current date, should be a single word
+#: src/pos-completer-base.c:81
+msgid "today"
+msgstr "сьогодні"
+
+#. Translators: Used to auto complete the a date, should be a single word
+#: src/pos-completer-base.c:86
+msgid "tomorrow"
+msgstr "завтра"
+
+#. Translators: Used to auto complete the current time, should be a single word
+#: src/pos-completer-base.c:93
+msgid "now"
+msgstr "зараз"
+
+#: src/pos-input-surface.c:877
+msgid "Emoji"
+msgstr "Емодзі"
+
+#: src/pos-input-surface.c:2322
+msgid "Terminal"
+msgstr "Термінал"
+
+#: src/ui/input-surface.ui:98
+msgid "Word completion"
+msgstr "Завершення слів"
+
+#: src/ui/input-surface.ui:105
+msgid "Keyboard Settings"
+msgstr "Параметри клавіатури"
