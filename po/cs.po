@@ -1,0 +1,84 @@
+# Czech translation for stevia.
+# Copyright (C) 2026 stevia's COPYRIGHT HOLDER
+# This file is distributed under the same license as the stevia package.
+# Daniel Rusek <mail@asciiwolf.com>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: stevia main\n"
+"Report-Msgid-Bugs-To: https://gitlab.gnome.org/World/Phosh/stevia/-/"
+"work_items\n"
+"POT-Creation-Date: 2026-08-06 13:16+0000\n"
+"PO-Revision-Date: 2026-08-19 14:46+0200\n"
+"Last-Translator: Daniel Rusek <mail@asciiwolf.com>\n"
+"Language-Team: Czech <Czech>\n"
+"Language: cs\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : "
+"2;\n"
+"X-Generator: Poedit 3.9\n"
+
+#: data/sm.puri.OSK0.desktop.in.in:3 data/sm.puri.OSK0.desktop.in.in:4
+msgid "On-screen keyboard"
+msgstr "Klávesnice na obrazovce"
+
+#. Translators: Do not translate the name. It's the name of a library
+#: data/completers/hunspell.desktop.in:5
+msgid "Hunspell"
+msgstr "Hunspell"
+
+#: data/completers/hunspell.desktop.in:6
+msgid "The Hunspell completer provides dictionary based text correction"
+msgstr "Dokončovač Hunspell poskytuje korekci textu na základě slovníku"
+
+#: data/completers/hunspell.desktop.in:7
+msgid "This completer needs language specific dictionaries installed"
+msgstr ""
+"Tento dokončovač vyžaduje instalaci jazykově specifických slovníků"
+
+#. Translators: Do not translate the name. It's the name of a library
+#: data/completers/presage.desktop.in:5
+msgid "Presage"
+msgstr "Presage"
+
+#: data/completers/presage.desktop.in:6
+msgid "The Presage completer provides intelligent predictive text entry"
+msgstr ""
+"Dokončovač Presage poskytuje inteligentní prediktivní zadávání textu"
+
+#: data/completers/presage.desktop.in:7
+msgid "This completer needs language specific data installed"
+msgstr "Tento dokončovač vyžaduje instalaci jazykově specifických dat"
+
+#. Translators: Used to auto complete the current date, should be a single word
+#: src/pos-completer-base.c:81
+msgid "today"
+msgstr "dnes"
+
+#. Translators: Used to auto complete the a date, should be a single word
+#: src/pos-completer-base.c:86
+msgid "tomorrow"
+msgstr "zítra"
+
+#. Translators: Used to auto complete the current time, should be a single word
+#: src/pos-completer-base.c:93
+msgid "now"
+msgstr "nyní"
+
+#: src/pos-input-surface.c:877
+msgid "Emoji"
+msgstr "Emodži"
+
+#: src/pos-input-surface.c:2322
+msgid "Terminal"
+msgstr "Terminál"
+
+#: src/ui/input-surface.ui:98
+msgid "Word completion"
+msgstr "Doplňování slov"
+
+#: src/ui/input-surface.ui:105
+msgid "Keyboard Settings"
+msgstr "Nastavení klávesnice"
