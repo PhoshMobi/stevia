@@ -1,3 +1,21 @@
+phosh-osk-stevia (0.57.0) experimental; urgency=medium
+
+  [ Anders Jonsson ]
+  * Add Swedish translation
+
+  [ Yuri Chornoivan ]
+  * Add Ukrainian translation
+
+  [ Guido Günther ]
+  * docs: Mention that Stevia is currently the default OSK
+  * docs: Modernize contributing information
+  * doap: Rename to git repo name.
+
+  [ Martin ]
+  * Add Slovenian translation
+
+ -- Guido Günther <agx@sigxcpu.org>  Wed, 19 Aug 2026 13:24:55 +0200
+
 phosh-osk-stevia (0.57~rc1) experimental; urgency=medium
 
   [ Guido Günther ]

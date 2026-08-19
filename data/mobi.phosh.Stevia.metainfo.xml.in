@@ -64,6 +64,19 @@
   </screenshots>
 
   <releases>
+    <release version="0.57.0" date="2026-08-19">
+      <description translate="no">
+        <ul>
+          <li>Improved Japanese input</li>
+          <li>terminal-layout: Don't use smaller keys in the lower case layout. Move `tab` and `esc` to the completion bar for that.</li>
+          <li>Add „ and ‚ to ch, cz, de and sk layouts.</li>
+          <li>Fix text input for X11 apps</li>
+          <li>Robustness fixes</li>
+          <li>Translation updates</li>
+        </ul>
+      </description>
+    </release>
+
     <release version="0.56.0" date="2026-07-04">
       <description translate="no">
         <ul>
