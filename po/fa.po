@@ -1,51 +1,76 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: phosh-osk-stevia\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-11-14 15:07+0100\n"
+"Report-Msgid-Bugs-To: https://gitlab.gnome.org/World/Phosh/stevia/-/"
+"work_items\n"
+"POT-Creation-Date: 2026-08-06 13:16+0000\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Danial Behzadi <dani.behzi@ubuntu.com>\n"
 "Language-Team: \n"
-"Language: de\n"
+"Language: fa\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.4.4\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Generator: Poedit 3.9\n"
 
-#: data/sm.puri.OSK0.desktop.in.in:4 data/sm.puri.OSK0.desktop.in.in:5
+#: data/sm.puri.OSK0.desktop.in.in:3 data/sm.puri.OSK0.desktop.in.in:4
 msgid "On-screen keyboard"
 msgstr "صفحه‌کلید مجازی"
 
 #. Translators: Do not translate the name. It's the name of a library
-#: data/completers/hunspell.desktop.in:6
+#: data/completers/hunspell.desktop.in:5
 msgid "Hunspell"
 msgstr "هانسپل"
+
+#: data/completers/hunspell.desktop.in:6
+msgid "The Hunspell completer provides dictionary based text correction"
+msgstr "تکمیلگر Hunspell تصحیح متن بر پایهٔ واژه‌نامه را فراهم می‌کند"
 
 #: data/completers/hunspell.desktop.in:7
 msgid "This completer needs language specific dictionaries installed"
 msgstr "نیاز به نصب واژه‌نامه‌های مشخّص"
 
 #. Translators: Do not translate the name. It's the name of a library
-#: data/completers/presage.desktop.in:6
+#: data/completers/presage.desktop.in:5
 msgid "Presage"
 msgstr "پریسیج"
+
+#: data/completers/presage.desktop.in:6
+msgid "The Presage completer provides intelligent predictive text entry"
+msgstr "تکمیلگر Presage ورود متن بر پایهٔ پیش‌بینی هوشمند را فراهم می‌کند"
 
 #: data/completers/presage.desktop.in:7
 msgid "This completer needs language specific data installed"
 msgstr "نیاز به نصب داده‌های خاص زبان"
 
-#: src/pos-input-surface.c:636
+#. Translators: Used to auto complete the current date, should be a single word
+#: src/pos-completer-base.c:81
+msgid "today"
+msgstr "امروز"
+
+#. Translators: Used to auto complete the a date, should be a single word
+#: src/pos-completer-base.c:86
+msgid "tomorrow"
+msgstr "فردا"
+
+#. Translators: Used to auto complete the current time, should be a single word
+#: src/pos-completer-base.c:93
+msgid "now"
+msgstr "اکنون"
+
+#: src/pos-input-surface.c:877
 msgid "Emoji"
 msgstr "شکلک"
 
-#: src/pos-input-surface.c:1865
+#: src/pos-input-surface.c:2322
 msgid "Terminal"
 msgstr "پایانه"
 
-#: src/ui/input-surface.ui:95
+#: src/ui/input-surface.ui:98
 msgid "Word completion"
 msgstr "تکمیل واژه"
 
-#: src/ui/input-surface.ui:102
+#: src/ui/input-surface.ui:105
 msgid "Keyboard Settings"
 msgstr "تنظیمات صفحه‌کلید"
