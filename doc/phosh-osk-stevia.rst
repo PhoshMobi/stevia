@@ -136,6 +136,7 @@ built. Available are currently at most
   - ``pipe``: completer using a pipe
   - ``fzf``: completer based on fzf command line tool. Useful for experiments)
   - ``varnam``: completer using govarnam for Indic languages
+  - ``uim``: completer using uim for Asian languages
 
 The default word completer is selected via the
 ``mobi.phosh.osk.Completers`` ``default`` GSetting.
@@ -207,6 +208,26 @@ not recommended. Instead enable it for a specific language via the
 
 The above would only enable govranam for Malayalam and Tamil while the
 English US layout would still use the default completer.
+
+TEXT COMPLETION USING UIM
+*************************
+
+This completer feeds the current input word (preedit) to uim for input
+of Asian languages.
+
+For the completer to work it needs uim files installed. Please refer
+to the uim documentation.
+
+Note that while you can enable uim as default completer this is
+not recommended. Instead enable it for a specific language via the
+`sources` gsettings:
+
+::
+
+  gsettings set org.gnome.desktop.input-sources sources "[('xkb', 'us'), ('ibus', 'uim:jp'), ('ibus', 'uim:cn')]"
+
+The above would enable uim for Japaense (Anthy) and Chinese (Pinyin)
+while the English US layout would still use the default completer.
 
 ADDITIONAL COMPLETION SOURCES
 *****************************
