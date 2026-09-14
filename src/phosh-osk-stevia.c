@@ -55,7 +55,7 @@ typedef struct _PosApp {
   PosHwTracker        *hw_tracker;
   PosEmojiDb          *emoji_db;
   PosSizeManager      *size_manager;
-  int                  exit_status;
+  int exit_status;
 } PosApp;
 
 G_DEFINE_TYPE (PosApp, pos_app, G_TYPE_OBJECT)
