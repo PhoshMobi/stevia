@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2018 Purism SPC
  *               2022-2024 The Phosh Developers
- *               2025 Phosh.mobi e.V.
+ *               2025-2026 Phosh.mobi e.V.
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  *
@@ -56,6 +56,7 @@ typedef struct _PosApp {
   PosEmojiDb          *emoji_db;
   PosSizeManager      *size_manager;
   int exit_status;
+  guint wl_proto_timeout_id;
 } PosApp;
 
 G_DEFINE_TYPE (PosApp, pos_app, G_TYPE_OBJECT)
@@ -427,6 +428,7 @@ on_wayland_ready (PosApp *self, PosWayland *wayland)
   self->hw_tracker =
     pos_hw_tracker_new (pos_wayland_get_zphoc_device_state_v1 (wayland));
 
+  g_clear_handle_id (&self->wl_proto_timeout_id, g_source_remove);
   maybe_create_input_surface (self);
 }
 
@@ -442,6 +444,18 @@ pos_app_setup_input_method (PosApp *self, PosOskDbus *osk_dbus)
   g_signal_connect (osk_dbus, "notify::has-name", G_CALLBACK (on_has_dbus_name_changed), self);
 
   return TRUE;
+}
+
+
+static void
+on_wl_proto_timeout (gpointer data)
+{
+  PosApp *self = data;
+
+  g_critical ("Failed to find all Wayland globals, giving up,");
+  self->wl_proto_timeout_id = 0;
+  self->exit_status = EXIT_FAILURE;
+  g_main_loop_quit (self->loop);
 }
 
 
@@ -474,6 +488,7 @@ pos_input_surface_finalize (GObject *object)
 {
   PosApp *self = POS_APP (object);
 
+  g_clear_handle_id (&self->wl_proto_timeout_id, g_source_remove);
   g_clear_object (&self->osk_dbus);
   g_clear_object (&self->activation_filter);
   g_clear_object (&self->hw_tracker);
@@ -514,6 +529,10 @@ pos_app_init (PosApp *self)
 
   self->session_proxy = pos_app_session_register (self, APP_ID);
   self->size_manager = pos_size_manager_new ();
+
+  /* Exit if we don't find all Wayland protocols */
+  self->wl_proto_timeout_id = g_timeout_add_seconds_once (5, on_wl_proto_timeout, self);
+  g_source_set_name_by_id (self->wl_proto_timeout_id, "[pos] wl-proto timeout");
 
   g_signal_connect_object (wayland,
                            "ready",
