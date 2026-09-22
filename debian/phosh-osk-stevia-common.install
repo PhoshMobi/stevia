@@ -1,0 +1,4 @@
+usr/share/glib-2.0/schemas/
+usr/share/locale/*/LC_MESSAGES/phosh-osk-stevia.mo
+usr/share/phosh-osk-stevia/completers/*.completer
+usr/share/phosh-osk-stevia/layouts.json
