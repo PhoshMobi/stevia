@@ -1,3 +1,44 @@
+phosh-osk-stevia (0.58.0) experimental; urgency=medium
+
+  [ Guido Günther ]
+  * presage: Lookup dictionaries in XDG_DATA_HOME too
+  * doc: Document uim completer
+  * doc: Copy-edit manpage for consistency
+  * stevia: Exit with failure if we can't bind all Wayland protocols.
+  * packaging: Sync with Debian
+
+  [ Antonio Marin ]
+  * Add Romanian translation
+
+  [ Baurzhan Muftakhidinov ]
+  * Add Kazakh translation
+
+  [ Danial Behzadi ]
+  * Update Persian translation
+
+  [ Asier Saratsua Garmendia ]
+  * Add Basque translation
+
+  [ Yaron Shahrabani ]
+  * Add Hebrew translation
+
+  [ Emin Tufan Çetin ]
+  * Add Turkish translation
+
+  [ Balázs Úr ]
+  * Add Hungarian translation
+
+  [ twlvnn kraftwerk ]
+  * Add Bulgarian translation.
+
+  [ Марко Костић ]
+  * Add Serbian translation
+
+  [ burns ]
+  * Add Brazilian Portuguese translation
+
+ -- Guido Günther <agx@sigxcpu.org>  Sat, 03 Oct 2026 17:10:23 +0200
+
 phosh-osk-stevia (0.57.0) experimental; urgency=medium
 
   [ Anders Jonsson ]
