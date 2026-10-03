@@ -173,6 +173,7 @@ test-layouts:
       fonts-noto-core libuim8
   needs:
     - build:native-debian-forky
+  <<: *forky_prep
   script:
     - !reference [.phosh-prepare-apt]
     - XDG_RUNTIME_DIR=$PWD
