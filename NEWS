@@ -1,3 +1,23 @@
+phosh-osk-stevia 0.58.0
+-----------------------
+Released October 2026
+* Fail loudly when Wayland protocols are missing
+* Allow to install completion dictionaries into $HOME.
+  This allows users to install their own on immutable systems.
+* Contributors:
+    * Guido Günther
+* UI translations:
+    * Antonio Marin (ro)
+    * Asier Saratsua Garmendia (eu)
+    * Balázs Úr (hu)
+    * Baurzhan Muftakhidinov (kk)
+    * burns (pt_BR)
+    * Danial Behzadi (fa)
+    * Emin Tufan Çetin (tr)
+    * twlvnn kraftwerk (bg)
+    * Yaron Shahrabani (he)
+    * Марко Костић (sr)
+
 phosh-osk-stevia 0.57.0
 -----------------------
 Released August 2026
