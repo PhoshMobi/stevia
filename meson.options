@@ -19,6 +19,9 @@ option('systemd_user_unit_dir',
        type: 'string', value: '',
        description: 'Directory for systemd user units')
 
+# Completers
+option('uim', type: 'feature', value: 'auto', description: 'Enable input via uim')
+option('govarnam', type: 'feature', value: 'auto', description: 'Enable input via govarnam')
 option('wordlist',
        type: 'string', value : '/usr/share/dict/words',
        description : 'Filename of the word list used by the fzf completer')
