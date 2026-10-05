@@ -10,6 +10,13 @@ else
   CONFIGURE_OPTS+=-Dgtk_doc=false -Dman=false
 endif
 
+PACKAGES := $(shell dh_listpackages)
+ifneq (,$(filter phosh-osk-stevia-uim,$(PACKAGES)))
+CONFIGURE_OPTS += -Duim=enabled
+else
+CONFIGURE_OPTS += -Duim=disabled
+endif
+
 %:
 	dh $@ --builddirectory=_build
 
