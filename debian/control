@@ -21,15 +21,15 @@ Build-Depends:
  libjson-glib-dev,
  libpresage-dev,
  libsystemd-dev,
- libuim-dev,
+ libuim-dev <!pkg.phosh-osk-stevia.nouim>,
  libwayland-dev,
  libxml2-utils,
  meson,
  presage <!nocheck>,
  python3-docutils <!nodoc>,
  systemd-dev,
- uim <!nocheck>,
- uim-anthy <!nocheck>,
+ uim <!nocheck> <!pkg.phosh-osk-stevia.nouim>,
+ uim-anthy <!nocheck> <!pkg.phosh-osk-stevia.nouim>,
  varnam-schemes-ml <!nocheck>,
  xauth <!nocheck>,
  xvfb <!nocheck>,
@@ -75,6 +75,7 @@ Description: On screen keyboard for Phosh
 
 Package: phosh-osk-stevia-uim
 Architecture: any
+Build-Profiles: <!pkg.phosh-osk-stevia.nouim>
 Depends:
  fonts-noto-ui-core,
  phosh-osk-stevia (>= ${source:Version}),

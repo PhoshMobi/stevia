@@ -142,8 +142,8 @@ else
   # presage did not have pkg-config files before version 2
   presage_dep = cc.find_library('presage', required: false)
 endif
-uim_dep = dependency('uim', required: false)
-varnam_dep = dependency('govarnam', required: false)
+uim_dep = dependency('uim', required: get_option('uim'))
+varnam_dep = dependency('govarnam', required: get_option('govarnam'))
 
 completers = []
 if presage_dep.found()
