@@ -231,9 +231,4 @@ summary(
 
 summary({'Use as default OSK': get_option('default_osk')}, bool_yn: true, section: 'Run')
 
-# gnome.post_install() is available since meson 0.59.0
-# Distributions use their own tooling (e.g. postinst, triggers, etc)
-# so it is okay if the post_install() is not run on distro builds
-if meson.version().version_compare('>=0.59.0')
-  gnome.post_install(glib_compile_schemas: true)
-endif
+gnome.post_install(glib_compile_schemas: true)
