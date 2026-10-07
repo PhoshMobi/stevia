@@ -2403,7 +2403,7 @@ pos_input_surface_set_visible (PosInputSurface *self, gboolean visible)
     reverse_ease_out_cubic (1.0 - hdy_ease_out_cubic (self->animation.progress));
 
   g_clear_handle_id (&self->animation.id, g_source_remove);
-  self->animation.id = g_timeout_add_seconds_once (1, on_animation_timeout, self);
+  self->animation.id = g_timeout_add_once (400, on_animation_timeout, self);
   gtk_widget_add_tick_callback (GTK_WIDGET (self), animate_cb, NULL, NULL);
 }
 
