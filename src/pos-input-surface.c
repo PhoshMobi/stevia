@@ -2366,19 +2366,18 @@ pos_input_surface_get_active (PosInputSurface *self)
 }
 
 
-static gboolean
-animation_timeout_cb (gpointer data)
+static void
+on_animation_timeout (gpointer data)
 {
   PosInputSurface *self = POS_INPUT_SURFACE (data);
+
+  self->animation.id = 0;
 
   if (self->animation.progress < 1.0) {
     g_warning ("Animation did not finish in time: %f", self->animation.progress);
     self->animation.progress = 1.0;
     pos_input_surface_move (self);
   }
-
-  self->animation.id = 0;
-  return FALSE;
 }
 
 
@@ -2402,7 +2401,7 @@ pos_input_surface_set_visible (PosInputSurface *self, gboolean visible)
   if (self->animation.id)
     g_source_remove (self->animation.id);
 
-  self->animation.id = g_timeout_add_seconds (1, animation_timeout_cb, self);
+  self->animation.id = g_timeout_add_seconds_once (1, on_animation_timeout, self);
   gtk_widget_add_tick_callback (GTK_WIDGET (self), animate_cb, NULL, NULL);
 }
 
