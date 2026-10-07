@@ -1111,14 +1111,15 @@ animate_cb (GtkWidget     *widget,
             gpointer       user_data)
 {
   PosInputSurface *self = POS_INPUT_SURFACE (widget);
-  gint64 time;
+  gint64 time_us;
   gboolean finished = FALSE;
 
-  time = gdk_frame_clock_get_frame_time (frame_clock) - self->animation.last_frame;
+  time_us = gdk_frame_clock_get_frame_time (frame_clock) - self->animation.last_frame;
   if (self->animation.last_frame < 0)
-    time = 0;
+    time_us = 0;
 
-  self->animation.progress += 0.06666 * time / 16666.00;
+  /* 16666 / 0.6666 ≈ 250 ms */
+  self->animation.progress += 0.06666 * time_us / 16666.00;
   self->animation.last_frame = gdk_frame_clock_get_frame_time (frame_clock);
 
   if (self->animation.progress >= 1.0) {
