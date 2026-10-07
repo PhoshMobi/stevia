@@ -1111,14 +1111,15 @@ animate_cb (GtkWidget     *widget,
             gpointer       user_data)
 {
   PosInputSurface *self = POS_INPUT_SURFACE (widget);
-  gint64 time;
+  gint64 time_us;
   gboolean finished = FALSE;
 
-  time = gdk_frame_clock_get_frame_time (frame_clock) - self->animation.last_frame;
+  time_us = gdk_frame_clock_get_frame_time (frame_clock) - self->animation.last_frame;
   if (self->animation.last_frame < 0)
-    time = 0;
+    time_us = 0;
 
-  self->animation.progress += 0.06666 * time / 16666.00;
+  /* 16666 / 0.6666 ≈ 250 ms */
+  self->animation.progress += 0.06666 * time_us / 16666.00;
   self->animation.last_frame = gdk_frame_clock_get_frame_time (frame_clock);
 
   if (self->animation.progress >= 1.0) {
@@ -1131,6 +1132,8 @@ animate_cb (GtkWidget     *widget,
   if (finished) {
     if (!self->animation.show)
       select_layout_by_im_purpose (self);
+
+    g_clear_handle_id (&self->animation.id, g_source_remove);
     return G_SOURCE_REMOVE;
   }
 
@@ -2366,19 +2369,20 @@ pos_input_surface_get_active (PosInputSurface *self)
 }
 
 
-static gboolean
-animation_timeout_cb (gpointer data)
+static void
+on_animation_timeout (gpointer data)
 {
   PosInputSurface *self = POS_INPUT_SURFACE (data);
 
-  if (self->animation.progress < 1.0) {
+  self->animation.id = 0;
+
+  if (self->animation.progress >= 1.0) {
+    g_warning ("Animation finished but timer present");
+  } else {
     g_warning ("Animation did not finish in time: %f", self->animation.progress);
     self->animation.progress = 1.0;
-    pos_input_surface_move (self);
   }
-
-  self->animation.id = 0;
-  return FALSE;
+  pos_input_surface_move (self);
 }
 
 
@@ -2399,10 +2403,8 @@ pos_input_surface_set_visible (PosInputSurface *self, gboolean visible)
   self->animation.progress =
     reverse_ease_out_cubic (1.0 - hdy_ease_out_cubic (self->animation.progress));
 
-  if (self->animation.id)
-    g_source_remove (self->animation.id);
-
-  self->animation.id = g_timeout_add_seconds (1, animation_timeout_cb, self);
+  g_clear_handle_id (&self->animation.id, g_source_remove);
+  self->animation.id = g_timeout_add_once (400, on_animation_timeout, self);
   gtk_widget_add_tick_callback (GTK_WIDGET (self), animate_cb, NULL, NULL);
 }
 

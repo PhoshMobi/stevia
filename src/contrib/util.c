@@ -49,7 +49,7 @@ phosh_get_desktop_app_info_for_app_id (const char *app_id)
   g_autofree char *desktop_id = NULL;
   g_autofree char *lowercase = NULL;
   GDesktopAppInfo *app_info = NULL;
-  char *last_component;
+  const char *last_component;
   static char *mappings[][2] = {
     { "org.gnome.ControlCenter", "gnome-control-center" },
     { "gnome-usage", "org.gnome.Usage" },
@@ -73,7 +73,7 @@ phosh_get_desktop_app_info_for_app_id (const char *app_id)
     return app_info;
 
   /* try to handle the case where app-id is rev-DNS, but desktop file is not */
-  last_component = strrchr(app_id, '.');
+  last_component = strrchr (app_id, '.');
   if (last_component) {
     g_free (desktop_id);
     desktop_id = g_strdup_printf ("%s.desktop", last_component + 1);
