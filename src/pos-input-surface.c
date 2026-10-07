@@ -2377,11 +2377,10 @@ on_animation_timeout (gpointer data)
 
   if (self->animation.progress >= 1.0) {
     g_warning ("Animation finished but timer present");
-    return;
+  } else {
+    g_warning ("Animation did not finish in time: %f", self->animation.progress);
+    self->animation.progress = 1.0;
   }
-
-  g_warning ("Animation did not finish in time: %f", self->animation.progress);
-  self->animation.progress = 1.0;
   pos_input_surface_move (self);
 }
 
