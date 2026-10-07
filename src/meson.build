@@ -133,6 +133,7 @@ executable(
   'phosh-osk-stevia',
   'dh-dconf-migration.c',
   'phosh-osk-stevia.c',
+  'pos-app.c',
   'pos-osk-dbus.c',
   include_directories: pos_includes,
   install: true,
