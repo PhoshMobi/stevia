@@ -1131,6 +1131,8 @@ animate_cb (GtkWidget     *widget,
   if (finished) {
     if (!self->animation.show)
       select_layout_by_im_purpose (self);
+
+    g_clear_handle_id (&self->animation.id, g_source_remove);
     return G_SOURCE_REMOVE;
   }
 
@@ -2373,11 +2375,14 @@ on_animation_timeout (gpointer data)
 
   self->animation.id = 0;
 
-  if (self->animation.progress < 1.0) {
-    g_warning ("Animation did not finish in time: %f", self->animation.progress);
-    self->animation.progress = 1.0;
-    pos_input_surface_move (self);
+  if (self->animation.progress >= 1.0) {
+    g_warning ("Animation finished but timer present");
+    return;
   }
+
+  g_warning ("Animation did not finish in time: %f", self->animation.progress);
+  self->animation.progress = 1.0;
+  pos_input_surface_move (self);
 }
 
 
