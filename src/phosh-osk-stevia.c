@@ -28,8 +28,6 @@
 #define GNOME_SESSION_DBUS_INTERFACE "org.gnome.SessionManager"
 #define GNOME_SESSION_CLIENT_PRIVATE_DBUS_INTERFACE "org.gnome.SessionManager.ClientPrivate"
 
-#define APP_ID "sm.puri.OSK0"
-
 /**
  * PosDebugFlags:
  * @POS_DEBUG_FLAG_FORCE_SHOW: Ignore the `screen-keyboard-enabled` GSetting and always enable the OSK
@@ -527,7 +525,7 @@ pos_app_init (PosApp *self)
   g_unix_signal_add (SIGTERM, quit_cb, self);
   g_unix_signal_add (SIGINT, quit_cb, self);
 
-  self->session_proxy = pos_app_session_register (self, APP_ID);
+  self->session_proxy = pos_app_session_register (self, POS_APP_ID);
   self->size_manager = pos_size_manager_new ();
 
   /* Exit if we don't find all Wayland protocols */
@@ -651,7 +649,7 @@ main (int argc, char *argv[])
 
   gdk_set_allowed_backends ("wayland");
   pos_init ();
-  lfb_init (APP_ID, NULL);
+  lfb_init (POS_APP_ID, NULL);
   _debug_flags = parse_debug_env ();
   gtk_init (&argc, &argv);
 
