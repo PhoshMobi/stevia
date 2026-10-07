@@ -484,7 +484,7 @@ parse_debug_env (void)
 
 
 static void
-pos_input_surface_finalize (GObject *object)
+pos_app_finalize (GObject *object)
 {
   PosApp *self = POS_APP (object);
 
@@ -510,7 +510,7 @@ pos_app_class_init (PosAppClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-  object_class->finalize = pos_input_surface_finalize;
+  object_class->finalize = pos_app_finalize;
 }
 
 
