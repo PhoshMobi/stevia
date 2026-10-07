@@ -62,7 +62,6 @@ G_DEFINE_TYPE (PosApp, pos_app, G_TYPE_OBJECT)
 
 /* TODO: allow to force virtual-keyboard instead of input-method */
 static PosDebugFlags _debug_flags;
-static PosApp *_app;
 
 
 static void G_GNUC_NORETURN
@@ -554,9 +553,14 @@ pos_app_run (PosApp *self)
 PosApp *
 pos_app_get_default (void)
 {
-  g_assert (POS_IS_APP (_app));
+  static PosApp *instance;
 
-  return _app;
+  if (instance == NULL) {
+    g_debug ("Creating app singleton cache");
+    instance = g_object_new (POS_TYPE_APP, NULL);
+    g_object_add_weak_pointer (G_OBJECT (instance), (gpointer *)&instance);
+  }
+  return instance;
 }
 
 
@@ -620,6 +624,7 @@ main (int argc, char *argv[])
   g_autoptr (GOptionContext) opt_context = NULL;
   g_autoptr (GError) err = NULL;
   g_autoptr (PosOskDbus) osk_dbus = NULL;
+  g_autoptr (PosApp) app = NULL;
   gboolean version = FALSE, replace = FALSE, allow_replace = FALSE;
   GBusNameOwnerFlags flags;
   g_autoptr (PosWayland) wayland = NULL;
@@ -654,19 +659,17 @@ main (int argc, char *argv[])
   gtk_init (&argc, &argv);
 
   wayland = pos_wayland_get_default ();
-  _app = g_object_new (POS_TYPE_APP, NULL);
-  g_object_add_weak_pointer (G_OBJECT (_app), (gpointer *)&_app);
+  app = pos_app_get_default ();
 
   flags = (allow_replace ? G_BUS_NAME_OWNER_FLAGS_ALLOW_REPLACEMENT : 0) |
     (replace ? G_BUS_NAME_OWNER_FLAGS_REPLACE : 0);
   osk_dbus = pos_osk_dbus_new (flags);
 
-  if (!pos_app_setup_input_method (_app, osk_dbus))
+  if (!pos_app_setup_input_method (app, osk_dbus))
     return EXIT_FAILURE;
 
-  ret = pos_app_run (_app);
+  ret = pos_app_run (app);
 
-  g_clear_object (&_app);
   pos_uninit ();
 
   return ret;
