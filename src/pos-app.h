@@ -5,6 +5,8 @@
  */
 
 #include "pos-osk-dbus.h"
+#include "pos-clipboard-manager.h"
+
 #include <glib-object.h>
 
 #pragma once
@@ -18,5 +20,6 @@ PosApp * pos_app_get_default (void);
 int      pos_app_run (PosApp *self);
 void     pos_app_quit (PosApp *self, int exit_status);
 gboolean pos_app_setup_input_method (PosApp *self, PosOskDbus *osk_dbus);
+PosClipboardManager *pos_app_get_clipboard_manager (PosApp *self);
 
 G_END_DECLS

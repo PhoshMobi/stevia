@@ -43,6 +43,7 @@ typedef struct _PosApp {
   PosHwTracker        *hw_tracker;
   PosEmojiDb          *emoji_db;
   PosSizeManager      *size_manager;
+  PosClipboardManager *clipboard_manager;
   int exit_status;
   guint wl_proto_timeout_id;
 } PosApp;
@@ -252,7 +253,6 @@ create_input_surface (PosApp *self)
   g_autoptr (PosVkDriver) vk_driver = NULL;
   g_autoptr (PosInputMethod) im = NULL;
   g_autoptr (PosCompleterManager) completer_manager = NULL;
-  g_autoptr (PosClipboardManager) clipboard_manager = NULL;
   PosWayland *wayland = pos_wayland_get_default ();
   gboolean force_completion;
 
@@ -264,7 +264,7 @@ create_input_surface (PosApp *self)
                               pos_wayland_get_wl_seat (wayland));
   vk_driver = pos_vk_driver_new (virtual_keyboard);
   completer_manager = pos_completer_manager_new ();
-  clipboard_manager =
+  self->clipboard_manager =
     pos_clipboard_manager_new (pos_wayland_get_ext_data_control_manager_v1 (wayland),
                                pos_wayland_get_wl_seat (wayland));
 
@@ -290,7 +290,7 @@ create_input_surface (PosApp *self)
                                       "keyboard-driver", vk_driver,
                                       "completer-manager", completer_manager,
                                       "completion-enabled", force_completion,
-                                      "clipboard-manager", clipboard_manager,
+                                      "clipboard-manager", self->clipboard_manager,
                                       NULL);
 
   g_object_bind_property (self->input_surface,
@@ -470,6 +470,7 @@ pos_app_finalize (GObject *object)
   g_clear_object (&self->osk_dbus);
   g_clear_object (&self->activation_filter);
   g_clear_object (&self->hw_tracker);
+  g_clear_object (&self->clipboard_manager);
 
   g_clear_object (&self->session_proxy);
 
@@ -555,4 +556,14 @@ pos_app_quit (PosApp *self, int exit_status)
 
   self->exit_status = exit_status;
   g_main_loop_quit (self->loop);
+}
+
+
+PosClipboardManager *
+pos_app_get_clipboard_manager (PosApp *self)
+{
+  g_assert (POS_IS_APP (self));
+  g_assert (POS_IS_CLIPBOARD_MANAGER (self->clipboard_manager));
+
+  return self->clipboard_manager;
 }
