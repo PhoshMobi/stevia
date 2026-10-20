@@ -31,6 +31,7 @@ pos_resources = gnome.compile_resources(
 )
 
 libpos_sources = files(
+  'pos-app.c',
   'pos-activation-filter.c',
   'pos-activation-filter.h',
   'pos-char-popup.c',
@@ -68,6 +69,7 @@ libpos_sources = files(
   'pos-logind-session.h',
   'pos-main.c',
   'pos-main.h',
+  'pos-osk-dbus.c',
   'pos-osk-key.c',
   'pos-osk-key.h',
   'pos-osk-widget.c',
@@ -133,8 +135,6 @@ executable(
   'phosh-osk-stevia',
   'dh-dconf-migration.c',
   'phosh-osk-stevia.c',
-  'pos-app.c',
-  'pos-osk-dbus.c',
   include_directories: pos_includes,
   install: true,
   dependencies: libpos_dep,
