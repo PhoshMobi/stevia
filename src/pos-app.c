@@ -264,10 +264,6 @@ create_input_surface (PosApp *self)
                               pos_wayland_get_wl_seat (wayland));
   vk_driver = pos_vk_driver_new (virtual_keyboard);
   completer_manager = pos_completer_manager_new ();
-  self->clipboard_manager =
-    pos_clipboard_manager_new (pos_wayland_get_ext_data_control_manager_v1 (wayland),
-                               pos_wayland_get_wl_seat (wayland));
-
   im =
     pos_input_method_new (pos_wayland_get_zwp_input_method_manager_v2 (wayland),
                           pos_wayland_get_wl_seat (wayland));
@@ -405,6 +401,9 @@ on_wayland_ready (PosApp *self, PosWayland *wayland)
     pos_activation_filter_new (pos_wayland_get_zwlr_foreign_toplevel_manager_v1 (wayland));
   self->hw_tracker =
     pos_hw_tracker_new (pos_wayland_get_zphoc_device_state_v1 (wayland));
+  self->clipboard_manager =
+    pos_clipboard_manager_new (pos_wayland_get_ext_data_control_manager_v1 (wayland),
+                               pos_wayland_get_wl_seat (wayland));
 
   g_clear_handle_id (&self->wl_proto_timeout_id, g_source_remove);
   maybe_create_input_surface (self);
