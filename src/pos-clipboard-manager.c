@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 The Phosh Developers
+ * Copyright (C) 2024-2026 Phosh.mobi e.V.
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  *
@@ -426,7 +426,7 @@ pos_clipboard_manager_get_text (PosClipboardManager *self)
 GStrv
 pos_clipboard_manager_get_texts (PosClipboardManager *self)
 {
-  GStrvBuilder *builder;
+  g_autoptr (GStrvBuilder) builder = NULL;
 
   g_assert (POS_IS_CLIPBOARD_MANAGER (self));
 
