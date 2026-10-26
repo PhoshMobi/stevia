@@ -39,7 +39,7 @@ static void
 migrate_gsettings (void)
 {
   g_autoptr (GSettings) settings = g_settings_new ("mobi.phosh.osk");
-  DhDconfMigration *migration = _dh_dconf_migration_new ();
+  DhDconfMigration *migration;
   const gchar *keys[] = {
     "osk/completion-mode",
     "osk/osk-features",
@@ -59,6 +59,7 @@ migrate_gsettings (void)
     return;
   }
 
+  migration = _dh_dconf_migration_new ();
   g_message ("Migrating schema to /mobi/phosh/osk/");
   for (int i = 0; keys[i] != NULL; i++) {
     const char *cur_key = keys[i];
