@@ -6,6 +6,7 @@ Documentation=https://gitlab.gnome.org/World/Phosh/stevia
 CollectMode=inactive-or-failed
 
 After=gnome-session-initialized.target
+PartOf=mobi.phosh.OSK.target
 
 [Service]
 Slice=session.slice
