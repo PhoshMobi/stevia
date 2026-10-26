@@ -131,6 +131,8 @@ main (int argc, char *argv[])
 
   ret = pos_app_run (app);
 
+  /* Dispose the app before pos_uninit so we don't trip on already free'd resources */
+  g_clear_object (&app);
   pos_uninit ();
 
   return ret;
