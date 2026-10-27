@@ -39,7 +39,7 @@ static void
 migrate_gsettings (void)
 {
   g_autoptr (GSettings) settings = g_settings_new ("mobi.phosh.osk");
-  DhDconfMigration *migration = _dh_dconf_migration_new ();
+  DhDconfMigration *migration;
   const gchar *keys[] = {
     "osk/completion-mode",
     "osk/osk-features",
@@ -59,6 +59,7 @@ migrate_gsettings (void)
     return;
   }
 
+  migration = _dh_dconf_migration_new ();
   g_message ("Migrating schema to /mobi/phosh/osk/");
   for (int i = 0; keys[i] != NULL; i++) {
     const char *cur_key = keys[i];
@@ -130,6 +131,8 @@ main (int argc, char *argv[])
 
   ret = pos_app_run (app);
 
+  /* Dispose the app before pos_uninit so we don't trip on already free'd resources */
+  g_clear_object (&app);
   pos_uninit ();
 
   return ret;

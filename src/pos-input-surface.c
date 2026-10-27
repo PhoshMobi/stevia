@@ -170,6 +170,8 @@ struct _PosInputSurface {
   char                       *surround_before;
   /* layout-override */
   gboolean                    layout_overriden;
+  /* Keymap handling */
+  guint                       keymap_delayed_id;
 };
 
 
@@ -653,6 +655,16 @@ set_keymap (PosInputSurface *self)
 
 
 static void
+on_keymap_delayed (gpointer user_data)
+{
+  PosInputSurface *self = user_data;
+
+  self->keymap_delayed_id = 0;
+  set_keymap (self);
+}
+
+
+static void
 set_keymap_delayed (PosInputSurface *self)
 {
   /*
@@ -660,7 +672,7 @@ set_keymap_delayed (PosInputSurface *self)
    * X11 client might apply the symbol sent to the popup to the new
    * keymap.
    */
-  g_timeout_add_once (25, (GSourceOnceFunc)set_keymap, self);
+  self->keymap_delayed_id = g_timeout_add_once (25, on_keymap_delayed, self);
 }
 
 
@@ -1650,6 +1662,7 @@ pos_input_surface_finalize (GObject *object)
 
   g_clear_handle_id (&self->animation.id, g_source_remove);
   g_clear_handle_id (&self->bs_repeat_id, g_source_remove);
+  g_clear_handle_id (&self->keymap_delayed_id, g_source_remove);
 
   g_clear_object (&self->logind_session);
   g_clear_object (&self->keyboard_driver);
