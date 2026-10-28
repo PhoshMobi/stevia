@@ -57,6 +57,8 @@ Breaks:
 Recommends:
  fonts-noto-color-emoji,
  fonts-noto-core,
+ gstreamer1.0-plugins-base,
+ gstreamer1.0-plugins-good,
  hunspell-en-us,
  phosh-osk-data-packager,
 Suggests:
