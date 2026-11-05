@@ -18,6 +18,19 @@
       </object>
     </child>
     <child>
+      <object class="GtkToggleButton" id="speech_input_button">
+        <property name="halign">start</property>
+        <property name="visible" bind-source="PosCompletionBar" bind-property="speech-input-visible" bind-flags="sync-create"/>
+        <property name="action-name">win.speech-input</property>
+        <child>
+          <object class="GtkImage" id="speech_input_icon">
+            <property name="visible">1</property>
+            <property name="icon-name">audio-input-microphone-symbolic</property>
+          </object>
+        </child>
+      </object>
+    </child>
+    <child>
       <object class="GtkScrolledWindow" id="scrolled_window">
         <property name="visible">1</property>
         <property name="hexpand">1</property>

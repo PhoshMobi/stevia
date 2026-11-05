@@ -23,11 +23,11 @@ tests = [
   'completer',
   'completer-base',
   'completer-hunspell',
+  'completers',
+  'emoji-db',
   'input-surface',
   'load-layouts',
   'osk-widget',
-  'completers',
-  'emoji-db',
   'size-manager',
 ]
 foreach name : tests
