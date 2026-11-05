@@ -208,6 +208,7 @@ subdir('po')
 subdir('protocol')
 subdir('src')
 subdir('tests')
+subdir('tools')
 subdir('doc')
 
 summary(
