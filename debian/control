@@ -9,6 +9,7 @@ Build-Depends:
  gir1.2-gtk-3.0-dev <!nodoc>,
  gir1.2-handy-1-dev <!nodoc>,
  gobject-introspection (>= 1.80) <!nodoc>,
+ gstreamer1.0-pulseaudio <!nocheck>,
  json-glib-tools,
  libdconf-dev,
  libfeedback-dev,
