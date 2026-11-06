@@ -1,3 +1,16 @@
+phosh-osk-stevia 0.59~rc1
+-------------------------
+Released November 2026
+* Initial speech input support via vosk
+* Several bug fixes and cleanups
+* Issues fixed:
+    * https://gitlab.gnome.org/World/Phosh/stevia/-/issues/33
+* Contributors:
+    * Guido Günther
+* UI translations:
+    * Artur S0 (ru)
+    * Roy-Magne Mo (nn)
+
 phosh-osk-stevia 0.58.0
 -----------------------
 Released October 2026

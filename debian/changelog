@@ -1,3 +1,79 @@
+phosh-osk-stevia (0.59~rc1) experimental; urgency=medium
+
+  [ Guido Günther ]
+  * build: Allow to disable uim and govarnam.
+    This was possible via feature detection anyway but lets add toggles to enforce it.
+  * packaging: Allow to disable uim.
+    This can help in bootstrapping when uim is not available
+  * util: Use const as strrchr returns a const now.
+    This fixes a compile warnings
+  * input-surface: Use `once` timer.
+    We will never need it to continue. Fix callback name while at that.
+  * input-surface: Use g_clear_handle_id
+  * input-surface: Remove animation timer when animation finished.
+    It's the same criteria than in the callback so no need to do it twice.
+    This allows us to warn when we hit that situation.
+  * input-surface: Unfold when anim didn't finish via frame callbacks.
+    This is the other half of the workaround so we also show when the
+    animation is in the end position.
+  * input-surface: Reduce keyboard timeout.
+    This makes things feel snappier when we're lacking frame callbacks.
+  * input-surface: Better document animation
+  * build: Drop superfluous check.
+    We require meson 1.1 anyway
+    Fixes: e61301f6a ("build: Bump minimum meson version to 1.1")
+  * stevia: Properly name finalize.
+    Fixes: b39833d47 ("osk-stub: Move session registration into PhoshOskStub")
+  * app: Use Stevia's app-id.
+    This is for session registration and feedbackd so we can use
+    our actual app-id.
+  * stevia: Make app a proper singleton.
+    Use the same pattern we use in phosh rather than open coding it here.
+  * app: Move to separate file.
+    Another bit untangled from our phosh-osk-stub is only a debug stub era.
+  * app: Allow to get clipboard manager
+  * app: Create clipboard manager only once.
+    Otherwse we leak when the clipboard manager gets recreated
+  * clipboard-manager: Don't leak builder
+  * build: Move app into library.
+    The idea that squeeboard (or other OSKs) would reuse parts of stevia never realized
+    so simplify our lives by moving everything except `main()` into the library.
+  * service: Make part of the OSK target.
+    This ensures things get removed from the session properly
+  * stevia: Don't leak migration.
+    Don't allocate migration if we don't perform one, otherwise we
+    leak on the early exit.
+  * stevia: Dispose app before uninit.
+    Otherwise we might step on already free'd resources, e.g. when cleaning
+    up the vk-driver which might load the keymap resource.
+    Fixes: f7105438e ("stevia: Make app a proper singleton")
+  * input-surface: Remove keymap-delayed timer.
+    Although unlikely we should make sure that the delayed keymap timer
+    is removed on dispose. This avoids multiple restarts when phrog's
+    session should actually end.
+  * tests: Sort alphabetically
+  * speech-input: Handle speech inpout via vosk-server
+    vosk-server offers offline speech recognition for multiple languages.
+    See https://github.com/alphacep/vosk-server
+  * completion-bar: Speech input button handling.
+    We add a toggle button that trickers a stateful action
+    to enable and disable speech input.
+  * input-surface: Wire up speech input.
+    Init the input engine and wire up the signals
+    Closes: https://gitlab.gnome.org/World/Phosh/stevia/-/issues/33
+  * doc: Mention speech input
+  * packaging: Recommend speech input related packages
+  * tools: Add simple tool to run speech recognition.
+    That way we don't need to spawn the OSK
+
+  [ Artur S0 ]
+  * Add Russian translation
+
+  [ Roy-Magne Mo ]
+  * Add Norwegian Nynorsk translation
+
+ -- Guido Günther <agx@sigxcpu.org>  Fri, 06 Nov 2026 19:56:44 +0100
+
 phosh-osk-stevia (0.58.0) experimental; urgency=medium
 
   [ Guido Günther ]
