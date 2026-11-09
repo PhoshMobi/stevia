@@ -324,12 +324,16 @@ pos_clipboard_manager_constructed (GObject *object)
 
   G_OBJECT_CLASS (pos_clipboard_manager_parent_class)->constructed (object);
 
-  self->data_control_device =
-    ext_data_control_manager_v1_get_data_device (self->data_control_manager,
-                                                 self->wl_seat);
-  ext_data_control_device_v1_add_listener (self->data_control_device,
-                                           &ext_data_control_device_v1_listener,
-                                           self);
+  if (self->data_control_manager && self->wl_seat) {
+    self->data_control_device =
+      ext_data_control_manager_v1_get_data_device (self->data_control_manager,
+                                                   self->wl_seat);
+    ext_data_control_device_v1_add_listener (self->data_control_device,
+                                             &ext_data_control_device_v1_listener,
+                                             self);
+  } else {
+    g_debug ("clipboard-manager: Didn't bind wayland protocols");
+  }
 }
 
 
