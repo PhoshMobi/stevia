@@ -1,5 +1,5 @@
-phosh-osk-stevia 0.59~rc1
--------------------------
+phosh-osk-stevia 0.59.0
+-----------------------
 Released November 2026
 * Initial speech input support via vosk
 * Several bug fixes and cleanups
@@ -9,6 +9,7 @@ Released November 2026
     * Guido Günther
 * UI translations:
     * Artur S0 (ru)
+    * Jiri Grönroos (fi)
     * Roy-Magne Mo (nn)
 
 phosh-osk-stevia 0.58.0

@@ -1,3 +1,16 @@
+phosh-osk-stevia (0.59.0) experimental; urgency=medium
+
+  [ Guido Günther ]
+  * clipboard-manager: Allow to create object without Wayland protocol.
+    This easies testing it and we check for the protocols in PosWayland
+    already.
+  * tests: Add simple clipboard-manager test. This ensures we don't leak.
+
+  [ Jiri Grönroos ]
+  * Add Finnish translation
+
+ -- Guido Günther <agx@sigxcpu.org>  Sat, 14 Nov 2026 16:49:49 +0100
+
 phosh-osk-stevia (0.59~rc1) experimental; urgency=medium
 
   [ Guido Günther ]
