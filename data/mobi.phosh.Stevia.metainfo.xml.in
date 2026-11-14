@@ -64,6 +64,16 @@
   </screenshots>
 
   <releases>
+    <release version="0.59.0" date="2026-11-14">
+      <description translate="no">
+        <ul>
+          <li>Initial speech input support via vosk</li>
+          <li>Several bug fixes and cleanups</li>
+          <li>Translation updates</li>
+        </ul>
+      </description>
+    </release>
+
     <release version="0.58.0" date="2026-10-03">
       <description translate="no">
         <ul>
