@@ -1236,6 +1236,10 @@ on_symbol_selected (PosOskWidget *self, const char *symbol)
   g_signal_emit (self, signals[OSK_KEY_DOWN], 0, symbol);
   g_signal_emit (self, signals[OSK_KEY_SYMBOL], 0, symbol);
   g_signal_emit (self, signals[OSK_KEY_UP], 0, symbol);
+
+  if (self->layer == POS_OSK_WIDGET_LAYER_CAPS && !self->caps_lock)
+    pos_osk_widget_set_layer (self, POS_OSK_WIDGET_LAYER_NORMAL);
+
   g_clear_pointer (&self->char_popup, phosh_cp_widget_destroy);
 }
 
