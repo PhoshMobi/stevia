@@ -116,7 +116,7 @@ main (int argc, char *argv[])
 
   gdk_set_allowed_backends ("wayland");
   pos_init ();
-  lfb_init (POS_APP_ID, NULL);
+  lfb_init ("sm.puri.OSK0", NULL); /* FIXME once the desktop file gets renamed */
   gtk_init (&argc, &argv);
 
   wayland = pos_wayland_get_default ();
